@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace SchoolEquipmentManager.Models
 {
-    public class Item
+    public class NewItemViewModel
     {
-        public int Id { get; set; }
-        public int ShortId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Location { get; set; }
     }
 }

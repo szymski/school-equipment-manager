@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <nav-menu></nav-menu>
-        <div class="container">
+        <div class="container mt-2">
             <router-view></router-view>
         </div>
     </div>

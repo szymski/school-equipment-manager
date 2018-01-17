@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Controllers
@@ -10,35 +11,45 @@ namespace SchoolEquipmentManager.Controllers
     [Route("api/[controller]")]
     public class ItemsController : Controller
     {
-        public IEnumerable<Item> Index()
+        private AppContext _context;
+
+        public ItemsController(AppContext dbContext)
         {
-            List<Item> items = new List<Item>();
+            _context = dbContext;
+        }
 
-            items.Add(new Item()
+        public IEnumerable<dynamic> Index()
+        {
+            return _context.Items.Select(i => new
             {
-                Id = 2137,
-                Name = "Myszek komputerowy",
-                Description = "Świetny do machania i śpiewania 'Mortadela, mortadela...'",
-                Location = "Chuj wie",
+                id = i.ShortId,
+                name = i.Name,
+                description = i.Description,
+                location = i.Location,
             });
+        }
 
-            items.Add(new Item()
+        [HttpPost("[action]")]
+        public IActionResult Remove(int id)
+        {
+            _context.Items.Remove(_context.Items.FirstOrDefault(i => i.ShortId == id));
+            _context.SaveChanges();
+            return Content("ok");
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] NewItemViewModel model)
+        {
+            _context.Items.Add(new Item()
             {
-                Id = 1337,
-                Name = "Monitor",
-                Description = "Nie działa",
-                Location = "Sala 8",
+                ShortId = new Random().Next(100, 10000),
+                Name = model.Name,
+                Description = model.Description,
+                Location = "",
             });
+            _context.SaveChanges();
 
-            items.Add(new Item()
-            {
-                Id = 45,
-                Name = "Kabel RJ-45",
-                Description = "",
-                Location = "Nie wiadomo",
-            });
-
-            return items;
+            return Content("ok");
         }
     }
 }
