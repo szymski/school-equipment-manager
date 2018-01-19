@@ -12,6 +12,14 @@
             <input class="form-control" type="text" v-model="description">
         </div>
 
+        <div class="form-group">
+            <label>Lokalizacja</label>            
+            <select v-model="location" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                <option selected value="0">Wybiorę później</option>
+                <option v-for="item in locations" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
+            </select>
+        </div>
+
         <button class="btn btn-primary float-right" @click="submit">Dodaj</button>
     </div>
 </template>
@@ -24,14 +32,21 @@ export default {
         return {
             name: "",
             description: "",
+            location: 0,
+            locations: [],
         }
     },
 
     methods: {
-        submit() {
-            this.$http.post("/api/Items/Add", { name: this.name, description: this.description });
+        async submit() {
+            await this.$http.post("/api/Items/Add", { name: this.name, description: this.description, location: this.location });
             router.push("/items");
         }
+    },
+
+    async created() {
+        var response = await this.$http.get("/api/Locations");
+        this.locations = response.data;
     }
 }
 </script>

@@ -11,6 +11,6 @@ namespace SchoolEquipmentManager.Models
         public int ShortId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Location { get; set; }
+        public virtual Location Location { get; set; }
     }
 }

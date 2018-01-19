@@ -56,7 +56,7 @@ export default {
             router.push("/add-item");
         },
         async removeItem(id) {
-            this.$http.post('/api/Items/Remove', "id=" + id);
+            await this.$http.post('/api/Items/Remove', "id=" + id);
             let response = await this.$http.get('/api/Items')
             this.items = response.data;
         }

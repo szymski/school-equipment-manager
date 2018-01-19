@@ -22,12 +22,24 @@ namespace SchoolEquipmentManager
             if(_dbContext.Items.Any())
                 return;
 
+            var location1 = new Location()
+            {
+                Name = "Sala 8",
+            };
+            _dbContext.Locations.Add(location1);
+
+            var location2 = new Location()
+            {
+                Name = "Sala 10",
+            };
+            _dbContext.Locations.Add(location2);
+
             _dbContext.Items.Add(new Item()
             {
                 ShortId = 2137,
                 Name = "Myszek komputerowy",
                 Description = "Przydatny do klikania",
-                Location = "Nie wiadomo",
+                Location = location1,
             });
 
             _dbContext.Items.Add(new Item()
@@ -35,7 +47,7 @@ namespace SchoolEquipmentManager
                 ShortId = 1337,
                 Name = "Monitor",
                 Description = "Nie działa",
-                Location = "Sala 8",
+                Location = location2,
             });
 
             var rnd = new Random();
@@ -46,7 +58,7 @@ namespace SchoolEquipmentManager
                     ShortId = rnd.Next(100, 10000),
                     Name = rnd.Next(0, 2) == 0 ? "Komputer" : "Mysz komputerowa",
                     Description = "",
-                    Location = "Sala " + (rnd.Next(0, 2) == 0 ? "8" : "10"),
+                    Location = (rnd.Next(0, 2) == 0 ? location1 : location2),
                 });
             }
 

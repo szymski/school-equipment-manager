@@ -10,6 +10,7 @@ namespace SchoolEquipmentManager
     public class AppContext : DbContext
     {
         public DbSet<Item> Items { get; set; }
+        public DbSet<Location> Locations { get; set; }
 
         public AppContext(DbContextOptions<AppContext> options) : base(options)
         {
@@ -19,6 +20,8 @@ namespace SchoolEquipmentManager
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Item>().HasOne(i => i.Location);
         }
     }
 }
