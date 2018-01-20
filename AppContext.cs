@@ -11,6 +11,7 @@ namespace SchoolEquipmentManager
     {
         public DbSet<Item> Items { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<ItemTemplate> ItemTemplates { get; set; }
 
         public AppContext(DbContextOptions<AppContext> options) : base(options)
         {
