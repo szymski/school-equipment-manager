@@ -2,3 +2,7 @@
     display: flex;
     align-items: center;
 }
+
+.ui.sidebar.visible ~ .pusher {
+    width: calc(100% - 260px);
+}

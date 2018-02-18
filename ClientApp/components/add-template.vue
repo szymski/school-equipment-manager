@@ -29,14 +29,13 @@ export default {
 
     methods: {
         async submit() {
-            await this.$http.post("/api/ItemTemplateController/Add", { name: this.name, description: this.description});
-            router.push("/ItemTemplateController");
+            await this.$http.post("/api/ItemTemplates/Add", { name: this.name, description: this.description});
+            router.push("/item-templates");
         }
     },
 
     async created() {
-        var response = await this.$http.get("/api/Locations");
-        this.locations = response.data;
+        
     }
 }
 </script>

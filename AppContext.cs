@@ -23,6 +23,7 @@ namespace SchoolEquipmentManager
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Item>().HasOne(i => i.Location);
+            modelBuilder.Entity<Item>().HasOne(i => i.Template);
         }
     }
 }

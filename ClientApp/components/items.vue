@@ -2,7 +2,7 @@
 <div>
     <div class="row">
         <h1 class="col-md-6">Przedmioty</h1>
-        <div class="col-md-3 col-center-items">
+        <div class="">
             <input type="text" class="form-control mr-0" v-model="searchText">
         </div>
         <div class="col-md-3 col-center-items">
@@ -10,13 +10,14 @@
         </div>
     </div>
 
-    <table class="table">
+    <table class="ui celled table">
         <thead>
             <tr>
                 <th style="width:1px;">lp.</th>
                 <th style="width:1px;">Identyfikator</th>
                 <th>Nazwa</th>
-                <th>Opis dodatkowy</th>
+                <th>Opis</th>
+                <th>Uwagi</th>
                 <th style="width:1px;">Położenie</th>
                 <th></th>
             </tr>
@@ -27,6 +28,7 @@
                 <td>{{ item.id }}</td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.description }}</td>
+                <td>{{ item.notes }}</td>
                 <td>{{ item.location }}</td>
                 <td>
                     <button class="btn btn-danger btn-sm" @click="removeItem(item.id)">Usuń</button>

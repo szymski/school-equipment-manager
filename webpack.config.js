@@ -28,13 +28,19 @@ module.exports = (env) => {
                 { test: /\.vue$/, include: /ClientApp/, use: 'vue-loader' },
                 { test: /\.js$/, include: /ClientApp/, use: 'babel-loader' },
                 { test: /\.css$/, use: isDevBuild ? ['style-loader', 'css-loader'] : ExtractTextPlugin.extract({ use: 'css-loader' }) },
-                { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' }
+                { test: /\.(png|jpg|jpeg|gif|svg|eot|woff2|ttf|woff)$/, use: 'url-loader?limit=25000' },
             ]
         },
         plugins: [
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./wwwroot/dist/vendor-manifest.json')
+            }),
+            new webpack.ProvidePlugin({
+                $: 'jquery',
+                jquery: 'jquery',
+                'window.jQuery': 'jquery',
+                jQuery: 'jquery'
             })
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only

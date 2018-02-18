@@ -1,15 +1,11 @@
 <template>
-    <div id="app">
-        <div class="container-fluid">
-            <div class="row fill">
-                <side-bar></side-bar>
-                <div class="col-10">
-                    <div class="container mt-2">
-                        <router-view></router-view>
-                    </div>
+    <div id="app" class="pushable">
+            <side-bar></side-bar>
+            <div class="pusher">
+                <div class="ui basic segment">
+                    <router-view ></router-view>
                 </div>
             </div>
-        </div>
     </div>
 </template>
 
@@ -31,5 +27,7 @@ export default {
 </script>
 
 <style>
-
+    .page-content {
+        padding: 0.5em;
+    }
 </style>

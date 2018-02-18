@@ -54,13 +54,13 @@ namespace SchoolEquipmentManager.Controllers
         [HttpPost("[action]")]
         public IActionResult Remove([FromBody] RemoveItemTemplateModel model)
         {
-            var location = _context.Locations.FirstOrDefault(l => l.Id == model.Id);
+            var template = _context.ItemTemplates.FirstOrDefault(l => l.Id == model.Id);
 
-            if (location != null)
+            if (template != null)
             {
-                foreach (var item in _context.Items.Where(i => i.Location == location))
-                    item.Location = null;
-                _context.Locations.Remove(location);
+                foreach (var item in _context.Items.Where(i => i.Template == template))
+                    item.Template = null;
+                _context.ItemTemplates.Remove(template);
                 _context.SaveChanges();
             }
 

@@ -20,7 +20,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="itemTemplate in filterItems(itemsTemplates)" v-bind:key="itemTemplate.id">
+            <tr v-for="itemTemplate in filterItems(items)" v-bind:key="itemTemplate.id">
                 <td>{{ itemTemplate.id }}</td>
                 <td>{{ itemTemplate.name }}</td>
                 <td>{{ itemTemplate.description }}</td>

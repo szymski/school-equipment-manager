@@ -19,8 +19,10 @@ namespace SchoolEquipmentManager
         {
             _dbContext.Database.EnsureCreated();
 
-            if(_dbContext.Items.Any())
+            if (_dbContext.Items.Any())
                 return;
+
+            #region Locations
 
             var location1 = new Location()
             {
@@ -34,20 +36,39 @@ namespace SchoolEquipmentManager
             };
             _dbContext.Locations.Add(location2);
 
+            #endregion
+
+            #region Templates
+
+            var template1 = new ItemTemplate()
+            {
+                Name = "Komputer",
+                Description = "Taki tam komputerek"
+            };
+            _dbContext.ItemTemplates.Add(template1);
+
+            var template2 = new ItemTemplate()
+            {
+                Name = "Mysz komputerowa",
+                Description = "Tania, łatwo się psuje"
+            };
+            _dbContext.ItemTemplates.Add(template1);
+
+            #endregion
+
             _dbContext.Items.Add(new Item()
             {
                 ShortId = 2137,
-                Name = "Myszek komputerowy",
-                Description = "Przydatny do klikania",
                 Location = location1,
+                Template = template2,
             });
 
             _dbContext.Items.Add(new Item()
             {
                 ShortId = 1337,
-                Name = "Monitor",
-                Description = "Nie działa",
+                Notes = "Nie działa",
                 Location = location2,
+                Template = template1,
             });
 
             var rnd = new Random();
@@ -57,7 +78,7 @@ namespace SchoolEquipmentManager
                 {
                     ShortId = rnd.Next(100, 10000),
                     Name = rnd.Next(0, 2) == 0 ? "Komputer" : "Mysz komputerowa",
-                    Description = "",
+                    Notes = "",
                     Location = (rnd.Next(0, 2) == 0 ? location1 : location2),
                 });
             }

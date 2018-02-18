@@ -5,6 +5,9 @@ import store from './store'
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
 
+require('semantic-ui-css/semantic.css')
+require('../node_modules/semantic-ui-css/semantic.js')
+
 Vue.prototype.$http = axios;
 
 sync(store, router)

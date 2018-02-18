@@ -13,8 +13,8 @@ namespace SchoolEquipmentManager.Controllers
     {
         public class NewItemViewModel
         {
-            public string Name { get; set; }
-            public string Description { get; set; }
+            public int Template { get; set; }
+            public string Notes { get; set; }
             public int Location { get; set; }
         }
 
@@ -41,11 +41,12 @@ namespace SchoolEquipmentManager.Controllers
             {
                 id = i.ShortId,
                 name = i.Name,
-                description = i.Description,
+                notes = i.Notes,
+                description = i.Template != null ? i.Template.Description : "",
                 location = i.Location != null ? i.Location.Name : "",
             });
         }
-
+         
         [HttpPost("[action]")]
         public IActionResult Remove(int id)
         {
@@ -63,13 +64,17 @@ namespace SchoolEquipmentManager.Controllers
         public IActionResult Add([FromBody] NewItemViewModel model)
         {
             var location = _context.Locations.FirstOrDefault(l => l.Id == model.Location);
+            var template = _context.ItemTemplates.FirstOrDefault(l => l.Id == model.Template);
+
+            if (template == null)
+                return Content("Invalid template");
 
             _context.Items.Add(new Item()
             {
                 ShortId = new Random().Next(100, 10000),
-                Name = model.Name,
-                Description = model.Description,
+                Notes = model.Notes,
                 Location = location,
+                Template = template,
             });
             _context.SaveChanges();
 
