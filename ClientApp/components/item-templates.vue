@@ -1,22 +1,26 @@
 <template>
 <div>
-    <div class="row">
-        <h1 class="col-md-6">Templates</h1>
-        <div class="col-md-3 col-center-items">
-            <input type="text" class="form-control mr-0" v-model="searchText">
+    <h1 class="six wide column">Typy przedmiotów</h1>
+    
+    <div class="ui grid">
+        <div class="four wide column">
+            <button class="ui button" @click="goToAddTemplate">Dodaj typ</button>
         </div>
-        <div class="col-md-3 col-center-items">
-            <button class="btn btn-primary btn-block add-item-btn" @click="goToAddItem">Dodaj Template</button>
+        <div class="ui right floated four wide column form">
+            <div class="ui icon input" style="width:100%">
+                <input type="text" class="" v-model="searchText">
+                <i class="search icon"></i>
+            </div>
         </div>
     </div>
 
-    <table class="table">
+    <table class="ui celled table">
         <thead>
             <tr>
                 <th style="width:1px;">lp.</th>
                 <th>Nazwa</th>
                 <th>Opis dodatkowy</th>
-                <th></th>
+                <th style="width:1px;"></th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +29,7 @@
                 <td>{{ itemTemplate.name }}</td>
                 <td>{{ itemTemplate.description }}</td>
                 <td>
-                    <button class="btn btn-danger btn-sm" @click="removeItem(itemTemplate.id)">Usuń</button>
+                    <button class="ui fluid small red button" @click="removeItem(itemTemplate.id)">Usuń</button>
                 </td>
             </tr>
         </tbody>
@@ -48,7 +52,7 @@ export default {
         filterItems(itemsT) {
             return itemsT.filter((iT) => this.searchText.length == 0 || (iT.name + iT.description + iT.location).toLowerCase().includes(this.searchText.toLowerCase()));
         },
-        goToAddItem() {
+        goToAddTemplate() {
             router.push("/add-template");
         },
         async removeItem(id) {

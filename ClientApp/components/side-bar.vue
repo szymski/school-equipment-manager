@@ -3,6 +3,10 @@
         <a class="item" v-for="item in routes" :key="item" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
             {{ item.display }}
         </a>
+        <div class="footer">
+            Copyright © 2018<br>
+            Szymon Jankowski &amp; Bartek Kurpanik
+        </div>
     </div>
 </template>
 
@@ -66,5 +70,15 @@ export default {
     color: #E2E2E2;
     border-bottom: 2px solid #E2E2E2;
     padding: 15px;
+}
+
+.footer {
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0.5em;
+    color: white;
 }
 </style>

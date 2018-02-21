@@ -2,7 +2,7 @@
     <div>
         <h1>Lokacje</h1>
 
-        <table class="table">
+        <table class="ui celled table">
             <thead>
                 <tr>
                     <th style="width:1px;">lp.</th>
@@ -15,16 +15,20 @@
                     <td>0</td>
                     <td>{{ item.name }}</td>
                     <td>
-                        <button class="btn btn-danger btn-sm" @click="removeLocation(item.id)">Usuń</button>
+                        <button class="ui fluid small red button" @click="removeLocation(item.id)">Usuń</button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <div class="row">
+        <!-- <div class="ui grid">
             <input class="col-7 form-control" style="display:inline;" type="text" v-model="newLocationName"/>
             <div class="col-1"></div>
             <button class="col-4 btn btn-primary" style="display:inline;" @click="addLocation">Dodaj</button>
+        </div> -->
+        <div class="ui action fluid input">
+            <input style="" type="text" v-model="newLocationName"/>
+            <button class="ui button" style="display:inline;" @click="addLocation">Dodaj</button>
         </div>
     </div>
 </template>

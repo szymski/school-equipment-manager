@@ -1,18 +1,20 @@
 <template>
     <div>
-        <h1>Dodaj Template</h1>
+        <h1>Dodaj typ przedmiotu</h1>
 
-        <div class="form-group">
-            <label>Template Name</label>
-            <input class="form-control" type="text" v-model="name">
+        <div class="ui form">
+            <div class="field">
+                <label>Nazwa typu</label>
+                <input type="text" v-model="name">
+            </div>
+
+            <div class="field">
+                <label>Opis typu</label>
+                <input type="text" v-model="description">
+            </div>
+
+            <button class="ui primary button" @click="submit">Dodaj</button>
         </div>
-
-        <div class="form-group">
-            <label>Template Description</label>
-            <input class="form-control" type="text" v-model="description">
-        </div>
-
-        <button class="btn btn-primary float-right" @click="submit">Dodaj</button>
     </div>
 </template>
 
