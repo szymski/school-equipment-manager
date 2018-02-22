@@ -13,6 +13,7 @@
     "font-awesome": "^4.6.3",
     "popper": "^1.0.1",
     "popper.js": "^1.12.9",
+    "semantic-ui": "^2.2.14",
     "semantic-ui-css": "^2.2.14",
     "vue": "^2.1.8",
     "vue-router": "^2.1.1",

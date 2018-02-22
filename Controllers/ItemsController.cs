@@ -28,6 +28,12 @@ namespace SchoolEquipmentManager.Controllers
             public int Id { get; set; }
         }
 
+        public class UpdateShortIdViewModel
+        {
+            public int Id { get; set; }
+            public string Identifier { get; set; }
+        }
+
         private AppContext _context;
 
         public ItemsController(AppContext dbContext)
@@ -46,7 +52,20 @@ namespace SchoolEquipmentManager.Controllers
                 location = i.Location != null ? i.Location.Name : "",
             });
         }
-         
+
+        [HttpPost("[action]")]
+        public IActionResult UpdateShortId(UpdateShortIdViewModel model)
+        {
+            var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
+            if (item == null)
+                return Content("No such item");
+
+            item.ShortId = model.Identifier;
+            _context.SaveChanges();
+
+            return Content("ok");
+        }
+
         [HttpPost("[action]")]
         public IActionResult Remove(int id)
         {
