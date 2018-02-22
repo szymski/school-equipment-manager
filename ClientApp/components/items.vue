@@ -18,7 +18,7 @@
         <thead>
             <tr>
                 <th style="width:1px;">lp.</th>
-                <th style="width:1px;">Identyfikator</th>
+                <th>Identyfikator</th>
                 <th>Nazwa</th>
                 <th>Opis</th>
                 <th>Uwagi</th>
@@ -29,7 +29,10 @@
         <tbody>
             <tr v-for="item in filterItems(items)" v-bind:key="item.id">
                 <td>0</td>
-                <td>{{ item.id }}</td>
+                <td style="text-align:center;">
+                    {{ item.shortId }}
+                    <a v-if="!item.shortId || item.shortId == ''" href="#" @click="showEnterIdDialog(item)">Dodaj</a>
+                </td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.description }}</td>
                 <td>{{ item.notes }}</td>
@@ -40,6 +43,33 @@
             </tr>
         </tbody>
     </table>
+
+    <div class="ui modal" id="enterIdModal">
+        <i class="close icon"></i>
+        <div class="header">
+            Wprowadź identyfikator dla <i>{{ modalItem.name }}</i> (<i>{{ modalItem.location }}</i>)
+        </div>
+        <div class="content">
+            <div class="description">
+                <div class="ui header">Ten przedmiot nie posiada jeszcze identyfikatora.</div>
+                <p>Zaznacz poniższe pole tekstowe i użyj skanera kodów kreskowych lub wprowadź kod ręcznie.</p>
+                <div class="ui form">
+                    <div class="field">
+                        <input type="text" v-model="modalIdentifier" id="modalIdentifierInput">
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="actions">
+            <div class="ui black deny button">
+                Anuluj
+            </div>
+            <div class="ui positive right labeled icon button" @click="setIdentifier(modalItem, modalIdentifier)" id="modalIdentifierButton">
+                Ustaw kod
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -51,6 +81,9 @@ export default {
         return {
             items: [ ],
             searchText: "",
+
+            modalItem: { },
+            modalIdentifier: "",
         };
     },
 
@@ -65,11 +98,27 @@ export default {
             await this.$http.post('/api/Items/Remove', "id=" + id);
             let response = await this.$http.get('/api/Items')
             this.items = response.data;
+        },
+        showEnterIdDialog(item) {
+            this.modalItem = item;
+            this.modalIdentifier = "";
+            $("#enterIdModal").modal("show");
+        },
+        setIdentifier(item, identifier) {
+            item.shortId = identifier;
+            this.api.updateItemIdentifier(item.id, identifier);
         }
     },
 
     computed: {
-        
+
+    },
+
+    mounted() {
+        $("#modalIdentifierInput").keyup(ev => {
+            if(ev.keyCode === 13)
+                $("#modalIdentifierButton").click();
+        });
     },
 
     async created() {

@@ -26,6 +26,10 @@ export default {
         };
     },
 
+    mounted() {
+
+    },
+
     created() {
          
     },

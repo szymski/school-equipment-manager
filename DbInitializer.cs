@@ -58,14 +58,22 @@ namespace SchoolEquipmentManager
 
             _dbContext.Items.Add(new Item()
             {
-                ShortId = 2137,
+                ShortId = "S8-MY-0001",
                 Location = location1,
                 Template = template2,
             });
 
             _dbContext.Items.Add(new Item()
             {
-                ShortId = 1337,
+                ShortId = null,
+                Notes = "Nie działa",
+                Location = location2,
+                Template = template1,
+            });
+
+            _dbContext.Items.Add(new Item()
+            {
+                ShortId = "S10-KO-0001",
                 Notes = "Nie działa",
                 Location = location2,
                 Template = template1,
@@ -76,7 +84,7 @@ namespace SchoolEquipmentManager
             {
                 _dbContext.Items.Add(new Item()
                 {
-                    ShortId = rnd.Next(100, 10000),
+                    ShortId = null,
                     Name = rnd.Next(0, 2) == 0 ? "Komputer" : "Mysz komputerowa",
                     Notes = "",
                     Location = (rnd.Next(0, 2) == 0 ? location1 : location2),
