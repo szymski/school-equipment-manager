@@ -3,8 +3,9 @@ import axios from 'axios';
 export const api = {
     username: "SuperUser",
 
-    updateItemIdentifier(itemId, identifier) {
-        console.log(this);
-        console.log(axios);
+    async updateItemIdentifier(itemId, identifier) {
+        console.log(itemId);
+        console.log(identifier);
+        await axios.post("/api/Items/UpdateShortId", { id: itemId, identifier: identifier });
     }
 };

@@ -55,7 +55,7 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult UpdateShortId(UpdateShortIdViewModel model)
+        public IActionResult UpdateShortId([FromBody] UpdateShortIdViewModel model)
         {
             var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
             if (item == null)
