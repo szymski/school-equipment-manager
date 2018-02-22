@@ -5,7 +5,7 @@
         <div class="ui form">
             <div class="field">
                 <label>Typ przedmiotu</label>            
-                <select v-model="template" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                <select v-model="template" class="ui dropdown" id="inlineFormCustomSelectPref">
                     <option selected value="0">Wybiorę później</option>
                     <option v-for="item in templates" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
                 </select>
@@ -13,7 +13,7 @@
 
             <div class="field">
                 <label>Lokalizacja</label>            
-                <select v-model="location" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                <select v-model="location" class="ui dropdown" id="inlineFormCustomSelectPref">
                     <option selected value="0">Wybiorę później</option>
                     <option v-for="item in locations" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
                 </select>
@@ -48,6 +48,10 @@ export default {
             await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template });
             router.push("/items");
         }
+    },
+
+    mounted() {
+        $('.ui.dropdown').dropdown();
     },
 
     async created() {

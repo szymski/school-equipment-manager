@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
+import { api } from './api'
 
 require('semantic-ui-css/semantic.css')
 require('../node_modules/semantic-ui-css/semantic.js')
@@ -17,6 +18,17 @@ const app = new Vue({
     router,
     ...App
 })
+
+Vue.mixin({
+    data: function() {
+        return {
+            get api() {
+                return api;
+            }
+        }
+    }
+})
+  
 
 export {
     app,

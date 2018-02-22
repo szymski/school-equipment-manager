@@ -1,5 +1,9 @@
 <template>
     <div class="ui visible sidebar inverted vertical menu left">
+        <div class="item user-header">
+            Witaj, {{ api.username }}!
+        </div>
+
         <a class="item" v-for="item in routes" :key="item" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
             {{ item.display }}
         </a>
@@ -80,5 +84,9 @@ export default {
     right: 0;
     margin: 0.5em;
     color: white;
+}
+
+.user-header {
+    text-align: center;
 }
 </style>
