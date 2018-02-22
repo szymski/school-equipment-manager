@@ -39,7 +39,8 @@ namespace SchoolEquipmentManager.Controllers
         {
             return _context.Items.Select(i => new
             {
-                id = i.ShortId,
+                id = i.Id,
+                shortId = i.ShortId,
                 name = i.Name,
                 notes = i.Notes,
                 description = i.Template != null ? i.Template.Description : "",
@@ -50,7 +51,7 @@ namespace SchoolEquipmentManager.Controllers
         [HttpPost("[action]")]
         public IActionResult Remove(int id)
         {
-            var item = _context.Items.FirstOrDefault(i => i.ShortId == id);
+            var item = _context.Items.FirstOrDefault(i => i.Id == id);
             if (item == null)
                 return Content("No such item");
 
@@ -71,7 +72,7 @@ namespace SchoolEquipmentManager.Controllers
 
             _context.Items.Add(new Item()
             {
-                ShortId = new Random().Next(100, 10000),
+                ShortId = null,
                 Notes = model.Notes,
                 Location = location,
                 Template = template,

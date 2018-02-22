@@ -10,7 +10,7 @@ namespace SchoolEquipmentManager.Models
         private string _name;
 
         public int Id { get; set; }
-        public int ShortId { get; set; }
+        public string ShortId { get; set; }
         public string Name
         {
             get => _name ?? Template.Name ?? "INVALID NAME";
