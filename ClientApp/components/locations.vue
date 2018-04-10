@@ -11,8 +11,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in locations" v-bind:key="item.id">
-                    <td>0</td>
+                <tr v-for="(item, index) in locations" v-bind:key="index">
+                    <td>{{ index + 1 }}</td>
                     <td>{{ item.name }}</td>
                     <td>
                         <button class="ui fluid small red button" @click="removeLocation(item.id)">Usuń</button>

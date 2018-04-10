@@ -6,7 +6,7 @@
             Witaj, {{ api.username }}!
         </div>
 
-        <a class="item" v-if="item.display" v-for="item in routes" :key="item" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
+        <a class="item" v-if="item.display" v-for="(item, index) in routes" :key="index" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
             <span>{{ item.display }}</span>
         </a>
 

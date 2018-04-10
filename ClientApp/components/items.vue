@@ -27,8 +27,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="item in filterItems(items)" v-bind:key="item.id">
-                <td>0</td>
+            <tr v-for="(item, index) in filterItems(items)" v-bind:key="index">
+                <td>{{ index + 1 }}</td>
                 <td style="text-align:center;">
                     {{ item.shortId }}
                     <a v-if="!item.shortId || item.shortId == ''" href="#" @click="showEnterIdDialog(item)">Dodaj</a>
