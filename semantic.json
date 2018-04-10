@@ -18,9 +18,5 @@
   "permission": false,
   "autoInstall": false,
   "rtl": false,
-<<<<<<< HEAD
-  "version": "2.3.0"
-=======
   "version": "2.3.1"
->>>>>>> 19a4538962d6a3a7a8d2d226107430664f63cb3e
 }

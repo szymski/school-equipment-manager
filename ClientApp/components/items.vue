@@ -88,11 +88,7 @@ export default {
 
     methods: {
         filterItems(items) {
-<<<<<<< HEAD
-            return items.filter((i) => this.searchText.length == 0 || (i.shortId + i.name + i.description + i.location).toLowerCase().includes(this.searchText.toLowerCase()));
-=======
             return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location + i.shortId).toLowerCase().includes(this.searchText.toLowerCase()));
->>>>>>> 19a4538962d6a3a7a8d2d226107430664f63cb3e
         },
         goToAddItem() {
             router.push("/add-item");
