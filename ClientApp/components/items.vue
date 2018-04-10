@@ -45,7 +45,6 @@
     </table>
 
     <div class="ui modal" id="enterIdModal">
-        <i class="close icon"></i>
         <div class="header">
             Wprowadź identyfikator dla <i>{{ modalItem.name }}</i> (<i>{{ modalItem.location }}</i>)
         </div>
@@ -89,7 +88,7 @@ export default {
 
     methods: {
         filterItems(items) {
-            return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location).toLowerCase().includes(this.searchText.toLowerCase()));
+            return items.filter((i) => this.searchText.length == 0 || (i.shortId + i.name + i.description + i.location).toLowerCase().includes(this.searchText.toLowerCase()));
         },
         goToAddItem() {
             router.push("/add-item");

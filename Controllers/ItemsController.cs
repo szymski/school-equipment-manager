@@ -16,6 +16,7 @@ namespace SchoolEquipmentManager.Controllers
             public int Template { get; set; }
             public string Notes { get; set; }
             public int Location { get; set; }
+            public int Number { get; set; }
         }
 
         public class AddLocationViewModel
@@ -89,13 +90,19 @@ namespace SchoolEquipmentManager.Controllers
             if (template == null)
                 return Content("Invalid template");
 
-            _context.Items.Add(new Item()
+            if (model.Number > 100)
+                return Content("Can't add more than 100 items at once");
+
+            for (int i = 0; i < model.Number; i++)
             {
-                ShortId = null,
-                Notes = model.Notes,
-                Location = location,
-                Template = template,
-            });
+                _context.Items.Add(new Item()
+                {
+                    ShortId = null,
+                    Notes = model.Notes,
+                    Location = location,
+                    Template = template,
+                });
+            }
             _context.SaveChanges();
 
             return Content("ok");

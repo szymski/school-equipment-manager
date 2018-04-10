@@ -1,4 +1,6 @@
 <template>
+    <!-- TODO: Side-bar isn't taking the entire page - when there's a scrollbar visible, side-bar stays at the top. -->
+
     <div class="ui visible sidebar inverted vertical menu left">
         <div class="item user-header">
             Witaj, {{ api.username }}!
@@ -7,6 +9,16 @@
         <a class="item" v-for="item in routes" :key="item" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
             {{ item.display }}
         </a>
+
+        <div class="item">
+            <div class="ui inverted green progress">
+                <div class="bar">
+                    <div class="progress"></div>
+                </div>
+                <div class="label">10% Projektu Gotowe</div>
+            </div>
+        </div>
+
         <div class="footer">
             Copyright © 2018<br>
             Szymon Jankowski &amp; Bartek Kurpanik

@@ -24,6 +24,11 @@
                 <input class="form-control" type="text" v-model="description">
             </div>
 
+            <div class="two wide field">
+                <label>Liczba</label>
+                <input type="number" value="1" v-model="number">
+            </div>
+
             <button class="ui primary button" @click="submit">Dodaj</button>
         </div>
     </div>
@@ -40,12 +45,13 @@ export default {
             locations: [],
             template: 0,
             templates: [],
+            number: 1,
         }
     },
 
     methods: {
         async submit() {
-            await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template });
+            await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template, number: this.number });
             router.push("/items");
         }
     },

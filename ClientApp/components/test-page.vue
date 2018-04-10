@@ -23,6 +23,7 @@
                 <div class="ui items">
                     <div class="item">
                         <a class="ui tiny image">
+                            <img src="http://url.szymekk.me/py2jl" alt="">
                         </a>
                         <div class="middle aligned content">
                             <div class="header">
@@ -56,6 +57,19 @@
                             </div>
                             <div class="description">
                                 Backend oraz motywacja
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <a class="ui tiny image">
+                            <img src="http://url.szymekk.me/i6cvw">
+                        </a>
+                        <div class="middle aligned content">
+                            <div class="header">
+                                Linus Torvalds
+                            </div>
+                            <div class="description">
+                                Bóg. Stworzył Gita, a bez niego dostałbym zawału.
                             </div>
                         </div>
                     </div>
