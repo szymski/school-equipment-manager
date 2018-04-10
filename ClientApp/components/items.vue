@@ -33,7 +33,7 @@
                     {{ item.shortId }}
                     <a v-if="!item.shortId || item.shortId == ''" href="#" @click="showEnterIdDialog(item)">Dodaj</a>
                 </td>
-                <td>{{ item.name }}</td>
+                <td><a @click="goToEventList(item.id)" href="#">{{ item.name }}</a></td>
                 <td>{{ item.description }}</td>
                 <td>{{ item.notes }}</td>
                 <td>{{ item.location }}</td>
@@ -89,10 +89,13 @@ export default {
 
     methods: {
         filterItems(items) {
-            return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location).toLowerCase().includes(this.searchText.toLowerCase()));
+            return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location + i.shortId).toLowerCase().includes(this.searchText.toLowerCase()));
         },
         goToAddItem() {
             router.push("/add-item");
+        },
+        goToEventList(id) {
+            router.push("/view-events/" + id);
         },
         async removeItem(id) {
             await this.$http.post('/api/Items/Remove', "id=" + id);

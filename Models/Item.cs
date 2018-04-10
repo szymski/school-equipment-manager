@@ -22,5 +22,7 @@ namespace SchoolEquipmentManager.Models
         /// </summary>
         public virtual Location Location { get; set; }
         public virtual ItemTemplate Template { get; set; }
+
+        public virtual List<BorrowEvent> Events { get; set; }
     }
 }

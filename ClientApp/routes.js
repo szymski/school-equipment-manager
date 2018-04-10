@@ -5,6 +5,7 @@ import Locations from 'components/locations'
 import ItemTemplates from 'components/item-templates'
 import AddTemplate from 'components/add-template'
 import Test from 'components/test-page'
+import ViewEvents from 'components/view-events'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna' },
@@ -13,5 +14,6 @@ export const routes = [
     { path: '/locations', component: Locations, display: 'Położenia' },
     { path: '/item-templates', component: ItemTemplates, display: 'Typy przedmiotów' },
     { path: '/add-template', component: AddTemplate, display: 'Dodaj typ przedmiotu' },
-    { path: '/test-page', component: Test, display: 'Test' }
+    { path: '/test-page', component: Test, display: 'Test' },
+    { path: '/view-events/:id', component: ViewEvents}
 ]

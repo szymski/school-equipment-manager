@@ -4,8 +4,8 @@
             Witaj, {{ api.username }}!
         </div>
 
-        <a class="item" v-for="item in routes" :key="item" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
-            {{ item.display }}
+        <a class="item" v-if="item.display" v-for="item in routes" :key="item" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
+            <span>{{ item.display }}</span>
         </a>
         <div class="footer">
             Copyright © 2018<br>

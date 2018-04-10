@@ -54,6 +54,30 @@ namespace SchoolEquipmentManager.Controllers
             });
         }
 
+        [HttpGet("[action]")]
+        public IEnumerable<dynamic> Events(int id)
+        {
+            var item = _context.Items.Include(i => i.Events).FirstOrDefault(i => i.Id == id);
+
+            if (item == null)
+                return new List<dynamic>();
+
+            List<dynamic> events = new List<dynamic>();
+
+            if (item.Events != null)
+                foreach (var ev in item.Events)
+                    events.Add(new
+                    {
+                        id = ev.Id,
+                        teacher = ev.Teacher?.Id ?? 0,
+                        date = ev.Date,
+                        type = ev.Type,
+                    });
+
+            return events;
+        }
+
+
         [HttpPost("[action]")]
         public IActionResult UpdateShortId([FromBody] UpdateShortIdViewModel model)
         {

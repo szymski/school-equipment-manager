@@ -82,13 +82,28 @@ namespace SchoolEquipmentManager
             var rnd = new Random();
             for (int i = 0; i < 20; i++)
             {
-                _dbContext.Items.Add(new Item()
+                var item = new Item()
                 {
                     ShortId = null,
                     Name = rnd.Next(0, 2) == 0 ? "Komputer" : "Mysz komputerowa",
                     Notes = "",
                     Location = (rnd.Next(0, 2) == 0 ? location1 : location2),
-                });
+                    Events = new List<BorrowEvent>()
+                    {
+                        new BorrowEvent()
+                        {
+                            Teacher = new Teacher()
+                            {
+                                Name = "Kekus",
+                                Surname = "Maximus",
+                                BarCode = "Jezus123"
+                            },
+                            Date = new DateTime(1999,12,11),
+                            Type = "Pobrano",
+                        }
+                    }
+                };
+                _dbContext.Items.Add(item);
             }
 
             _dbContext.SaveChanges();
