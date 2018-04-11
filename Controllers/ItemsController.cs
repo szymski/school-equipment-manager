@@ -56,6 +56,25 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpGet("[action]")]
+        public dynamic Get(int id)
+        {
+            var item = _context.Items.Include(i => i.Location).FirstOrDefault(i => i.Id == id);
+
+            if (item == null)
+                return "No such item";
+
+            return new
+            {
+                id = item.Id,
+                shortId = item.ShortId,
+                name = item.Name,
+                notes = item.Notes,
+                description = item.Template != null ? item.Template.Description : "",
+                location = item.Location != null ? item.Location.Name : "",
+            };
+        }
+
+        [HttpGet("[action]")]
         public IEnumerable<dynamic> Events(int id)
         {
             var item = _context.Items.Include(i => i.Events).FirstOrDefault(i => i.Id == id);
@@ -71,7 +90,7 @@ namespace SchoolEquipmentManager.Controllers
                     {
                         id = ev.Id,
                         teacher = ev.Teacher?.Id ?? 0,
-                        date = ev.Date,
+                        date = ev.Date.ToString("G"),
                         type = ev.Type,
                     });
 

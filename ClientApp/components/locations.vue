@@ -45,19 +45,16 @@ export default {
     methods: {
         async removeLocation(id) {
             await this.$http.post("/api/Locations/Remove", { id: id });
-            var response = await this.$http.get("/api/Locations");
-            this.locations = response.data;
+            this.locations = await this.api.getLocations();
         },
         async addLocation() {
             await this.$http.post("/api/Locations/Add", { name: this.newLocationName });
-            var response = await this.$http.get("/api/Locations");
-            this.locations = response.data;
+            this.locations = await this.api.getLocations();
         }
     },
 
     async created() {
-        var response = await this.$http.get("/api/Locations");
-        this.locations = response.data;
+        this.locations = await this.api.getLocations();
     }
 }
 </script>

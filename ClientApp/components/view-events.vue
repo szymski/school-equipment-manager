@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1 class="six wide column">Historia</h1>
+    <h1 class="six wide column">Historia przedmiotu - {{ item.name }} ({{ item.location != "" ? item.location : "Brak lokalizacji" }})</h1>
 
     <div class="ui grid">
         <div class="ui right floated four wide column form">
@@ -21,14 +21,28 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="item in items" v-bind:key="item">
-                <td>0</td>
+            <tr v-for="(item, index) in events" v-bind:key="index">
+                <td>{{ index + 1 }}</td>
                 <td>{{ item.teacher }}</td>
                 <td>{{ item.date }}</td>
                 <td>{{ item.type }}</td>
             </tr>
         </tbody>
     </table>
+
+    <div class="ui segment">
+        <h3>Dodawanie zdarzeń</h3>
+        <div class="ui form">
+            <div class="field">
+                <label>Nauczyciel</label>
+                <select>
+                    <option value="">Bronek</option>
+                    <option value="">Kosiara</option>
+                    <option value="">Pirat</option>
+                </select>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -38,13 +52,16 @@ import router from "../router.js";
 export default {
     data() {
         return {
-            itemId: this.$route.params.id, // TODO : <- szymek dokoncz
+            itemId: this.$route.params.id,
+            item: {
+                name: "No name",
+            },
 
-            items: [ ],
+            events: {
+
+            },
+            
             searchText: "",
-
-            modalItem: { },
-            modalIdentifier: "",
         };
     },
 
@@ -53,9 +70,10 @@ export default {
     },
 
     async created() {
+        this.item = await this.api.getItem(this.itemId);
+
         let response = await this.$http.get('/api/Items/Events?id=' + this.itemId);
-        this.items = response.data;
-        console.log(this.items);
+        this.events = response.data;
     }
 };
 </script>

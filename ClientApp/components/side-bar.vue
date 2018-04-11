@@ -15,7 +15,7 @@
                 <div class="bar">
                     <div class="progress"></div>
                 </div>
-                <div class="label">10% Projektu Gotowe</div>
+                <div class="label">20% Projektu Gotowe</div>
             </div>
         </div>
 
