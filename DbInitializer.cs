@@ -106,6 +106,33 @@ namespace SchoolEquipmentManager
                 _dbContext.Items.Add(item);
             }
 
+            _dbContext.Teachers.Add(new Teacher()
+            {
+                Name = "Bartek",
+                Surname = "Kurpinix",
+                BarCode = "2137",
+            });
+
+            _dbContext.Teachers.Add(new Teacher()
+            {
+                Name = "Szymon",
+                Surname = "Dzankowski",
+                BarCode = "1337",
+            });
+
+            _dbContext.Teachers.Add(new Teacher()
+            {
+                Name = "Richard",
+                Surname = "Hendricks",
+                BarCode = "PiedPiper",
+            });
+
+            _dbContext.Teachers.Add(new Teacher()
+            {
+                Name = "Bertram",
+                Surname = "Gilfoyle",
+                BarCode = "BitcoinPrice",
+            });
             _dbContext.SaveChanges();
         }
     }
