@@ -56,6 +56,36 @@ namespace SchoolEquipmentManager
 
             #endregion
 
+            _dbContext.Teachers.Add(new Teacher()
+            {
+                Name = "Bartek",
+                Surname = "Kurpinix",
+                BarCode = "2137",
+            });
+
+            _dbContext.Teachers.Add(new Teacher()
+            {
+                Name = "Szymon",
+                Surname = "Dzankowski",
+                BarCode = "1337",
+            });
+
+            _dbContext.Teachers.Add(new Teacher()
+            {
+                Name = "Richard",
+                Surname = "Hendricks",
+                BarCode = "PiedPiper",
+            });
+
+            var teacherOne = new Teacher()
+            {
+                Name = "Bertram",
+                Surname = "Gilfoyle",
+                BarCode = "BitcoinPrice",
+            };
+
+            _dbContext.Teachers.Add(teacherOne);
+
             _dbContext.Items.Add(new Item()
             {
                 ShortId = "S8-MY-0001",
@@ -92,12 +122,7 @@ namespace SchoolEquipmentManager
                     {
                         new BorrowEvent()
                         {
-                            Teacher = new Teacher()
-                            {
-                                Name = "Kekus",
-                                Surname = "Maximus",
-                                BarCode = "Jezus123"
-                            },
+                            Teacher = teacherOne,
                             Date = new DateTime(1999,12,11),
                             Type = "Pobrano",
                         }
@@ -106,33 +131,6 @@ namespace SchoolEquipmentManager
                 _dbContext.Items.Add(item);
             }
 
-            _dbContext.Teachers.Add(new Teacher()
-            {
-                Name = "Bartek",
-                Surname = "Kurpinix",
-                BarCode = "2137",
-            });
-
-            _dbContext.Teachers.Add(new Teacher()
-            {
-                Name = "Szymon",
-                Surname = "Dzankowski",
-                BarCode = "1337",
-            });
-
-            _dbContext.Teachers.Add(new Teacher()
-            {
-                Name = "Richard",
-                Surname = "Hendricks",
-                BarCode = "PiedPiper",
-            });
-
-            _dbContext.Teachers.Add(new Teacher()
-            {
-                Name = "Bertram",
-                Surname = "Gilfoyle",
-                BarCode = "BitcoinPrice",
-            });
             _dbContext.SaveChanges();
         }
     }

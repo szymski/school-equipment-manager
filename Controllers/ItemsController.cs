@@ -77,7 +77,7 @@ namespace SchoolEquipmentManager.Controllers
         [HttpGet("[action]")]
         public IEnumerable<dynamic> Events(int id)
         {
-            var item = _context.Items.Include(i => i.Events).FirstOrDefault(i => i.Id == id);
+            var item = _context.Items.Include(i => i.Events).Include("Events.Teacher").FirstOrDefault(i => i.Id == id);
 
             if (item == null)
                 return new List<dynamic>();

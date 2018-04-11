@@ -26,5 +26,22 @@ namespace SchoolEquipmentManager.Controllers
                 barcode = t.BarCode,
             });
         }
+
+        [HttpGet("[action]")]
+        public dynamic Get(int id)
+        {
+            var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
+
+            if (teacher == null)
+                return "No such teacher";
+
+            return new
+            {
+                id = teacher.Id,
+                name = teacher.Name,
+                surname = teacher.Surname,
+                barcode = teacher.BarCode,
+            };
+        }
     }
 }

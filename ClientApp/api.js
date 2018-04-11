@@ -15,5 +15,10 @@ export const api = {
 
     async getLocations() {
         return (await axios.get("/api/Locations")).data;
-    }
+    },
+
+    async getTeacher(teacherId) {
+        return (await axios.get("/api/Teachers/Get?id=" + teacherId)).data;
+    },
+
 };
