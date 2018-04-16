@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Controllers
 {
@@ -10,6 +11,13 @@ namespace SchoolEquipmentManager.Controllers
     public class TeachersController : Controller
     {
         private AppContext _context;
+
+        public class NewTeacherModel
+        {
+            public string Name { get; set; }
+            public string Surname { get; set; }
+            public string BarCode { get; set; }
+        }
 
         public TeachersController(AppContext dbContext)
         {
@@ -42,6 +50,20 @@ namespace SchoolEquipmentManager.Controllers
                 surname = teacher.Surname,
                 barcode = teacher.BarCode,
             };
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult Add([FromBody] NewTeacherModel model)
+        {
+            _context.Teachers.Add(new Teacher()
+            {
+                Name = model.Name,
+                Surname = model.Surname,
+                BarCode = model.BarCode,
+            });
+            _context.SaveChanges();
+
+            return Content("ok");
         }
     }
 }

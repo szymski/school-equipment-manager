@@ -8,6 +8,7 @@ import Test from 'components/test-page'
 import Report from 'components/report'
 import ViewEvents from 'components/view-events'
 import Teachers from 'components/teachers'
+import AddTeacher from 'components/add-teacher'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna' },
@@ -18,7 +19,8 @@ export const routes = [
     { path: '/add-template', component: AddTemplate, display: 'Dodaj typ przedmiotu' },
     { path: '/report', component: Report, display: 'Raporty' },
     { path: '/test-page', component: Test, display: 'Test' },
-    { path: '/view-events/:id', component: ViewEvents},
-    { path: '/teachers', component: Teachers, display: 'Nauczyciele'},
+    { path: '/view-events/:id', component: ViewEvents },
+    { path: '/teachers', component: Teachers, display: 'Nauczyciele' },
+    { path: '/add-teacher', component: AddTeacher, display: 'Dodaj Nauczyciela' },
 ]
 
