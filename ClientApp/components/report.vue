@@ -14,9 +14,8 @@
         <tbody>
             <tr v-for="item in items" v-bind:key="item.id">
                 <td>{{ item.location }}</td>
-                <td>{{ item.description }}</td>
-                <td>{{ item.notes }}</td>
-                <td>{{ item.location }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
                 <td>
                     <button class="ui fluid tiny red button" @click="removeItem(item.id)">Usuń</button>
                 </td>
@@ -36,13 +35,9 @@ export default {
                 {
                     id: 0,
                     location: "Jakaś tam sala",
-                    items: [
-                        {
-                            name: "Myszek",
-                            quantity: 10,
-                        }
-                    ]
-                }
+                    name: "Myszek",
+                    quantity: 10,
+                },
             ],
         };
     },

@@ -36,7 +36,7 @@ export default {
     methods: {
         async submit() {
             await this.$http.post("/api/Teachers/Add", { name: this.name, surname: this.surname, barcode: this.barcode });
-            //router.push("/teachers");
+            router.push("/teachers");
         }
     },
 

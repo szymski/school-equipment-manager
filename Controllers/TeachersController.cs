@@ -52,7 +52,7 @@ namespace SchoolEquipmentManager.Controllers
             };
         }
 
-        [HttpGet("[action]")]
+        [HttpPost("[action]")]
         public IActionResult Add([FromBody] NewTeacherModel model)
         {
             _context.Teachers.Add(new Teacher()
