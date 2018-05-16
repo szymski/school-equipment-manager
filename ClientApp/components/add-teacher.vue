@@ -2,6 +2,15 @@
     <div>
         <h1>Dodaj nauczyciela</h1>
 
+        <div v-if="error" class="ui negative message">
+            <div class="header">
+                Wystąpił problem
+            </div>
+            <p>
+                {{ error }}
+            </p>
+        </div>
+
         <div class="ui form">
             <div class="field">
                 <label>Imie</label>
@@ -30,13 +39,20 @@ export default {
             name: "",
             surname: "",
             barcode: "",
+
+            error: null,
         }
     },
 
     methods: {
         async submit() {
-            await this.$http.post("/api/Teachers/Add", { name: this.name, surname: this.surname, barcode: this.barcode });
-            router.push("/teachers");
+            try {
+                var response = await this.api.addTeacher(this.name, this.surname, this.barcode);
+            }
+            catch(e) {
+                console.log(e);
+                this.error = e.response.data;
+            }
         }
     },
 

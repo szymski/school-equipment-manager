@@ -30,7 +30,12 @@
             <tr v-for="(item, index) in filterItems(items)" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
                 <td style="text-align:center;">
-                    {{ item.shortId }}
+                    <div v-if="item.shortId">
+                        {{ item.shortId }}
+                        <button class="ui mini basic icon circular button" @click="showEnterIdDialog(item)">
+                            <i class="pencil icon"></i>
+                        </button>
+                    </div>
                     <a v-if="!item.shortId || item.shortId == ''" href="#" @click="showEnterIdDialog(item)">Dodaj</a>
                 </td>
                 <td><a @click="goToEventList(item.id)" href="#">{{ item.name }}</a></td>
@@ -50,7 +55,7 @@
         </div>
         <div class="content">
             <div class="description">
-                <div class="ui header">Ten przedmiot nie posiada jeszcze identyfikatora.</div>
+                <div class="ui header" v-if="modalFirstTime">Ten przedmiot nie posiada jeszcze identyfikatora.</div>
                 <p>Zaznacz poniższe pole tekstowe i użyj skanera kodów kreskowych lub wprowadź kod ręcznie.</p>
                 <div class="ui form">
                     <div class="field">
@@ -83,6 +88,7 @@ export default {
 
             modalItem: { },
             modalIdentifier: "",
+            modalFirstTime: false,
         };
     },
 
@@ -103,7 +109,8 @@ export default {
         },
         showEnterIdDialog(item) {
             this.modalItem = item;
-            this.modalIdentifier = "";
+            this.modalIdentifier = item.shortId ? item.shortId : "";
+            this.modalFirstTime = !this.modalIdentifier || this.modalIdentifier == "";
             $("#enterIdModal").modal("show");
         },
         setIdentifier(item, identifier) {

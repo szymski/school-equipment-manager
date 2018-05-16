@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,11 @@ namespace SchoolEquipmentManager.Controllers
 
         public class NewTeacherModel
         {
+            [Required]
+            [MinLength(2)]
             public string Name { get; set; }
+            [Required]
+            [MinLength(2)]
             public string Surname { get; set; }
             public string BarCode { get; set; }
         }
@@ -55,15 +60,20 @@ namespace SchoolEquipmentManager.Controllers
         [HttpPost("[action]")]
         public IActionResult Add([FromBody] NewTeacherModel model)
         {
-            _context.Teachers.Add(new Teacher()
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var teacher = new Teacher()
             {
                 Name = model.Name,
                 Surname = model.Surname,
                 BarCode = model.BarCode,
-            });
+            };
+
+            _context.Teachers.Add(teacher);
             _context.SaveChanges();
 
-            return Content("ok");
+            return Json(teacher);
         }
     }
 }
