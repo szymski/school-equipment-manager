@@ -4,7 +4,7 @@
 
     <div class="ui grid">
         <div class="four wide column">
-            <button class="ui button">Dodaj nauczyciela</button>
+            <button class="ui button" @click="goToAddTeacher()">Dodaj nauczyciela</button>
         </div>
         <div class="ui right floated four wide column form">
             <div class="ui icon input" style="width:100%">
@@ -47,6 +47,10 @@ export default {
     },
 
     methods: {
+        goToAddTeacher() {
+            router.push("/add-teacher");
+        },
+
         filterTeachers(teachers) {
             return teachers.filter((t) => this.searchText.length == 0 || (t.name + t.surname).toLowerCase().includes(this.searchText.toLowerCase()));
         },

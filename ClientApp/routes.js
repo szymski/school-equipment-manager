@@ -21,6 +21,6 @@ export const routes = [
     { path: '/test-page', component: Test, display: 'Test' },
     { path: '/view-events/:id', component: ViewEvents },
     { path: '/teachers', component: Teachers, display: 'Nauczyciele' },
-    { path: '/add-teacher', component: AddTeacher, display: 'Dodaj Nauczyciela' },
+    { path: '/add-teacher', component: AddTeacher },
 ]
 

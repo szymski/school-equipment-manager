@@ -26,7 +26,7 @@ namespace SchoolEquipmentManager
             modelBuilder.Entity<Item>().HasOne(i => i.Location);
             modelBuilder.Entity<Item>().HasOne(i => i.Template);
             modelBuilder.Entity<BorrowEvent>().HasOne(e => e.Teacher);
-            modelBuilder.Entity<Item>().HasMany(i => i.Events).WithOne(e => e.Item);
+            modelBuilder.Entity<Item>().HasMany(i => i.Events).WithOne(e => e.Item).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

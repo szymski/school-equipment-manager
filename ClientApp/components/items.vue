@@ -30,9 +30,9 @@
             <tr v-for="(item, index) in filterItems(items)" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
                 <td style="text-align:center;">
-                    <div v-if="item.shortId">
+                    <div v-if="item.shortId" class="item-short-id">
                         {{ item.shortId }}
-                        <button class="ui mini basic icon circular button" @click="showEnterIdDialog(item)">
+                        <button class="ui mini basic icon circular button edit-id-btn" @click="showEnterIdDialog(item)">
                             <i class="pencil icon"></i>
                         </button>
                     </div>
@@ -138,5 +138,15 @@ export default {
 </script>
 
 <style>
+    .item-short-id {
+        margin-left: 32px;
+    }
 
+    .item-short-id .edit-id-btn {
+        opacity: 0;
+    }
+
+    .item-short-id:hover .edit-id-btn {
+        opacity: 1;
+    }
 </style>

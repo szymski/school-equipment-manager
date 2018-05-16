@@ -118,7 +118,7 @@ namespace SchoolEquipmentManager.Controllers
             if (item == null)
                 return Content("No such item");
 
-            _context.Items.Remove(item);
+            _context.Remove(item);
             _context.SaveChanges();
 
             return Content("ok");
