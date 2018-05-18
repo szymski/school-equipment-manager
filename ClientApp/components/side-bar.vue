@@ -1,6 +1,4 @@
 <template>
-    <!-- TODO: Side-bar isn't taking the entire page - when there's a scrollbar visible, side-bar stays at the top. -->
-
     <div class="ui visible sidebar inverted vertical menu left">
         <div class="item user-header">
             Witaj, {{ api.username }}!

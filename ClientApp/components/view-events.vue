@@ -2,6 +2,8 @@
 <div>
     <h1 class="six wide column">Historia przedmiotu - {{ item.name }} ({{ item.location != "" ? item.location : "Brak lokalizacji" }})</h1>
 
+    <error-display/>
+
     <div class="ui grid">
         <div class="ui eight wide column">
             <span v-if="!returned" class="not-returned-text"><i class="exclamation circle icon"/>Przedmiot nie został jeszcze zwrócony</span>
@@ -72,7 +74,7 @@ export default {
                 
             },
             
-            returned: false,
+            returned: true,
             
             searchText: "",
         };

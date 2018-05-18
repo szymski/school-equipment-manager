@@ -2,6 +2,8 @@
     <div>
         <h1>Położenia przedmiotów</h1>
 
+        <error-display/>
+
         <table class="ui celled table">
             <thead>
                 <tr>
@@ -21,11 +23,6 @@
             </tbody>
         </table>
 
-        <!-- <div class="ui grid">
-            <input class="col-7 form-control" style="display:inline;" type="text" v-model="newLocationName"/>
-            <div class="col-1"></div>
-            <button class="col-4 btn btn-primary" style="display:inline;" @click="addLocation">Dodaj</button>
-        </div> -->
         <div class="ui action fluid input">
             <input style="" type="text" v-model="newLocationName"/>
             <button class="ui button" style="display:inline;" @click="addLocation">Dodaj</button>
@@ -48,8 +45,13 @@ export default {
             this.locations = await this.api.getLocations();
         },
         async addLocation() {
-            await this.$http.post("/api/Locations/Add", { name: this.newLocationName });
-            this.locations = await this.api.getLocations();
+            try {
+                await this.$http.post("/api/Locations/Add", { name: this.newLocationName });
+                this.locations = await this.api.getLocations();
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
         }
     },
 

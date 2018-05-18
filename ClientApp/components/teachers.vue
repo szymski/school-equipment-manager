@@ -2,6 +2,8 @@
 <div>
     <h1 class="six wide column">Nauczyciele</h1>
 
+    <error-display/>
+
     <div class="ui grid">
         <div class="four wide column">
             <button class="ui button" @click="goToAddTeacher()">Dodaj nauczyciela</button>

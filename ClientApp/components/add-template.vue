@@ -2,6 +2,8 @@
     <div>
         <h1>Dodaj typ przedmiotu</h1>
 
+        <error-display/>
+
         <div class="ui form">
             <div class="field">
                 <label>Nazwa typu</label>

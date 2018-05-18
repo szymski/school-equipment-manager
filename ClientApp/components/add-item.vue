@@ -2,6 +2,8 @@
     <div>
         <h1>Dodaj przedmiot</h1>
 
+        <error-display/>
+
         <div class="ui form">
             <div class="field">
                 <label>Typ przedmiotu</label>            

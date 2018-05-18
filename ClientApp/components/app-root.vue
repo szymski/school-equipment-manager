@@ -1,11 +1,31 @@
 <template>
     <div id="app" class="pushable">
-            <side-bar></side-bar>
+        <div v-if="loggedIn">
+            <side-bar/>
             <div class="pusher">
                 <div class="ui basic segment">
-                    <router-view ></router-view>
+                    <router-view></router-view>
                 </div>
             </div>
+        </div>
+        <div v-else>
+            <div class="ui one column stackable center aligned page grid">
+                <div class="ui eight wide column">
+                    <div class="ui raised segment login-box">
+                        <h3>Wymagane zalogowanie</h3>
+                        <div class="ui form">
+                            <div class="ui field">
+                                <input type="text" placeholder="Login">
+                            </div>
+                            <div class="ui field">
+                                <input type="password" placeholder="Hasło">
+                            </div>
+                            <button class="ui fluid primary button">Zaloguj</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -18,14 +38,20 @@ Vue.component("home-page", HomePage);
 Vue.component("side-bar", SideBar);
 
 export default {
-    data() {
-        return { };
-    }
+  data() {
+    return {
+        loggedIn: true,
+    };
+  }
 };
 </script>
 
 <style>
-    .page-content {
-        padding: 0.5em;
-    }
+.page-content {
+    padding: 0.5em;
+}
+
+.login-box {
+    margin-top: 4em !important;
+}
 </style>

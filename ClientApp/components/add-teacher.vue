@@ -2,14 +2,7 @@
     <div>
         <h1>Dodaj nauczyciela</h1>
 
-        <div v-if="error" class="ui negative message">
-            <div class="header">
-                Wystąpił problem
-            </div>
-            <p>
-                {{ error }}
-            </p>
-        </div>
+        <error-display/>
 
         <div class="ui form">
             <div class="field">
@@ -55,13 +48,11 @@ export default {
         async submit() {
             try {
                 var response = await this.api.addTeacher(this.name, this.surname, this.barcode);
+                router.push("/teachers");
             }
             catch(e) {
-                console.log(e);
-                this.error = e.response.data;
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
             }
-
-            router.push("/teachers");
         },
 
         canGenerateBarcode(name, surname) {

@@ -15,11 +15,11 @@ namespace SchoolEquipmentManager.Controllers
 
         public class NewTeacherModel
         {
-            [Required]
-            [MinLength(2)]
+            [Required(ErrorMessage = "Pole Imię jest wymagane.")]
+            [MinLength(2, ErrorMessage = "Imię musi mieć przynajmniej 2 znaki.")]
             public string Name { get; set; }
-            [Required]
-            [MinLength(2)]
+            [Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
+            [MinLength(2, ErrorMessage = "Nazwisko musi mieć przynajmniej 2 znaki.")]
             public string Surname { get; set; }
             public string BarCode { get; set; }
         }
@@ -62,6 +62,12 @@ namespace SchoolEquipmentManager.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            if(_context.Teachers.Any(t => t.Name.ToLower() == model.Name.ToLower() && t.Surname.ToLower() == model.Surname.ToLower()))
+                return BadRequest("Istnieje już nauczyciel z takim imieniem i nazwiskiem.");
+
+            if (_context.Teachers.Any(t => t.BarCode.ToLower() == model.BarCode.ToLower()))
+                return BadRequest("Istnieje już nauczyciel z takim kodem kreskowym.");
 
             var teacher = new Teacher()
             {

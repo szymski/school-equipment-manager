@@ -2,6 +2,8 @@
 <div>
     <h1 class="six wide column">Przedmioty</h1>
 
+    <error-display/>
+
     <div class="ui grid">
         <div class="four wide column">
             <button class="ui button" @click="goToAddItem">Dodaj przedmiot</button>
@@ -101,7 +103,7 @@ export default {
 
     methods: {
         filterItems(items) {
-            return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location + i.shortId).toLowerCase().includes(this.searchText.toLowerCase()));
+            return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location + i.shortId + i.notes).toLowerCase().includes(this.searchText.toLowerCase()));
         },
         goToAddItem() {
             router.push("/add-item");

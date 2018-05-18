@@ -1,8 +1,12 @@
 import axios from 'axios';
+import { isString } from 'util';
 
 export const api = {
+    loggedIn: false,
     username: "SuperUser",
     teachers: null,
+    
+    currentError: null,
 
     async updateItemIdentifier(itemId, identifier) {
         console.log(itemId);
@@ -68,4 +72,29 @@ export const api = {
 
         return barcode;
     },
+
+    /// Returns a formatted error message from the response
+    parseError(response) {
+        if(isString(response))
+            return response;
+
+        var result = "";
+
+        for(var key in response) {
+            result += response[key][0] + "<br>";
+        }
+
+        return result;
+    },
+
+    displayError(title, message) {
+        this.currentError = {
+            title: title,
+            message: message,
+        }
+    },
+
+    clearError() {
+        this.currentError = null;
+    }
 };

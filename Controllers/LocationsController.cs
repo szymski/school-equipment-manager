@@ -39,6 +39,9 @@ namespace SchoolEquipmentManager.Controllers
         [HttpPost("[action]")]
         public IActionResult Add([FromBody] ItemsController.AddLocationViewModel model)
         {
+            if (_context.Locations.Any(l => l.Name == model.Name))
+                return BadRequest("Istnieje już położenie o takiej nazwie");
+
             _context.Locations.Add(new Location()
             {
                 Name = model.Name,
