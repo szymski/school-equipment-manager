@@ -36,6 +36,17 @@
 
         <div class="title">
             <i class="dropdown icon"></i>
+            Jak wygląda procedura pobrania i zwrotu przedmiotu?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                Nauczyciel, który zamierza pobrać dany przedmiot, najpierw skanuje skanerem swój kod kreskowy pobrania, a następnie skanuje kod przedmiotu. Zeskanowanie kodu pobrania następuje tylko raz.<br>
+                Przy zwrocie przedmiotu należy zeskanować kod zwrotu oraz kod przedmiotu.
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
             Kto jest twórcą strony?
         </div>
         <div class="content">

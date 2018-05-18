@@ -42,6 +42,8 @@ export default {
         $(".progress").progress({
             percent: 30
         });
+
+        $(".sidebar").sidebar();
     },
 
     created() {

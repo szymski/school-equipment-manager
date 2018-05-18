@@ -56,4 +56,16 @@ export const api = {
 
         return borrowed;
     },
+
+    generateBarcodeForTeacher(firstName, lastName) {
+        var barcode = "";
+
+        barcode += firstName.substr(0, 3).toUpperCase();
+        barcode += "-";
+        barcode += lastName.substr(0, 3).toUpperCase();
+        barcode += "-";
+        barcode += Math.floor((Math.random() * 899999) + 100000);;
+
+        return barcode;
+    },
 };

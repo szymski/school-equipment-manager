@@ -21,6 +21,7 @@
                 <th>Imie</th>
                 <th>Nazwisko</th>
                 <th>Barcode</th>
+                <th style="width:1px;"></th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,7 @@
                 <td>{{ teacher.name }}</td>
                 <td>{{ teacher.surname }}</td>
                 <td>{{ teacher.barcode }}</td>
+                <td><button class="ui tiny primary button">Wyświetl kody</button></td>
             </tr>
         </tbody>
     </table>

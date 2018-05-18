@@ -2,9 +2,10 @@
 <div>
     <h1 class="six wide column">Historia przedmiotu - {{ item.name }} ({{ item.location != "" ? item.location : "Brak lokalizacji" }})</h1>
 
-    <span v-if="!returned" class="not-returned-text"><i class="exclamation circle icon"/>Przedmiot nie został jeszcze zwrócony</span>
-
     <div class="ui grid">
+        <div class="ui eight wide column">
+            <span v-if="!returned" class="not-returned-text"><i class="exclamation circle icon"/>Przedmiot nie został jeszcze zwrócony</span>
+        </div>
         <div class="ui right floated four wide column form">
             <div class="ui icon input" style="width:100%">
                 <input type="text" class="">
@@ -46,8 +47,8 @@
             <div class="field">
                 <label>Typ zdarzenia</label>
                 <select>
-                    <option value="">Pobrano</option>
-                    <option value="">Zwrócono</option>
+                    <option value="borrowed">Pobrano</option>
+                    <option value="returned">Zwrócono</option>
                 </select>
             </div>
             <button class="ui primary button" @click="addEvent">Dodaj zdarzenie</button>

@@ -22,7 +22,10 @@
             </div>
             <div class="field">
                 <label>BarCode</label>
-                <input type="text" v-model="barcode">
+                <div class="ui action input">
+                    <input type="text" v-model="barcode">
+                    <button class="ui blue button" :disabled="!canGenerateBarcode(name, surname)" @click="generateBarcode">Wygeneruj</button>
+                </div>
             </div>
 
             <button class="ui primary button" @click="submit">Dodaj</button>
@@ -44,6 +47,10 @@ export default {
         }
     },
 
+    computed: {
+        
+    },
+
     methods: {
         async submit() {
             try {
@@ -53,6 +60,16 @@ export default {
                 console.log(e);
                 this.error = e.response.data;
             }
+
+            router.push("/teachers");
+        },
+
+        canGenerateBarcode(name, surname) {
+            return name.length > 0 && surname.length > 0;
+        },
+
+        generateBarcode() {
+            this.barcode = this.api.generateBarcodeForTeacher(this.name, this.surname);
         }
     },
 

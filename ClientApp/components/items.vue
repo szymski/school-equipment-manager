@@ -22,7 +22,7 @@
                 <th>Nazwa</th>
                 <th>Opis</th>
                 <th>Uwagi</th>
-                <th style="width:1px;">Położenie</th>
+                <th style="width:auto;">Położenie</th>
                 <th></th>
             </tr>
         </thead>
@@ -41,7 +41,14 @@
                 <td><a @click="goToEventList(item.id)" href="#">{{ item.name }}</a></td>
                 <td>{{ item.description }}</td>
                 <td>{{ item.notes }}</td>
-                <td>{{ item.location }}</td>
+                <td>
+                    <div class="item-location">
+                        {{ item.location || "Brak" }}
+                        <button class="ui mini basic icon circular button edit-id-btn" @click="showEnterIdDialog(item)">
+                            <i class="pencil icon"></i>
+                        </button>
+                    </div>
+                </td>
                 <td>
                     <button class="ui fluid tiny red button" @click="removeItem(item.id)">Usuń</button>
                 </td>
@@ -147,6 +154,17 @@ export default {
     }
 
     .item-short-id:hover .edit-id-btn {
+        opacity: 1;
+    }
+
+    .item-location {
+    }
+
+    .item-location .edit-id-btn {
+        opacity: 0;
+    }
+
+    .item-location:hover .edit-id-btn {
         opacity: 1;
     }
 </style>
