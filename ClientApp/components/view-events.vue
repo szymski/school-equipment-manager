@@ -2,6 +2,8 @@
 <div>
     <h1 class="six wide column">Historia przedmiotu - {{ item.name }} ({{ item.location != "" ? item.location : "Brak lokalizacji" }})</h1>
 
+    <span v-if="!returned" class="not-returned-text"><i class="exclamation circle icon"/>Przedmiot nie został jeszcze zwrócony</span>
+
     <div class="ui grid">
         <div class="ui right floated four wide column form">
             <div class="ui icon input" style="width:100%">
@@ -15,9 +17,9 @@
         <thead>
             <tr>
                 <th style="width:1px;">lp.</th>
-                <th>Teacher</th>
+                <th>Nauczyciel</th>
                 <th>Data</th>
-                <th>Type</th>
+                <th>Typ</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +43,14 @@
                     </option>
                 </select>
             </div>
+            <div class="field">
+                <label>Typ zdarzenia</label>
+                <select>
+                    <option value="">Pobrano</option>
+                    <option value="">Zwrócono</option>
+                </select>
+            </div>
+            <button class="ui primary button" @click="addEvent">Dodaj zdarzenie</button>
         </div>
     </div>
 </div>
@@ -61,8 +71,16 @@ export default {
                 
             },
             
+            returned: false,
+            
             searchText: "",
         };
+    },
+
+    methods: {
+        async addEvent() {
+
+        },
     },
 
     mounted() {
@@ -73,17 +91,21 @@ export default {
         await this.api.fetchTeachers();
         this.item = await this.api.getItem(this.itemId);
 
-        let response = await this.$http.get('/api/Items/Events?id=' + this.itemId);
-        response.data.forEach(event => {
-            console.log(this.api.teachers[event.teacher]);
+        var data = await this.api.getEvents(this.itemId);
+        data.forEach(event => {
             event.teacherName = this.api.teachers[event.teacher].name + " " + this.api.teachers[event.teacher].surname;
-            console.log(event.teacherName);
         });
-        this.events = response.data;
-    }
+        this.events = data;
+
+        this.returned = !this.api.isItemBorrowed(this.events);
+    },
 };
 </script>
 
 <style>
-
+    .not-returned-text {
+        display: inline;
+        color: #bb4444;
+        font-size: 18px;
+    }
 </style>

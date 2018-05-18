@@ -1,27 +1,10 @@
 <template>
 <div>
     <h1 class="six wide column">Raporty</h1>
-    <p>Tutaj możesz wygenerować raport zawierający wszystkie przedmioty.</p>
+    <p>Wybierz rodzaj raportu z poniższej listy.</p>
     
-    <table class="ui celled table">
-        <thead>
-            <tr>
-                <th>Lokalizacja</th>
-                <th>Nazwa przedmiotu</th>
-                <th>Liczba</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="item in items" v-bind:key="item.id">
-                <td>{{ item.location }}</td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>
-                    <button class="ui fluid tiny red button" @click="removeItem(item.id)">Usuń</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <button class="ui primary button">Wyświetl niezwrócone przedmioty</button>
+    <button class="ui primary button">Wyświetl przedmioty z danej sali</button>
 </div>
 </template>
 

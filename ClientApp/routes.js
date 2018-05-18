@@ -5,22 +5,23 @@ import Locations from 'components/locations'
 import ItemTemplates from 'components/item-templates'
 import AddTemplate from 'components/add-template'
 import Test from 'components/test-page'
+import Faq from 'components/faq-page'
 import Report from 'components/report'
 import ViewEvents from 'components/view-events'
 import Teachers from 'components/teachers'
 import AddTeacher from 'components/add-teacher'
 
 export const routes = [
-    { path: '/', component: HomePage, display: 'Strona główna' },
-    { path: '/items', component: Items, display: 'Wyposażenie' },
-    { path: '/add-item', component: AddItem, display: 'Dodaj przedmiot' },
-    { path: '/locations', component: Locations, display: 'Położenia' },
-    { path: '/item-templates', component: ItemTemplates, display: 'Typy przedmiotów' },
-    { path: '/add-template', component: AddTemplate, display: 'Dodaj typ przedmiotu' },
-    { path: '/report', component: Report, display: 'Raporty' },
-    { path: '/test-page', component: Test, display: 'Test' },
+    { path: '/', component: HomePage, display: 'Strona główna', icon: "home" },
+    { path: '/items', component: Items, display: 'Wyposażenie', icon: "clipboard list" },
+    { path: '/add-item', component: AddItem },
+    { path: '/locations', component: Locations, display: 'Położenia', icon: "map marker alternate" },
+    { path: '/item-templates', component: ItemTemplates, display: 'Typy przedmiotów', icon: "wrench" },
+    { path: '/add-template', component: AddTemplate },
+    { path: '/report', component: Report, display: 'Raporty', icon: "clipboard check" },
     { path: '/view-events/:id', component: ViewEvents },
-    { path: '/teachers', component: Teachers, display: 'Nauczyciele' },
+    { path: '/teachers', component: Teachers, display: 'Nauczyciele', icon: "user" },
     { path: '/add-teacher', component: AddTeacher },
+    { path: '/faq-page', component: Faq, display: 'Pomoc', icon: "question circle" },
 ]
 

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Lokacje</h1>
+        <h1>Położenia przedmiotów</h1>
 
         <table class="ui celled table">
             <thead>

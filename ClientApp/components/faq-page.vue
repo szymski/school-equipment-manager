@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1>Test</h1>
+    <h1>Pomoc</h1>
 
     <div class="ui styled fluid accordion">
         <div class="title">
@@ -11,6 +11,26 @@
             <p class="transition hidden">
                 Strona, na której się znajdujesz, służy do zarządzania inwentarzem.
                 TODO
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Czym są położenia przedmiotów?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Czym są typy przedmiotów?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                
             </p>
         </div>
 

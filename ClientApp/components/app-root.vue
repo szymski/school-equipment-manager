@@ -12,11 +12,9 @@
 <script>
 import Vue from "vue";
 import HomePage from "./home-page";
-import NavMenu from "./nav-menu";
 import SideBar from "./side-bar";
 
 Vue.component("home-page", HomePage);
-Vue.component("nav-menu", NavMenu);
 Vue.component("side-bar", SideBar);
 
 export default {

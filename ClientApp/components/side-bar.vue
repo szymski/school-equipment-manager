@@ -7,7 +7,7 @@
         </div>
 
         <a class="item" v-if="item.display" v-for="(item, index) in routes" :key="index" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
-            <span>{{ item.display }}</span>
+            <span><i v-if="item.icon" :class="{'icon': true, [item.icon]: true}"/>{{ item.display }}</span>
         </a>
 
         <div class="item">
@@ -21,7 +21,7 @@
 
         <div class="footer">
             Copyright © 2018<br>
-            Szymon Jankowski &amp; Bartek Kurpanik
+            Szymon Jankowski
         </div>
     </div>
 </template>

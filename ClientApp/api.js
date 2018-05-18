@@ -37,5 +37,23 @@ export const api = {
 
     async addTeacher(name, surname, barcode) {
         return await axios.post("/api/Teachers/Add", { name: name, surname: surname, barcode: barcode });
-    }
+    },
+
+    async getEvents(itemId) {
+        return (await axios.get("/api/Items/Events/" + itemId)).data;
+    },
+
+    /// Returns whether the item hasn't been returned yet.
+    isItemBorrowed(eventList) {
+        var borrowed = false; // Has the item been borrowe
+
+        eventList.forEach(i => {
+            if(i.type.toLowerCase() == "pobrano" || i.type.toLowerCase() == "borrowed")
+                borrowed = true;
+            if(i.type.toLowerCase() == "zwrócono" || i.type.toLowerCase() == "returned")
+                borrowed = false;
+        });
+
+        return borrowed;
+    },
 };
