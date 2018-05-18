@@ -10,6 +10,7 @@ import Report from 'components/report'
 import ViewEvents from 'components/view-events'
 import Teachers from 'components/teachers'
 import AddTeacher from 'components/add-teacher'
+import TeacherBarcodes from 'components/teacher-barcodes-page'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna', icon: "home" },
@@ -23,5 +24,6 @@ export const routes = [
     { path: '/teachers', component: Teachers, display: 'Nauczyciele', icon: "user" },
     { path: '/add-teacher', component: AddTeacher },
     { path: '/faq-page', component: Faq, display: 'Pomoc', icon: "question circle" },
+    { path: '/teacher-barcodes/:id', component: TeacherBarcodes },
 ]
 

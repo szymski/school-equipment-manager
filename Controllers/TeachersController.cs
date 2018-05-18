@@ -46,7 +46,7 @@ namespace SchoolEquipmentManager.Controllers
             var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
 
             if (teacher == null)
-                return "No such teacher";
+                return BadRequest("Taki nauczyciel nie istnieje.");
 
             return new
             {

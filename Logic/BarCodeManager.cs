@@ -15,7 +15,15 @@ namespace SchoolEquipmentManager.Logic
     /// </summary>
     public class BarCodeManager
     {
-        
+        public string GetBorrowCode(Teacher teacher)
+        {
+            return $"{teacher.BarCode}.POBR";
+        }
+
+        public string GetReturnCode(Teacher teacher)
+        {
+            return $"{teacher.BarCode}.ZWROT";
+        }
     }
 
     public class BarCodeDefinition

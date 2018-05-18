@@ -96,5 +96,9 @@ export const api = {
 
     clearError() {
         this.currentError = null;
-    }
+    },
+
+    async getBarcodesForTeacher(teacherId) {
+        return (await axios.get("/api/BarCode/GetBarcodesForTeacher/" + teacherId)).data;
+    },
 };

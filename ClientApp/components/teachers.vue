@@ -32,7 +32,7 @@
                 <td>{{ teacher.name }}</td>
                 <td>{{ teacher.surname }}</td>
                 <td>{{ teacher.barcode }}</td>
-                <td><button class="ui tiny primary button">Wyświetl kody</button></td>
+                <td><button class="ui tiny primary button" @click="goToBarcodes(teacher.id)">Wyświetl kody</button></td>
             </tr>
         </tbody>
     </table>
@@ -53,6 +53,10 @@ export default {
     methods: {
         goToAddTeacher() {
             router.push("/add-teacher");
+        },
+
+        goToBarcodes(teacherId) {
+            router.push("/teacher-barcodes/" + teacherId);
         },
 
         filterTeachers(teachers) {

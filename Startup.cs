@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SchoolEquipmentManager;
+using SchoolEquipmentManager.Logic;
 using AppContext = SchoolEquipmentManager.AppContext;
 
 namespace Vue2Spa
@@ -33,6 +34,8 @@ namespace Vue2Spa
         {
             services.AddDbContext<AppContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddTransient<BarCodeManager>();
 
             // Add framework services.
             services.AddMvc();
