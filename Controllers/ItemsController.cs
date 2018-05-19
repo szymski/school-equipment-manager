@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SchoolEquipmentManager.Logic;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Controllers
@@ -35,24 +36,51 @@ namespace SchoolEquipmentManager.Controllers
             public string Identifier { get; set; }
         }
 
-        private AppContext _context;
+        public class AddEventViewModel
+        {
+            public int Id { get; set; }
+            public int TeacherId { get; set; }
+            public string Type { get; set; }
+        }
 
-        public ItemsController(AppContext dbContext)
+        private AppContext _context;
+        private ItemManager _itemManager;
+
+        public ItemsController(AppContext dbContext, ItemManager itemManager)
         {
             _context = dbContext;
+            _itemManager = itemManager;
         }
 
         public IEnumerable<dynamic> Index()
         {
-            return _context.Items.Select(i => new
-            {
-                id = i.Id,
-                shortId = i.ShortId,
-                name = i.Name,
-                notes = i.Notes,
-                description = i.Template != null ? i.Template.Description : "",
-                location = i.Location != null ? i.Location.Name : "",
-            });
+            List<dynamic> result = new List<dynamic>();
+
+            foreach (var i in _context.Items.Include(j => j.Location).Include(j => j.Template).Include(j => j.Events))
+                result.Add(new
+                {
+                    id = i.Id,
+                    shortId = i.ShortId,
+                    name = i.Name,
+                    notes = i.Notes,
+                    description = i.Template != null ? i.Template.Description : "",
+                    location = i.Location != null ? i.Location.Name : "",
+                    returned = _itemManager.HasBeenReturned(i),
+                });
+
+            return result;
+
+            // WTF? This won't work!
+            //return _context.Items.Include(j => j.Events).Select(i => new
+            //{
+            //    id = i.Id,
+            //    shortId = i.ShortId,
+            //    name = i.Name,
+            //    notes = i.Notes,
+            //    description = i.Template != null ? i.Template.Description : "",
+            //    location = i.Location != null ? i.Location.Name : "",
+            //    xd = _itemManager.HasBeenReturned(i),
+            //});
         }
 
         [HttpGet("[action]")]
@@ -85,7 +113,7 @@ namespace SchoolEquipmentManager.Controllers
             List<dynamic> events = new List<dynamic>();
 
             if (item.Events != null)
-                foreach (var ev in item.Events)
+                foreach (var ev in item.Events.OrderBy(e => e.Date))
                     events.Add(new
                     {
                         id = ev.Id,
@@ -97,13 +125,43 @@ namespace SchoolEquipmentManager.Controllers
             return events;
         }
 
+        [HttpPost("[action]")]
+        public IActionResult AddEvent([FromBody] AddEventViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var item = _context.Items.Include(i => i.Events).FirstOrDefault(i => i.Id == model.Id);
+            if (item == null)
+                return BadRequest("Nie ma przedmiotu o takim id.");
+
+            var teacher = _context.Teachers.FirstOrDefault(t => t.Id == model.TeacherId);
+            if (teacher == null)
+                return BadRequest("Nie ma nauczyciela o takim id.");
+
+            if (model.Type.ToLower() != "borrow" && model.Type.ToLower() != "return")
+                return BadRequest($"Nieprawidłowy typ zdarzenia - {model.Type}");
+
+            item.Events.Add(new BorrowEvent()
+            {
+                Date = DateTime.Now,
+                Teacher = teacher,
+                Type = model.Type.ToLower(),
+            });
+            _context.SaveChanges();
+
+            // TODO: Disallow two borrow events without return.
+
+            return Ok();
+        }
+
 
         [HttpPost("[action]")]
         public IActionResult UpdateShortId([FromBody] UpdateShortIdViewModel model)
         {
             var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
             if (item == null)
-                return Content("No such item");
+                return Content("Nie ma przedmiotu o takim id.");
 
             item.ShortId = model.Identifier;
             _context.SaveChanges();

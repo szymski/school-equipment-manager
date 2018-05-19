@@ -112,21 +112,31 @@ namespace SchoolEquipmentManager
             var rnd = new Random();
             for (int i = 0; i < 20; i++)
             {
+                var events = new List<BorrowEvent>()
+                {
+                    new BorrowEvent()
+                    {
+                        Teacher = teacherOne,
+                        Date = DateTime.Now - TimeSpan.FromMinutes(45),
+                        Type = "borrow",
+                    }
+                };
+
+                if(rnd.Next(0, 2) == 0)
+                    events.Add(new BorrowEvent()
+                    {
+                        Teacher = teacherOne,
+                        Date = DateTime.Now,
+                        Type = "return",
+                    });
+
                 var item = new Item()
                 {
                     ShortId = null,
                     Name = rnd.Next(0, 2) == 0 ? "Komputer" : "Mysz komputerowa",
                     Notes = "",
                     Location = (rnd.Next(0, 2) == 0 ? location1 : location2),
-                    Events = new List<BorrowEvent>()
-                    {
-                        new BorrowEvent()
-                        {
-                            Teacher = teacherOne,
-                            Date = new DateTime(1999,12,11),
-                            Type = "Pobrano",
-                        }
-                    }
+                    Events = events,
                 };
                 _dbContext.Items.Add(item);
             }

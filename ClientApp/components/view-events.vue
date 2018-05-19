@@ -26,11 +26,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(item, index) in events" v-bind:key="index">
+            <tr v-for="(item, index) in events.reverse()" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
                 <td>{{ item.teacherName }}</td>
                 <td>{{ item.date }}</td>
-                <td>{{ item.type }}</td>
+                <td>{{ ({ borrow: "Pobrano", return: "Zwrócono" })[item.type] }}</td>
             </tr>
         </tbody>
     </table>
@@ -40,20 +40,20 @@
         <div class="ui form">
             <div class="field">
                 <label>Nauczyciel</label>
-                <select>
-                    <option v-for="(item, index) in api.teachers" :key="index">
+                <select v-model="teacherId">
+                    <option v-for="(item, index) in api.teachers" :key="index" :value="item.id">
                         {{ item.name }} {{ item.surname }}
                     </option>
                 </select>
             </div>
             <div class="field">
                 <label>Typ zdarzenia</label>
-                <select>
-                    <option value="borrowed">Pobrano</option>
-                    <option value="returned">Zwrócono</option>
+                <select v-model="type">
+                    <option value="borrow">Pobrano</option>
+                    <option value="return">Zwrócono</option>
                 </select>
             </div>
-            <button class="ui primary button" @click="addEvent">Dodaj zdarzenie</button>
+            <button class="ui primary button" :class="{ 'loading': adding }" @click="addEvent">Dodaj zdarzenie</button>
         </div>
     </div>
 </div>
@@ -77,12 +77,39 @@ export default {
             returned: true,
             
             searchText: "",
+
+            teacherId: "",
+            type: "",
+            adding: false,
         };
     },
 
     methods: {
-        async addEvent() {
+        async reload() {
+            var data = await this.api.getEvents(this.itemId);
+            data.forEach(event => {
+                event.teacherName = this.api.teachers[event.teacher].name + " " + this.api.teachers[event.teacher].surname;
+            });
+            this.events = data;
 
+            this.returned = !this.api.isItemBorrowed(this.events);
+        },
+
+        async addEvent() {
+            if(this.adding)
+                return;
+
+            this.adding = true;
+
+            try {
+                await this.api.addItemEvent(this.itemId, this.teacherId, this.type);
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.data));
+            }
+
+            await this.reload();
+            this.adding = false;
         },
     },
 
@@ -94,13 +121,7 @@ export default {
         await this.api.fetchTeachers();
         this.item = await this.api.getItem(this.itemId);
 
-        var data = await this.api.getEvents(this.itemId);
-        data.forEach(event => {
-            event.teacherName = this.api.teachers[event.teacher].name + " " + this.api.teachers[event.teacher].surname;
-        });
-        this.events = data;
-
-        this.returned = !this.api.isItemBorrowed(this.events);
+        await this.reload();
     },
 };
 </script>

@@ -40,7 +40,14 @@
                     </div>
                     <a v-if="!item.shortId || item.shortId == ''" href="#" @click="showEnterIdDialog(item)">Dodaj</a>
                 </td>
-                <td><a @click="goToEventList(item.id)" href="#">{{ item.name }}</a></td>
+                <td>
+                    <div :data-tooltip="item.returned ? null : 'Ten przedmiot nie został jeszcze zwrócony.'">
+                        <i v-if="!item.returned" class="exclamation circle icon not-returned-icon"/>
+                        <a @click="goToEventList(item.id)" href="#">
+                            {{ item.name }}
+                        </a>
+                    </div>
+                </td>
                 <td>{{ item.description }}</td>
                 <td>{{ item.notes }}</td>
                 <td>
@@ -168,5 +175,9 @@ export default {
 
     .item-location:hover .edit-id-btn {
         opacity: 1;
+    }
+
+    .not-returned-icon {
+        color: #bb4444;
     }
 </style>

@@ -36,6 +36,7 @@ namespace Vue2Spa
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<BarCodeManager>();
+            services.AddTransient<ItemManager>();
 
             // Add framework services.
             services.AddMvc();

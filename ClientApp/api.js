@@ -52,9 +52,9 @@ export const api = {
         var borrowed = false; // Has the item been borrowe
 
         eventList.forEach(i => {
-            if(i.type.toLowerCase() == "pobrano" || i.type.toLowerCase() == "borrowed")
+            if(i.type.toLowerCase() == "pobrano" || i.type.toLowerCase() == "borrow")
                 borrowed = true;
-            if(i.type.toLowerCase() == "zwrócono" || i.type.toLowerCase() == "returned")
+            if(i.type.toLowerCase() == "zwrócono" || i.type.toLowerCase() == "return")
                 borrowed = false;
         });
 
@@ -101,4 +101,12 @@ export const api = {
     async getBarcodesForTeacher(teacherId) {
         return (await axios.get("/api/BarCode/GetBarcodesForTeacher/" + teacherId)).data;
     },
+
+    async addItemEvent(itemId, teacherId, type) {
+        return (await axios.post("/api/Items/AddEvent", {
+           id: itemId,
+           teacherId: teacherId,
+           type: type,
+        })).data;
+    }
 };

@@ -5,11 +5,15 @@
     <error-display/>
 
     <div v-if="barcodes">
-        <div v-for="(item, key) in barcodes" :key="key" class="ui segment">
-            <h3 class="barcode-title">
-                {{ ({ base: "Kod nauczyciela", borrow: "Kod pobrania", return: "Kod zwrotu" })[key] }}
-            </h3>
-            <img class="barcode" :src="'/api/BarCode/Generate?text=' + item"/>
+        <div v-for="(item, key) in barcodes" :key="key" class="ui segments">
+            <div class="ui secondary segment">
+                <h3 class="barcode-title">
+                    {{ ({ base: "Kod nauczyciela", borrow: "Kod pobrania", return: "Kod zwrotu" })[key] }}
+                </h3>
+            </div>
+            <div class="ui segment">
+                <img class="barcode" :src="'/api/BarCode/Generate?text=' + item"/>
+            </div>
         </div>
     </div>
 </div>
