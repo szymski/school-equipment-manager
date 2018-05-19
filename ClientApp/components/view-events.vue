@@ -26,7 +26,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(item, index) in events.reverse()" v-bind:key="index">
+            <tr v-for="(item, index) in [].concat(events).reverse()" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
                 <td>{{ item.teacherName }}</td>
                 <td>{{ item.date }}</td>
@@ -41,8 +41,8 @@
             <div class="field">
                 <label>Nauczyciel</label>
                 <select v-model="teacherId">
-                    <option v-for="(item, index) in api.teachers" :key="index" :value="item.id">
-                        {{ item.name }} {{ item.surname }}
+                    <option v-for="(teacher, index) in api.teachers" :key="index" :value="teacher.id" default>
+                        {{ teacher.name }} {{ teacher.surname }}
                     </option>
                 </select>
             </div>
@@ -78,8 +78,8 @@ export default {
             
             searchText: "",
 
-            teacherId: "",
-            type: "",
+            teacherId: 0,
+            type: "borrow",
             adding: false,
         };
     },
@@ -105,7 +105,7 @@ export default {
                 await this.api.addItemEvent(this.itemId, this.teacherId, this.type);
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
             }
 
             await this.reload();
@@ -120,6 +120,7 @@ export default {
     async created() {
         await this.api.fetchTeachers();
         this.item = await this.api.getItem(this.itemId);
+        this.teacherId = Object.keys(this.api.teachers)[0];
 
         await this.reload();
     },

@@ -20,9 +20,10 @@
         <thead>
             <tr>
                 <th style="width:1px;">lp.</th>
-                <th>Imie</th>
+                <th>Imię</th>
                 <th>Nazwisko</th>
-                <th>Barcode</th>
+                <th style="width:1px;">Niezwrócone&nbsp;przedmioty</th>
+                <th>Kod kreskowy</th>
                 <th style="width:1px;"></th>
             </tr>
         </thead>
@@ -31,6 +32,7 @@
                 <td>{{ index + 1 }}</td>
                 <td>{{ teacher.name }}</td>
                 <td>{{ teacher.surname }}</td>
+                <td style="text-align:center;">{{ teacher.borrowedItems }}</td>
                 <td>{{ teacher.barcode }}</td>
                 <td><button class="ui tiny primary button" @click="goToBarcodes(teacher.id)">Wyświetl kody</button></td>
             </tr>

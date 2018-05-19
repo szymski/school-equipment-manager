@@ -19,5 +19,17 @@ namespace SchoolEquipmentManager.Logic
 
             return returned;
         }
+
+        public Teacher GetWhoBorrowed(Item item)
+        {
+            var lastEvent = item.Events?.Where(e => e.Type == "borrow" || e.Type == "return").OrderByDescending(e => e.Date)?.FirstOrDefault();
+            if (lastEvent == null)
+                return null;
+
+            if (lastEvent.Type == "borrow")
+                return lastEvent.Teacher;
+
+            return null;
+        }
     }
 }

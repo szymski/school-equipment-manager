@@ -9,8 +9,6 @@ export const api = {
     currentError: null,
 
     async updateItemIdentifier(itemId, identifier) {
-        console.log(itemId);
-        console.log(identifier);
         await axios.post("/api/Items/UpdateShortId", { id: itemId, identifier: identifier });
     },
 
@@ -26,13 +24,11 @@ export const api = {
         if(this.teachers)
             return;
 
-        console.log("Fetching teachers");
         var temp = (await axios.get("/api/Teachers")).data;
         this.teachers = { };
         temp.forEach(el => {
             this.teachers[el.id] = el;
         });
-        console.log(this.teachers);
     },
 
     async getTeacher(teacherId) {

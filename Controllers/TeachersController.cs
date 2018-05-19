@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SchoolEquipmentManager.Logic;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Controllers
@@ -12,6 +14,7 @@ namespace SchoolEquipmentManager.Controllers
     public class TeachersController : Controller
     {
         private AppContext _context;
+        private ItemManager _itemManager;
 
         public class NewTeacherModel
         {
@@ -24,20 +27,29 @@ namespace SchoolEquipmentManager.Controllers
             public string BarCode { get; set; }
         }
 
-        public TeachersController(AppContext dbContext)
+        public TeachersController(AppContext dbContext, ItemManager itemManager)
         {
             _context = dbContext;
+            _itemManager = itemManager;
         }
 
         public IEnumerable<dynamic> Index()
         {
-            return _context.Teachers.Select(t => new
+            var teachers = new List<dynamic>();
+
+            foreach (var t in _context.Teachers.ToList())
             {
-                id = t.Id,
-                name = t.Name,
-                surname = t.Surname,
-                barcode = t.BarCode,
-            });
+                teachers.Add(new
+                {
+                    id = t.Id,
+                    name = t.Name,
+                    surname = t.Surname,
+                    barcode = t.BarCode,
+                    borrowedItems = _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).ToList().Count(i => _itemManager.GetWhoBorrowed(i)?.Id == t.Id),
+                });
+            }
+
+            return teachers;
         }
 
         [HttpGet("[action]")]
