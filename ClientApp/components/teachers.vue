@@ -19,12 +19,12 @@
     <table class="ui celled table">
         <thead>
             <tr>
-                <th style="width:1px;">lp.</th>
+                <th class="collapsing">lp.</th>
                 <th>Imię</th>
                 <th>Nazwisko</th>
-                <th style="width:1px;">Niezwrócone&nbsp;przedmioty</th>
+                <th class="collapsing">Niezwrócone&nbsp;przedmioty</th>
                 <th>Kod kreskowy</th>
-                <th style="width:1px;"></th>
+                <th class="collapsing"></th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +34,10 @@
                 <td>{{ teacher.surname }}</td>
                 <td style="text-align:center;">{{ teacher.borrowedItems }}</td>
                 <td>{{ teacher.barcode }}</td>
-                <td><button class="ui tiny primary button" @click="goToBarcodes(teacher.id)">Wyświetl kody</button></td>
+                <td class="single line">
+                    <button class="ui tiny green button" @click="goToEditTeacher(teacher.id)">Edytuj</button>
+                    <button class="ui tiny primary button" @click="goToBarcodes(teacher.id)">Wyświetl kody</button>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -59,6 +62,10 @@ export default {
 
         goToBarcodes(teacherId) {
             router.push("/teacher-barcodes/" + teacherId);
+        },
+
+        goToEditTeacher(teacherId) {
+            router.push("/edit-teacher/" + teacherId);
         },
 
         filterTeachers(teachers) {

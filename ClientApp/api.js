@@ -39,6 +39,14 @@ export const api = {
         return await axios.post("/api/Teachers/Add", { name: name, surname: surname, barcode: barcode });
     },
 
+    async updateTeacher(id, name, surname, barcode) {
+        return await axios.post("/api/Teachers/Update/" + id, { id: id, name: name, surname: surname, barcode: barcode });
+    },
+
+    async removeTeacher(id) {
+        return await axios.post("/api/Teachers/Remove/" + id);
+    },
+
     async getEvents(itemId) {
         return (await axios.get("/api/Items/Events/" + itemId)).data;
     },

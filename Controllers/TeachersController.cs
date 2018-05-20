@@ -93,5 +93,49 @@ namespace SchoolEquipmentManager.Controllers
 
             return Json(teacher);
         }
+
+        [HttpPost("[action]/{id}")]
+        public IActionResult Update(int id, [FromBody] NewTeacherModel model)
+        {
+            var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
+
+            if (teacher == null)
+                return BadRequest("Taki nauczyciel nie istnieje.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (_context.Teachers.Any(t => t.Id != teacher.Id && t.Name.ToLower() == model.Name.ToLower() && t.Surname.ToLower() == model.Surname.ToLower()))
+                return BadRequest("Istnieje już nauczyciel z takim imieniem i nazwiskiem.");
+
+            if (_context.Teachers.Any(t => t.Id != teacher.Id && t.BarCode.ToLower() == model.BarCode.ToLower()))
+                return BadRequest("Istnieje już nauczyciel z takim kodem kreskowym.");
+
+            teacher.Name = model.Name;
+            teacher.Surname = model.Surname;
+            teacher.BarCode = model.BarCode;
+
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPost("[action]/{id}")]
+        public IActionResult Remove(int id)
+        {
+            var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
+
+            if (teacher == null)
+                return BadRequest("Taki nauczyciel nie istnieje.");
+
+            foreach (var ev in _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).SelectMany(i => i.Events))
+                if (ev.Teacher?.Id == teacher.Id)
+                    ev.Teacher = null;
+
+            _context.Remove(teacher);
+            _context.SaveChanges();
+
+            return Ok();
+        }
     }
 }

@@ -17,10 +17,10 @@
     <table class="ui celled table">
         <thead>
             <tr>
-                <th style="width:1px;">lp.</th>
+                <th class="collapsing">lp.</th>
                 <th>Nazwa</th>
                 <th>Opis dodatkowy</th>
-                <th style="width:1px;"></th>
+                <th class="collapsing"></th>
             </tr>
         </thead>
         <tbody>

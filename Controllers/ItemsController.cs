@@ -73,18 +73,6 @@ namespace SchoolEquipmentManager.Controllers
                 });
 
             return result;
-
-            // WTF? This won't work!
-            //return _context.Items.Include(j => j.Events).Select(i => new
-            //{
-            //    id = i.Id,
-            //    shortId = i.ShortId,
-            //    name = i.Name,
-            //    notes = i.Notes,
-            //    description = i.Template != null ? i.Template.Description : "",
-            //    location = i.Location != null ? i.Location.Name : "",
-            //    xd = _itemManager.HasBeenReturned(i),
-            //});
         }
 
         [HttpGet("[action]")]
@@ -121,7 +109,7 @@ namespace SchoolEquipmentManager.Controllers
                     events.Add(new
                     {
                         id = ev.Id,
-                        teacher = ev.Teacher?.Id ?? 0,
+                        teacher = ev.Teacher?.Id ?? -1,
                         date = ev.Date.ToString("G"),
                         type = ev.Type,
                     });

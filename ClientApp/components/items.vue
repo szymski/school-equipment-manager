@@ -19,7 +19,7 @@
     <table class="ui celled table">
         <thead>
             <tr>
-                <th style="width:1px;">lp.</th>
+                <th class="collapsing">lp.</th>
                 <th>Identyfikator</th>
                 <th>Nazwa</th>
                 <th>Opis</th>
@@ -38,12 +38,12 @@
                             <i class="pencil icon"></i>
                         </button>
                     </div>
-                    <a v-if="!item.shortId || item.shortId == ''" href="#" @click="showEnterIdDialog(item)">Dodaj</a>
+                    <a v-if="!item.shortId || item.shortId == ''" @click="showEnterIdDialog(item)">Dodaj</a>
                 </td>
                 <td>
                     <div :data-tooltip="item.returned ? null : 'Ten przedmiot nie został jeszcze zwrócony.'">
                         <i v-if="!item.returned" class="exclamation circle icon not-returned-icon"/>
-                        <a @click="goToEventList(item.id)" href="#">
+                        <a @click="goToEventList(item.id)">
                             {{ item.name }}
                         </a>
                     </div>
@@ -59,7 +59,7 @@
                     </div>
                 </td>
                 <td>
-                    <button class="ui fluid tiny red button" @click="removeItem(item.id)">Usuń</button>
+                    <button class="ui fluid tiny red button" @click="removeItem(item.id, $event)">Usuń</button>
                 </td>
             </tr>
         </tbody>
@@ -79,9 +79,9 @@
                     </div>
                 </div>
             </div>
-            </div>
-            <div class="actions">
-            <div class="ui black deny button">
+        </div>
+        <div class="actions">
+            <div class="ui deny button">
                 Anuluj
             </div>
             <div class="ui positive right labeled icon button" @click="setIdentifier(modalItem, modalIdentifier)" id="modalIdentifierButton">
@@ -112,23 +112,30 @@ export default {
         filterItems(items) {
             return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location + i.shortId + i.notes).toLowerCase().includes(this.searchText.toLowerCase()));
         },
+
         goToAddItem() {
             router.push("/add-item");
         },
+
         goToEventList(id) {
             router.push("/view-events/" + id);
         },
-        async removeItem(id) {
+        
+        async removeItem(id, event) {
+            $(event.srcElement).addClass("loading");
             await this.$http.post('/api/Items/Remove', "id=" + id);
             let response = await this.$http.get('/api/Items')
             this.items = response.data;
+            $(event.srcElement).removeClass("loading");            
         },
+
         showEnterIdDialog(item) {
             this.modalItem = item;
-            this.modalIdentifier = item.shortId ? item.shortId : "";
+            this.modalIdentifier = item.shortId || "";
             this.modalFirstTime = !this.modalIdentifier || this.modalIdentifier == "";
             $("#enterIdModal").modal("show");
         },
+
         setIdentifier(item, identifier) {
             item.shortId = identifier;
             this.api.updateItemIdentifier(item.id, identifier);
@@ -154,6 +161,11 @@ export default {
 </script>
 
 <style>
+    /* TODO: Move this to a global style */
+    a {
+        cursor: pointer;
+    }
+
     .item-short-id {
         margin-left: 32px;
     }

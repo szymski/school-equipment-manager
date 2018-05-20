@@ -19,7 +19,7 @@
     <table class="ui celled table">
         <thead>
             <tr>
-                <th style="width:1px;">lp.</th>
+                <th class="collapsing">lp.</th>
                 <th>Nauczyciel</th>
                 <th>Data</th>
                 <th>Typ</th>
@@ -88,7 +88,12 @@ export default {
         async reload() {
             var data = await this.api.getEvents(this.itemId);
             data.forEach(event => {
-                event.teacherName = this.api.teachers[event.teacher].name + " " + this.api.teachers[event.teacher].surname;
+                if(event.teacher == -1)
+                    event.teacherName = "Usunięto";
+                else {
+                    var teacher = this.api.teachers[event.teacher];
+                    event.teacherName = teacher.name + " " + teacher.surname;
+                }
             });
             this.events = data;
 
