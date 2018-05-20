@@ -47,6 +47,10 @@ export default {
 </script>
 
 <style>
+body, h1, h2, h3, h4, h5, .ui.button, .ui.menu, .header {
+    font-family: Arial, Helvetica, sans-serif !important;
+}
+
 .page-content {
     padding: 0.5em;
 }

@@ -153,12 +153,15 @@ namespace SchoolEquipmentManager.Controllers
         {
             var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
             if (item == null)
-                return Content("Nie ma przedmiotu o takim id.");
+                return BadRequest("Nie ma przedmiotu o takim id.");
+
+            if (_context.Items.Any(i => i.Id != item.Id && i.ShortId == model.Identifier))
+                return BadRequest("Istnieje już przedmiot z takim identyfikatorem.");
 
             item.ShortId = model.Identifier;
             _context.SaveChanges();
 
-            return Content("ok");
+            return Ok();
         }
 
         [HttpPost("[action]")]

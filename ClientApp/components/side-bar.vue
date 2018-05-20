@@ -13,7 +13,7 @@
                 <div class="bar">
                     <div class="progress"></div>
                 </div>
-                <div class="label">Gotowość projektu</div>
+                <div class="label"><p>😁 Gotowość projektu 😁</p></div>
             </div>
         </div>
 
@@ -38,7 +38,7 @@ export default {
 
     mounted() {
         $(".progress").progress({
-            percent: 30
+            percent: 40
         });
 
         $(".sidebar").sidebar();

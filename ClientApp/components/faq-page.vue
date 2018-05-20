@@ -20,7 +20,8 @@
         </div>
         <div class="content">
             <p class="transition hidden">
-                
+                Położeniem przedmiotu jest miejsce, w którym przedmiot ma być docelowo przechowywany.
+                Przy pobraniu przedmiotu przez nauczyciela, jego położenie nie ulega zmianie.
             </p>
         </div>
 
@@ -30,7 +31,8 @@
         </div>
         <div class="content">
             <p class="transition hidden">
-                
+                Aby uniknąć powielania informacji przy każdym dodanym przedmiocie, dostępne są typy przedmiotów.
+                Każdy dodany przedmiot posiada swój typ, który zawiera nazwę przedmiotu oraz jego opis.
             </p>
         </div>
 
@@ -78,20 +80,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item">
-                        <a class="ui tiny image">
-                            <img src="http://url.szymekk.me/i6cvw">
-                        </a>
-                        <div class="middle aligned content">
-                            <div class="header">
-                                Linus Torvalds
-                            </div>
-                            <div class="description">
-                                Bóg. Stworzył Gita, a bez niego dostałbym zawału.
-                            </div>
-                        </div>
-                    </div>
                 </div>
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Lista zmian
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                <ul class="ui list">
+                    <li>
+                        <b>20.05.2018</b>
+                        <div>Dodano tę informację</div>
+                    </li>
+                    <li>
+                        <b>15.01.2018</b>
+                        <div>Rozpoczęto prace nad systemem</div>
+                    </li>
+                </ul>
             </p>
         </div>
     </div>

@@ -33,8 +33,13 @@ export default {
 
     methods: {
         async submit() {
-            await this.$http.post("/api/ItemTemplates/Add", { name: this.name, description: this.description});
-            router.push("/item-templates");
+            try {
+                await this.$http.post("/api/ItemTemplates/Add", { name: this.name, description: this.description});
+                router.push("/item-templates");
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
         }
     },
 

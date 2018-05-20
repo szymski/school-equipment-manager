@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,8 @@ namespace SchoolEquipmentManager.Controllers
     {
         public class AddItemTemplateModel
         {
+            [Required(ErrorMessage = "Pole Nazwa typu jest wymagane.")]
+            [MinLength(2, ErrorMessage = "Minimalna długość nazwy to 2 znaki.")]
             public string Name { get; set; }
             public string Description { get; set; }
         }
@@ -41,6 +44,12 @@ namespace SchoolEquipmentManager.Controllers
         [HttpPost("[action]")]
         public IActionResult Add([FromBody] AddItemTemplateModel model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (_context.ItemTemplates.Any(t => t.Name == model.Name))
+                return BadRequest("Istnieje już typ o takiej nazwie.");
+
             _context.ItemTemplates.Add(new ItemTemplate()
             {
                 Name = model.Name,
@@ -48,7 +57,7 @@ namespace SchoolEquipmentManager.Controllers
             });
             _context.SaveChanges();
 
-            return Content("ok");
+            return Ok();
         }
 
         [HttpPost("[action]")]

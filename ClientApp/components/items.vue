@@ -136,9 +136,14 @@ export default {
             $("#enterIdModal").modal("show");
         },
 
-        setIdentifier(item, identifier) {
-            item.shortId = identifier;
-            this.api.updateItemIdentifier(item.id, identifier);
+        async setIdentifier(item, identifier) {
+            try {
+                await this.api.updateItemIdentifier(item.id, identifier);
+                item.shortId = identifier;
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
         }
     },
 
