@@ -14,12 +14,6 @@ Vue.prototype.$http = axios;
 
 sync(store, router)
 
-const app = new Vue({
-    store,
-    router,
-    ...App
-})
-
 Vue.mixin({
     data: function() {
         return {
@@ -28,6 +22,12 @@ Vue.mixin({
             }
         }
     }
+})
+
+const app = new Vue({
+    store,
+    router,
+    ...App
 })
 
 Vue.component("error-display", ErrorDisplay);

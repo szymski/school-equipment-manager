@@ -5,6 +5,11 @@
             <div class="pusher">
                 <div class="ui basic segment">
                     <router-view></router-view>
+                    <div class="ui inverted top aligned dimmer" :class="{ 'active': api.loading }">
+                        <div class="content">
+                            <div class="ui inline loader my-loader"/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -57,5 +62,9 @@ body, h1, h2, h3, h4, h5, .ui.button, .ui.menu, .header {
 
 .login-box {
     margin-top: 4em !important;
+}
+
+.my-loader {
+    margin-top: 2em !important;
 }
 </style>

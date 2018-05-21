@@ -90,16 +90,20 @@
         </div>
         <div class="content">
             <p class="transition hidden">
-                <ul class="ui list">
-                    <li>
-                        <b>20.05.2018</b>
-                        <div>Dodano tę informację</div>
-                    </li>
-                    <li>
-                        <b>15.01.2018</b>
-                        <div>Rozpoczęto prace nad systemem</div>
-                    </li>
-                </ul>
+                <div class="ui relaxed divided list">
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">20.05.2018</div>
+                            <div class="description">Dodano tę informację</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">15.01.2018</div>
+                            <div class="description">Rozpoczęto prace nad systemem</div>
+                        </div>
+                    </div>
+                </div>
             </p>
         </div>
     </div>

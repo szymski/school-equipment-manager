@@ -16,9 +16,12 @@
         </div>
 
         <div class="field">
-            <label>Kod kreskowy</label>
-            <input type="text" v-model="barcode">
-        </div>
+                <label>Kod kreskowy</label>
+                <div class="ui action input">
+                    <input type="text" v-model="barcode">
+                    <button class="ui blue button" :disabled="!canGenerateBarcode(name, surname)" @click="generateBarcode">Wygeneruj</button>
+                </div>
+            </div>
 
         <button class="ui primary button" @click="save">Zapisz</button>
         <button class="ui right floated red button" @click="showRemoveDialog">Usuń nauczyciela</button>
@@ -74,7 +77,6 @@ export default {
             $("#removeModal").modal("show");
         },
 
-        // TODO: Add confirmation dialog.
         async remove() {
             try {
                 await this.api.removeTeacher(this.teacher.id);
@@ -83,10 +85,20 @@ export default {
             catch(e) {
                 this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
             }
+        },
+
+        canGenerateBarcode(name, surname) {
+            return name.length > 0 && surname.length > 0;
+        },
+
+        generateBarcode() {
+            this.barcode = this.api.generateBarcodeForTeacher(this.name, this.surname);
         }
     },
 
     async created() {
+        this.api.loading = true;
+
         try {
             this.teacher = await this.api.getTeacher(this.$route.params.id);
             this.name = this.teacher.name;
@@ -96,6 +108,8 @@ export default {
         catch(e) {
             this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
         }
+
+        this.api.loading = false;
     },
 };
 </script>

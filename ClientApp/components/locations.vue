@@ -9,6 +9,7 @@
                 <tr>
                     <th class="collapsing">lp.</th>
                     <th style="">Nazwa</th>
+                    <th class="collapsing">Użyto</th>                    
                     <th class="collapsing"></th>
                 </tr>
             </thead>
@@ -16,8 +17,9 @@
                 <tr v-for="(item, index) in locations" v-bind:key="index">
                     <td>{{ index + 1 }}</td>
                     <td>{{ item.name }}</td>
+                    <td style="text-align:center;">{{ item.useCount }}</td>
                     <td>
-                        <button class="ui fluid small red button" @click="removeLocation(item.id)">Usuń</button>
+                        <button class="ui fluid small red button" @click="removeLocation(item.id, $event)">Usuń</button>
                     </td>
                 </tr>
             </tbody>
@@ -40,9 +42,11 @@ export default {
     },
 
     methods: {
-        async removeLocation(id) {
+        async removeLocation(id, event) {
+            $(event.srcElement).addClass("loading");
             await this.$http.post("/api/Locations/Remove", { id: id });
             this.locations = await this.api.getLocations();
+            $(event.srcElement).removeClass("loading");
         },
         async addLocation() {
             try {
@@ -56,7 +60,9 @@ export default {
     },
 
     async created() {
+        this.api.loading = true;
         this.locations = await this.api.getLocations();
+        this.api.loading = false;
     }
 }
 </script>

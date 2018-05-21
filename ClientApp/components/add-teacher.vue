@@ -14,7 +14,7 @@
                 <input type="text" v-model="surname">
             </div>
             <div class="field">
-                <label>BarCode</label>
+                <label>Kod kreskowy</label>
                 <div class="ui action input">
                     <input type="text" v-model="barcode">
                     <button class="ui blue button" :disabled="!canGenerateBarcode(name, surname)" @click="generateBarcode">Wygeneruj</button>

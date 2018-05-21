@@ -52,7 +52,14 @@ namespace SchoolEquipmentManager
                 Name = "Mysz komputerowa",
                 Description = "Tania, łatwo się psuje"
             };
-            _dbContext.ItemTemplates.Add(template1);
+            _dbContext.ItemTemplates.Add(template2);
+
+            var template3 = new ItemTemplate()
+            {
+                Name = "Laptop",
+                Description = "Raz działa, a raz nie"
+            };
+            _dbContext.ItemTemplates.Add(template3);
 
             #endregion
 
@@ -133,7 +140,7 @@ namespace SchoolEquipmentManager
                 var item = new Item()
                 {
                     ShortId = null,
-                    Name = rnd.Next(0, 2) == 0 ? "Komputer" : "Mysz komputerowa",
+                    Template = rnd.Next(0, 2) == 0 ? template1 : template2,
                     Notes = "",
                     Location = (rnd.Next(0, 2) == 0 ? location1 : location2),
                     Events = events,

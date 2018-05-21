@@ -20,6 +20,7 @@
                 <th class="collapsing">lp.</th>
                 <th>Nazwa</th>
                 <th>Opis dodatkowy</th>
+                <th class="collapsing">Użyto</th>
                 <th class="collapsing"></th>
             </tr>
         </thead>
@@ -28,8 +29,9 @@
                 <td>{{ index + 1 }}</td>
                 <td>{{ itemTemplate.name }}</td>
                 <td>{{ itemTemplate.description }}</td>
+                <td style="text-align:center;">{{ itemTemplate.useCount }}</td>
                 <td>
-                    <button class="ui fluid small red button" @click="removeItem(itemTemplate.id)">Usuń</button>
+                    <button class="ui fluid small red button" @click="removeItem(itemTemplate.id, $event)">Usuń</button>
                 </td>
             </tr>
         </tbody>
@@ -52,13 +54,17 @@ export default {
         filterItems(itemsT) {
             return itemsT.filter((iT) => this.searchText.length == 0 || (iT.name + iT.description + iT.location).toLowerCase().includes(this.searchText.toLowerCase()));
         },
+        
         goToAddTemplate() {
             router.push("/add-template");
         },
-        async removeItem(id) {
-            await this.$http.post('/api/ItemTemplates/Remove', "id=" + id);
+
+        async removeItem(id, event) {
+            $(event.srcElement).addClass("loading");
+            await this.$http.post('/api/ItemTemplates/Remove/' + id);
             let response = await this.$http.get('/api/ItemTemplates')
             this.items = response.data;
+            $(event.srcElement).removeClass("loading");
         }
     },
 
@@ -67,8 +73,10 @@ export default {
     },
 
     async created() {
+        this.api.loading = true;
         let response = await this.$http.get('/api/ItemTemplates')
         this.items = response.data;
+        this.api.loading = false;
     }
 };
 </script>

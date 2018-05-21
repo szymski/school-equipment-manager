@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Controllers
@@ -29,10 +30,11 @@ namespace SchoolEquipmentManager.Controllers
 
         public IEnumerable<dynamic> Index()
         {
-            return _context.Locations.Select(l => new
+            return _context.Locations.ToList().Select(l => new
             {
                 id = l.Id,
                 name = l.Name,
+                useCount = _context.Items.Include(i => i.Location).Count(i => i.Location == l),
             });
         }
 

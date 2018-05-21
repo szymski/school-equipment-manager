@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Controllers
@@ -19,11 +20,6 @@ namespace SchoolEquipmentManager.Controllers
             public string Description { get; set; }
         }
 
-        public class RemoveItemTemplateModel
-        {
-            public int Id { get; set; }
-        }
-
         private AppContext _context;
 
         public ItemTemplatesController(AppContext dbContext)
@@ -33,11 +29,12 @@ namespace SchoolEquipmentManager.Controllers
 
         public IEnumerable<dynamic> Index()
         {
-            return _context.ItemTemplates.Select(l => new
+            return _context.ItemTemplates.ToList().Select(t => new
             {
-                id = l.Id,
-                name = l.Name,
-                description = l.Description
+                id = t.Id,
+                name = t.Name,
+                description = t.Description,
+                useCount = _context.Items.Include(i => i.Template).Count(i => i.Template == t),
             });
         }
 
@@ -60,20 +57,20 @@ namespace SchoolEquipmentManager.Controllers
             return Ok();
         }
 
-        [HttpPost("[action]")]
-        public IActionResult Remove([FromBody] RemoveItemTemplateModel model)
+        [HttpPost("[action]/{id}")]
+        public IActionResult Remove(int id)
         {
-            var template = _context.ItemTemplates.FirstOrDefault(l => l.Id == model.Id);
+            var template = _context.ItemTemplates.FirstOrDefault(t => t.Id == id);
 
-            if (template != null)
-            {
-                foreach (var item in _context.Items.Where(i => i.Template == template))
-                    item.Template = null;
-                _context.ItemTemplates.Remove(template);
-                _context.SaveChanges();
-            }
+            if (template == null)
+                return BadRequest("Nie ma typu o takim id.");
 
-            return Content("ok");
+            foreach (var item in _context.Items.Where(i => i.Template == template))
+                item.Template = null;
+            _context.ItemTemplates.Remove(template);
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }

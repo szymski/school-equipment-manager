@@ -69,13 +69,15 @@ export default {
         },
 
         filterTeachers(teachers) {
-            return teachers.filter((t) => this.searchText.length == 0 || (t.name + t.surname).toLowerCase().includes(this.searchText.toLowerCase()));
+            return teachers.filter((t) => this.searchText.length == 0 || (t.name + t.surname + t.barcode || "").toLowerCase().includes(this.searchText.toLowerCase()));
         },
     },
 
     async created() {
+        this.api.loading = true;
         let response = await this.$http.get('/api/Teachers')
         this.teachers = response.data;
+        this.api.loading = false;
     }
 };
 </script>

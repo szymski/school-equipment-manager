@@ -36,6 +36,8 @@ export default {
     },
 
     async created() {
+        this.api.loading = true;
+
         try {
             this.teacher = await this.api.getTeacher(this.$route.params.id);
             this.barcodes = await this.api.getBarcodesForTeacher(this.teacher.id);
@@ -43,6 +45,8 @@ export default {
         catch(e) {
             this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
         }
+
+        this.api.loading = false;
     }
 };
 </script>

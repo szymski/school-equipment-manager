@@ -3,6 +3,7 @@ import { isString } from 'util';
 
 export const api = {
     loggedIn: false,
+    loading: false,
     username: "SuperUser",
     teachers: null,
     

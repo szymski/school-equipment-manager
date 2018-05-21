@@ -159,8 +159,10 @@ export default {
     },
 
     async created() {
+        this.api.loading = true;
         let response = await this.$http.get('/api/Items')
         this.items = response.data;
+        this.api.loading = false;
     }
 };
 </script>

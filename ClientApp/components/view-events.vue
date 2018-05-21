@@ -123,11 +123,15 @@ export default {
     },
 
     async created() {
+        this.api.loading = true;
+
         await this.api.fetchTeachers();
         this.item = await this.api.getItem(this.itemId);
         this.teacherId = Object.keys(this.api.teachers)[0];
 
         await this.reload();
+
+        this.api.loading = false;
     },
 };
 </script>
