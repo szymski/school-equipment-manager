@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1 class="six wide column">Kody kreskowe nauczyciela <span v-if="teacher"> - {{ teacher.name }} {{ teacher.surname }}</span></h1>
+    <h1 class="six wide column">Kod kreskowy nauczyciela <span v-if="teacher"> - {{ teacher.name }} {{ teacher.surname }}</span></h1>
 
     <error-display/>
 
@@ -41,6 +41,7 @@ export default {
         try {
             this.teacher = await this.api.getTeacher(this.$route.params.id);
             this.barcodes = await this.api.getBarcodesForTeacher(this.teacher.id);
+            this.barcodes = { base: this.barcodes.base };
         }
         catch(e) {
             this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));

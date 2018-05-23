@@ -3,11 +3,11 @@
         <h1>Strona główna</h1>
         <p>Witaj na stronie systemu ewidencji inwentarzu szkolnego.</p>
 
-        <div class="ui stackable equal width grid">
+        <div v-if="info" class="ui stackable equal width grid">
             <div class="ui column">
                 <div class="ui segment">
                     <div class="dashboard-entry-wrapper">
-                        <p class="number">17</p>
+                        <p class="number">{{ info.totalItems }}</p>
                         <p class="description">Liczba przedmiotów</p>
                     </div>
                 </div>
@@ -15,7 +15,7 @@
             <div class="ui column">
                 <div class="ui segment">
                     <div class="dashboard-entry-wrapper">
-                        <p class="number">5</p>
+                        <p class="number">{{ info.borrowedItems }}</p>
                         <p class="description">Niezwrócone przedmioty</p>
                     </div>
                 </div>
@@ -28,9 +28,17 @@
 export default {
     data() {
         return {
-            
+            info: null,
         }
     },
+
+    async created() {
+        this.api.loading = true;
+
+        this.info = await this.api.getDashboardInfo();
+
+        this.api.loading = false;
+    }
 }
 </script>
 

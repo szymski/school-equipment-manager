@@ -37,6 +37,18 @@ namespace SchoolEquipmentManager.Controllers
             public string Identifier { get; set; }
         }
 
+        public class UpdateNotesViewModel
+        {
+            public int Id { get; set; }
+            public string Notes { get; set; }
+        }
+
+        public class UpdateTemplateViewModel
+        {
+            public int Id { get; set; }
+            public int Template { get; set; }
+        }
+
         public class AddEventViewModel
         {
             [Required(ErrorMessage = "Id przedmiotu jest wymagane.")]
@@ -66,6 +78,7 @@ namespace SchoolEquipmentManager.Controllers
                     id = i.Id,
                     shortId = i.ShortId,
                     name = i.Name,
+                    template = i.Template?.Id ?? 0,
                     notes = i.Notes,
                     description = i.Template != null ? i.Template.Description : "",
                     location = i.Location != null ? i.Location.Name : "",
@@ -76,22 +89,23 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpGet("[action]")]
-        public dynamic Get(int id)
+        public IActionResult Get(int id)
         {
             var item = _context.Items.Include(i => i.Location).FirstOrDefault(i => i.Id == id);
 
             if (item == null)
-                return "No such item";
+                return BadRequest("Nie ma takiego przedmiotu.");
 
-            return new
+            return Json(new
             {
                 id = item.Id,
                 shortId = item.ShortId,
                 name = item.Name,
+                template = item.Template?.Id ?? 0,
                 notes = item.Notes,
                 description = item.Template != null ? item.Template.Description : "",
                 location = item.Location != null ? item.Location.Name : "",
-            };
+            });
         }
 
         [HttpGet("[action]/{id}")]
@@ -165,16 +179,52 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpPost("[action]")]
+        public IActionResult UpdateNotes([FromBody] UpdateNotesViewModel model)
+        {
+            var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
+            if (item == null)
+                return BadRequest("Nie ma przedmiotu o takim id.");
+
+            item.Notes = model.Notes;
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult UpdateTemplate([FromBody] UpdateTemplateViewModel model)
+        {
+            var item = _context.Items.Include(i => i.Template).FirstOrDefault(i => i.Id == model.Id);
+            if (item == null)
+                return BadRequest("Nie ma przedmiotu o takim id.");
+
+            if (model.Template == 0)
+                item.Template = null;
+            else
+            {
+                var template = _context.ItemTemplates.FirstOrDefault(t => t.Id == model.Template);
+                if (template == null)
+                    return BadRequest("Nie ma takiego typu przedmiotu.");
+
+                item.Template = template;
+            }
+
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
         public IActionResult Remove(int id)
         {
             var item = _context.Items.FirstOrDefault(i => i.Id == id);
             if (item == null)
-                return Content("No such item");
+                return BadRequest("Nie ma takiego przedmiotu.");
 
             _context.Remove(item);
             _context.SaveChanges();
 
-            return Content("ok");
+            return Ok();
         }
 
         [HttpPost("[action]")]
@@ -183,11 +233,11 @@ namespace SchoolEquipmentManager.Controllers
             var location = _context.Locations.FirstOrDefault(l => l.Id == model.Location);
             var template = _context.ItemTemplates.FirstOrDefault(l => l.Id == model.Template);
 
-            if (template == null)
-                return Content("Invalid template");
+            //if (template == null)
+            //    return BadRequest("Nieprawidłowy typ przedmiotu");
 
             if (model.Number > 100)
-                return Content("Can't add more than 100 items at once");
+                return BadRequest("Nie można dodać więcej niż 100 przedmiotów naraz.");
 
             for (int i = 0; i < model.Number; i++)
             {
@@ -201,7 +251,8 @@ namespace SchoolEquipmentManager.Controllers
             }
             _context.SaveChanges();
 
-            return Content("ok");
+            return Ok();
         }
     }
 }
+

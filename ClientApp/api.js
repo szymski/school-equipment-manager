@@ -2,6 +2,7 @@ import axios from 'axios';
 import { isString } from 'util';
 
 export const api = {
+    useDevVersion: true,
     loggedIn: false,
     loading: false,
     username: "SuperUser",
@@ -9,8 +10,20 @@ export const api = {
     
     currentError: null,
 
+    async getDashboardInfo() {
+        return (await axios.get("/api/General/GeneralInfo")).data;
+    },
+
     async updateItemIdentifier(itemId, identifier) {
         await axios.post("/api/Items/UpdateShortId", { id: itemId, identifier: identifier });
+    },
+
+    async updateItemNotes(itemId, notes) {
+        await axios.post("/api/Items/UpdateNotes", { id: itemId, notes: notes });
+    },
+
+    async updateItemTemplate(itemId, templateId) {
+        await axios.post("/api/Items/UpdateTemplate", { id: itemId, template: templateId });
     },
 
     async getItem(itemId) {

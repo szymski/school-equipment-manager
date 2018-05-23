@@ -7,7 +7,7 @@
         <div class="ui form">
             <div class="field">
                 <label>Typ przedmiotu</label>            
-                <select v-model="template" class="ui dropdown" id="inlineFormCustomSelectPref">
+                <select v-model="template" class="ui dropdown">
                     <option selected value="0">Wybiorę później</option>
                     <option v-for="item in templates" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
                 </select>
@@ -15,7 +15,7 @@
 
             <div class="field">
                 <label>Lokalizacja</label>            
-                <select v-model="location" class="ui dropdown" id="inlineFormCustomSelectPref">
+                <select v-model="location" class="ui dropdown">
                     <option selected value="0">Wybiorę później</option>
                     <option v-for="item in locations" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
                 </select>
@@ -28,10 +28,10 @@
 
             <div class="two wide field">
                 <label>Liczba</label>
-                <input type="number" value="1" v-model="number">
+                <input type="number" value="1" v-model="number" min="1">
             </div>
 
-            <button class="ui primary button" @click="submit">Dodaj</button>
+            <button class="ui primary button" @click="submit" :class="{ 'disabled': !canSubmit() }">Dodaj</button>
         </div>
     </div>
 </template>
@@ -52,9 +52,18 @@ export default {
     },
 
     methods: {
+        canSubmit() {
+            return this.number > 0;
+        },
+
         async submit() {
-            await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template, number: this.number });
-            router.push("/items");
+            try {
+                await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template, number: this.number });
+                router.push("/items");
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
         }
     },
 

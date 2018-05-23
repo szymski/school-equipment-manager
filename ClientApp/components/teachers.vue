@@ -36,7 +36,7 @@
                 <td>{{ teacher.barcode }}</td>
                 <td class="single line">
                     <button class="ui tiny green button" @click="goToEditTeacher(teacher.id)">Edytuj</button>
-                    <button class="ui tiny primary button" @click="goToBarcodes(teacher.id)">Wyświetl kody</button>
+                    <button class="ui tiny primary button" @click="goToBarcodes(teacher.id)">Wyświetl kod</button>
                 </td>
             </tr>
         </tbody>

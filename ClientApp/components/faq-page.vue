@@ -93,6 +93,12 @@
                 <div class="ui relaxed divided list">
                     <div class="item">
                         <div class="content">
+                            <div class="header">23.05.2018</div>
+                            <div class="description">Dodano opcje pobierania i zwracania przedmiotów przy pomocy skanera kodów kreskowych</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
                             <div class="header">20.05.2018</div>
                             <div class="description">Dodano tę informację</div>
                         </div>

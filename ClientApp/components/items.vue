@@ -21,10 +21,10 @@
             <tr>
                 <th class="collapsing">lp.</th>
                 <th>Identyfikator</th>
-                <th>Nazwa</th>
+                <th>Typ</th>
                 <th>Opis</th>
                 <th>Uwagi</th>
-                <th style="width:auto;">Położenie</th>
+                <th class="collapsing">Położenie</th>
                 <th></th>
             </tr>
         </thead>
@@ -38,23 +38,41 @@
                             <i class="pencil icon"></i>
                         </button>
                     </div>
-                    <a v-if="!item.shortId || item.shortId == ''" @click="showEnterIdDialog(item)">Dodaj</a>
+                    <a v-if="!item.shortId || item.shortId == ''" @click="showEnterIdDialog(item)"><b>Dodaj</b></a>
                 </td>
                 <td>
                     <div :data-tooltip="item.returned ? null : 'Ten przedmiot nie został jeszcze zwrócony.'">
-                        <i v-if="!item.returned" class="exclamation circle icon not-returned-icon"/>
-                        <a @click="goToEventList(item.id)">
-                            {{ item.name }}
-                        </a>
+                        <div class="editable-property" v-if="item.name && item.name != ''">
+                            <i v-if="!item.returned" class="exclamation circle icon not-returned-icon"/>
+                            <a @click="goToEventList(item.id)">
+                                {{ item.name }}
+                            </a>
+                            <button class="ui mini basic icon circular button edit-id-btn" @click="showTemplateModal(item)">
+                                <i class="pencil icon"></i>
+                            </button>
+                        </div>
+                        <div class="centered" v-else>
+                            <b>
+                                <i v-if="!item.returned" class="exclamation circle icon not-returned-icon"/>
+                                <a @click="showTemplateModal(item)">
+                                    Ustaw typ
+                                </a>
+                            </b>
+                        </div>
                     </div>
                 </td>
                 <td>{{ item.description }}</td>
                 <td>
                     <div class="editable-property">
-                        {{ item.notes }}
-                        <button class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
-                            <i class="pencil icon"></i>
-                        </button>
+                        <div v-if="!areNotesTooBigToDisplay(item.notes)">
+                            {{ item.notes }}
+                            <button class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
+                                <i class="pencil icon"></i>
+                            </button>
+                        </div>
+                        <div class="centered" v-else>
+                            <a @click="showNotesModal(item)">Kliknij aby wyświetlić</a>
+                        </div>
                     </div>
                 </td>
                 <td>
@@ -72,6 +90,7 @@
         </tbody>
     </table>
 
+    <!-- Identifier modal -->
     <div class="ui modal" id="enterIdModal">
         <div class="header">
             Wprowadź identyfikator dla <i>{{ modalItem.name }}</i> (<i>{{ modalItem.location }}</i>)
@@ -98,6 +117,7 @@
         </div>
     </div>
 
+    <!-- Notes modal -->
     <div class="ui modal" id="notesModal">
         <div class="header">
             Uwagi dla <i>{{ modalItem.name }}</i> (<i>{{ modalItem.location }}</i>)
@@ -121,6 +141,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Template modal -->
+    <div class="ui modal" id="templateModal">
+        <div class="header">
+            Zmień typ przedmiotu
+        </div>
+        <div class="content">
+            <div class="description">
+                <div class="ui form">
+                    <div class="field">
+                        <select v-model="modalTemplate" class="ui dropdown">
+                            <option value="0">Brak</option>
+                            <option v-for="item in templates" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui deny button">
+                Anuluj
+            </div>
+            <div class="ui positive right labeled icon button" @click="setItemTemplate(modalItem, modalTemplate)" id="templateModalButton">
+                Aktualizuj
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -131,11 +179,16 @@ export default {
     data() {
         return {
             items: [ ],
+            templates: [ ],
             searchText: "",
 
             modalItem: { },
             modalIdentifier: "",
             modalFirstTime: false,
+
+            modalNotes: "",
+
+            modalTemplate: 0,
         };
     },
 
@@ -162,15 +215,23 @@ export default {
 
         showEnterIdDialog(item) {
             this.modalItem = item;
-            this.modalIdentifier = item.shortId || "";
+            this.modalIdentifier = item.shortId || ""; // This doesn't always update the modal. wtf
+            $("modalIdentifierInput").val(this.modalIdentifier);
             this.modalFirstTime = !this.modalIdentifier || this.modalIdentifier == "";
             $("#enterIdModal").modal("show");
         },
 
         showNotesModal(item) {
             this.modalItem = item;
-            this.modalNotes = item.notes || "";
+            this.modalNotes = item.notes || ""; // This doesn't always update the modal. wtf
+            $("notesModalInput").val(this.modalNotes);
             $("#notesModal").modal("show");
+        },
+
+        showTemplateModal(item) {
+            this.modalItem = item;
+            this.modalTemplate = item.template; 
+            $("#templateModal").modal("show");
         },
 
         async setIdentifier(item, identifier) {
@@ -182,6 +243,41 @@ export default {
                 this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
             }
         },
+
+        async setNotes(item, newNotes) {
+            try {
+                await this.api.updateItemNotes(item.id, newNotes);
+                item.notes = newNotes;
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
+        },
+
+        async setItemTemplate(item, templateId) {
+            try {
+                await this.api.updateItemTemplate(item.id, templateId);
+
+                item.template = templateId;
+
+                if(templateId == 0) {
+                    item.name = "";
+                    item.description = "";
+                }
+                else {
+                    var template = this.templates.find(t => t.id == templateId);
+                    item.name = template.name;
+                    item.description = template.description;
+                }
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
+        },
+
+        areNotesTooBigToDisplay(notes) {
+            return notes.length > 50;
+        }
     },
 
     computed: {
@@ -198,8 +294,12 @@ export default {
 
     async created() {
         this.api.loading = true;
+        
         let response = await this.$http.get('/api/Items')
         this.items = response.data;
+
+        this.templates = (await this.$http.get("/api/ItemTemplates")).data;
+
         this.api.loading = false;
     }
 };
@@ -236,5 +336,9 @@ export default {
 
     .not-returned-icon {
         color: #bb4444;
+    }
+
+    .centered {
+        text-align: center;
     }
 </style>

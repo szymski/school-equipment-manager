@@ -35,7 +35,7 @@
         </tbody>
     </table>
 
-    <div class="ui segment">
+    <div v-if="api.useDevVersion" class="ui segment">
         <h3>Dodawanie zdarzeń</h3>
         <div class="ui form">
             <div class="field">

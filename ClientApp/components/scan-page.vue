@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="ui segment">
+    <div v-if="api.useDevVersion" class="ui segment">
         <button class="ui button" @click="processCode('KAR-WOJ-592479')">Nauczyciel</button>
         <button class="ui button" @click="processCode('POBR')">Pobranie</button>
         <button class="ui button" @click="processCode('ZWROT')">Zwrot</button>
@@ -169,6 +169,8 @@ export default {
                 $("#codeInput").select();
             }
         });
+
+        $("#codeInput").select();
     },
 
     async created() {

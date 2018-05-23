@@ -8,12 +8,19 @@
             <span><i v-if="item.icon" :class="{'icon': true, [item.icon]: true}"/>{{ item.display }}</span>
         </a>
 
-        <div class="item">
+        <div v-if="api.useDevVersion" class="item">
             <div class="ui inverted green progress">
                 <div class="bar">
                     <div class="progress"></div>
                 </div>
                 <div class="label"><p>😁 Gotowość projektu 😁</p></div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="ui checkbox">
+                <input type="checkbox" v-model="api.useDevVersion">
+                <label style="color:white;">Użyj wersji deweloperskiej</label>
             </div>
         </div>
 
@@ -38,7 +45,7 @@ export default {
 
     mounted() {
         $(".progress").progress({
-            percent: 40
+            percent: 70
         });
 
         $(".sidebar").sidebar();
