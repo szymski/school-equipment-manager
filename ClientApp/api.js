@@ -113,5 +113,9 @@ export const api = {
            teacherId: teacherId,
            type: type,
         })).data;
+    },
+
+    async parseCode(code) {
+        return (await axios.get("/api/BarCode/ParseCode?code=" + code)).data;
     }
 };

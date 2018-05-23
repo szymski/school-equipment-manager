@@ -12,6 +12,7 @@ import Teachers from 'components/teachers'
 import AddTeacher from 'components/add-teacher'
 import TeacherBarcodes from 'components/teacher-barcodes-page'
 import EditTeacher from 'components/edit-teacher-page'
+import ScanPage from 'components/scan-page'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna', icon: "home" },
@@ -27,5 +28,6 @@ export const routes = [
     { path: '/faq-page', component: Faq, display: 'Pomoc', icon: "question circle" },
     { path: '/teacher-barcodes/:id', component: TeacherBarcodes },
     { path: '/edit-teacher/:id', component: EditTeacher },
+    { path: '/scan', component: ScanPage, display: "Skanowanie", icon: "play" },
 ]
 

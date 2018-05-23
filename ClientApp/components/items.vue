@@ -49,11 +49,18 @@
                     </div>
                 </td>
                 <td>{{ item.description }}</td>
-                <td>{{ item.notes }}</td>
                 <td>
-                    <div class="item-location">
+                    <div class="editable-property">
+                        {{ item.notes }}
+                        <button class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
+                            <i class="pencil icon"></i>
+                        </button>
+                    </div>
+                </td>
+                <td>
+                    <div class="editable-property">
                         {{ item.location || "Brak" }}
-                        <button class="ui mini basic icon circular button edit-id-btn" @click="showEnterIdDialog(item)">
+                        <button class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
                             <i class="pencil icon"></i>
                         </button>
                     </div>
@@ -86,6 +93,30 @@
             </div>
             <div class="ui positive right labeled icon button" @click="setIdentifier(modalItem, modalIdentifier)" id="modalIdentifierButton">
                 Ustaw kod
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui modal" id="notesModal">
+        <div class="header">
+            Uwagi dla <i>{{ modalItem.name }}</i> (<i>{{ modalItem.location }}</i>)
+        </div>
+        <div class="content">
+            <div class="description">
+                <div class="ui form">
+                    <div class="field">
+                        <textarea v-model="modalNotes" id="notesModalInput"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui deny button">
+                Anuluj
+            </div>
+            <div class="ui positive right labeled icon button" @click="setNotes(modalItem, modalNotes)" id="notesModalButton">
+                Aktualizuj
                 <i class="checkmark icon"></i>
             </div>
         </div>
@@ -136,6 +167,12 @@ export default {
             $("#enterIdModal").modal("show");
         },
 
+        showNotesModal(item) {
+            this.modalItem = item;
+            this.modalNotes = item.notes || "";
+            $("#notesModal").modal("show");
+        },
+
         async setIdentifier(item, identifier) {
             try {
                 await this.api.updateItemIdentifier(item.id, identifier);
@@ -144,7 +181,7 @@ export default {
             catch(e) {
                 this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
             }
-        }
+        },
     },
 
     computed: {
@@ -153,6 +190,7 @@ export default {
 
     mounted() {
         $("#modalIdentifierInput").keyup(ev => {
+            console.log(ev.keyCode);
             if(ev.keyCode === 13)
                 $("#modalIdentifierButton").click();
         });
@@ -185,14 +223,14 @@ export default {
         opacity: 1;
     }
 
-    .item-location {
+    .editable-property {
     }
 
-    .item-location .edit-id-btn {
+    .editable-property .edit-id-btn {
         opacity: 0;
     }
 
-    .item-location:hover .edit-id-btn {
+    .editable-property:hover .edit-id-btn {
         opacity: 1;
     }
 

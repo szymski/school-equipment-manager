@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Internal;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager
@@ -49,97 +50,51 @@ namespace SchoolEquipmentManager
 
             var template2 = new ItemTemplate()
             {
-                Name = "Mysz komputerowa",
-                Description = "Tania, łatwo się psuje"
-            };
-            _dbContext.ItemTemplates.Add(template2);
-
-            var template3 = new ItemTemplate()
-            {
                 Name = "Laptop",
                 Description = "Raz działa, a raz nie"
             };
-            _dbContext.ItemTemplates.Add(template3);
+            _dbContext.ItemTemplates.Add(template2);
 
             #endregion
 
-            _dbContext.Teachers.Add(new Teacher()
-            {
-                Name = "Bartek",
-                Surname = "Kurpinix",
-                BarCode = "2137",
-            });
+            #region Teachers
 
-            _dbContext.Teachers.Add(new Teacher()
+            var teacher1 = new Teacher()
             {
-                Name = "Szymon",
-                Surname = "Dzankowski",
-                BarCode = "1337",
-            });
-
-            _dbContext.Teachers.Add(new Teacher()
-            {
-                Name = "Richard",
-                Surname = "Hendricks",
-                BarCode = "PiedPiper",
-            });
-
-            var teacherOne = new Teacher()
-            {
-                Name = "Bertram",
-                Surname = "Gilfoyle",
-                BarCode = "BitcoinPrice",
+                Name = "Karol",
+                Surname = "Wojtyła",
+                BarCode = "KAR-WOJ-592479",
             };
+            _dbContext.Teachers.Add(teacher1);
 
-            _dbContext.Teachers.Add(teacherOne);
-
-            _dbContext.Items.Add(new Item()
+            var teacher2 = new Teacher()
             {
-                ShortId = "S8-MY-0001",
-                Location = location1,
-                Template = template2,
-            });
+                Name = "Jarosław",
+                Surname = "Polskezbaw",
+                BarCode = "JAR-POL-582307",
+            };
+            _dbContext.Teachers.Add(teacher2);
 
-            _dbContext.Items.Add(new Item()
-            {
-                ShortId = null,
-                Notes = "Nie działa",
-                Location = location2,
-                Template = template1,
-            });
-
-            _dbContext.Items.Add(new Item()
-            {
-                ShortId = "S10-KO-0001",
-                Notes = "Nie działa",
-                Location = location2,
-                Template = template1,
-            });
+            #endregion
 
             var rnd = new Random();
             for (int i = 0; i < 20; i++)
             {
-                var events = new List<BorrowEvent>()
-                {
-                    new BorrowEvent()
-                    {
-                        Teacher = teacherOne,
-                        Date = DateTime.Now - TimeSpan.FromMinutes(45),
-                        Type = "borrow",
-                    }
-                };
+                var events = new List<BorrowEvent>();
 
-                if(rnd.Next(0, 2) == 0)
+                if (rnd.Next(0, 2) == 0)
+                {
                     events.Add(new BorrowEvent()
                     {
-                        Teacher = teacherOne,
-                        Date = DateTime.Now,
-                        Type = "return",
+                        Teacher = rnd.Next(0, 1) == 0 ? teacher1 : teacher2,
+                        Date = DateTime.Now - TimeSpan.FromMinutes(45),
+                        Type = "borrow",
                     });
+                }
 
                 var item = new Item()
                 {
-                    ShortId = null,
+                    ShortId = rnd.Next(0, 2) == 0 ? null : $"{rnd.Next(100000000, 999999999)}.{rnd.Next(10000, 99999)}",
                     Template = rnd.Next(0, 2) == 0 ? template1 : template2,
                     Notes = "",
                     Location = (rnd.Next(0, 2) == 0 ? location1 : location2),

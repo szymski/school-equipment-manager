@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.KeyVault.Models;
+using Microsoft.EntityFrameworkCore;
 using SchoolEquipmentManager.Logic;
 using SchoolEquipmentManager.Models;
 
@@ -16,11 +17,13 @@ namespace SchoolEquipmentManager.Controllers
     {
         private AppContext _context;
         private BarCodeManager _barcodeManager;
+        private ItemManager _itemManager;
 
-        public BarCodeController(AppContext dbContext, BarCodeManager barcodeManager)
+        public BarCodeController(AppContext dbContext, BarCodeManager barcodeManager, ItemManager itemManager)
         {
             _context = dbContext;
             _barcodeManager = barcodeManager;
+            _itemManager = itemManager;
         }
 
         [HttpGet("[action]")]
@@ -49,6 +52,51 @@ namespace SchoolEquipmentManager.Controllers
                 borrow = _barcodeManager.GetBorrowCode(teacher),
                 @return = _barcodeManager.GetReturnCode(teacher),
             });
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult ParseCode(string code)
+        {
+            if (string.IsNullOrEmpty(code))
+                return BadRequest("Nie wprowadzono kodu.");
+
+            code = code.Trim().ToLower();
+
+            if(code == "pobr")
+                return Json(new
+                {
+                    type = "borrow",
+                });
+
+            if (code == "zwrot")
+                return Json(new
+                {
+                    type = "return",
+                });
+
+            var teacher = _context.Teachers.FirstOrDefault(t => t.BarCode.ToLower() == code);
+            if (teacher != null)
+                return Json(new
+                {
+                    type = "teacher",
+                    id = teacher.Id,
+                });
+
+            var item = _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).FirstOrDefault(i => i.ShortId.ToLower() == code);
+            if (item != null)
+            {
+                var whoBorrowed = _itemManager.GetWhoBorrowed(item);
+
+                return Json(new
+                {
+                    type = "item",
+                    id = item.Id,
+                    alreadyBorrowed = whoBorrowed != null,
+                    whoBorrowed = whoBorrowed?.Id,
+                });
+            }
+
+            return BadRequest("Kod nie został rozpoznany.");
         }
     }
 }

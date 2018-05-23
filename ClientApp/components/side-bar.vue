@@ -51,7 +51,7 @@ export default {
     methods: {
         navigate(route) {
             router.push(route);
-        }
+        },
     }
 };
 </script>
