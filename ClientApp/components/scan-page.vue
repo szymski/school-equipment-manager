@@ -4,7 +4,7 @@
         <button class="ui button" @click="processCode('KAR-WOJ-592479')">Nauczyciel</button>
         <button class="ui button" @click="processCode('POBR')">Pobranie</button>
         <button class="ui button" @click="processCode('ZWROT')">Zwrot</button>
-        <button class="ui button" @click="processCode('974050523.83391')">Przedmiot</button>
+        <button class="ui button" @click="processCode('165063918.54584')">Przedmiot</button>
     </div>
 
     <error-display/>
@@ -18,6 +18,7 @@
     </div>
 
     <div v-if="teacher">
+        <div class="logout-text">Wylogowanie za {{ displayTime }}</div>
         <h2 class="scan-teacher-code-text">{{ teacher.name }} {{ teacher.surname }}</h2>
 
         <div v-if="!currentAction">
@@ -38,7 +39,7 @@
                         <i class="times circle outline icon failed-icon"/>
                     </div>
                     <h1 class="scan-item-code-text">
-                        Przedmiot {{ item.name }} już został pobrany przez nauczyciela {{ borrowedTeacher.name }} {{ borrowedTeacher.surname }}
+                        Przedmiot {{ item.name }} <span v-if="item.location && item.location != ''">({{ item.location }})</span> już został pobrany przez nauczyciela {{ borrowedTeacher.name }} {{ borrowedTeacher.surname }}
                     </h1>
                 </div>
                 <div v-else-if="!alreadyBorrowed && currentAction == 'return'">
@@ -46,7 +47,7 @@
                         <i class="times circle outline icon failed-icon"/>
                     </div>
                     <h1 class="scan-item-code-text">
-                        Przedmiot {{ item.name }} nie został wcześniej pobrany
+                        Przedmiot {{ item.name }} <span v-if="item.location && item.location != ''">({{ item.location }})</span> nie został wcześniej pobrany
                     </h1>
                 </div>
                 <div v-else>
@@ -55,7 +56,7 @@
                     </div>
                     <h1 class="scan-item-code-text">
                         {{ ({ "borrow": "Pobrano", "return": "Zwrócono" })[currentAction] }}
-                        przedmiot {{ item.name }}
+                        przedmiot {{ item.name }} <span v-if="item.location && item.location != ''">({{ item.location }})</span>
                     </h1>
                 </div>
             </div>
@@ -71,25 +72,20 @@ import { parse } from 'querystring';
 export default {
     data() {
         return {
+            codeInput: "",
+
             teacher: null,
             currentAction: null,
             item: null,
             alreadyBorrowed: false,
             borrowedTeacher: null,
 
-            codeInput: "",
+            logoutDate: null,
+            displayTime: "00:00",
         };
     },
 
     methods: {
-        async reload() {
-            
-        },
-
-        async addEvent() {
-            
-        },
-
         async processCode(code) {
             this.api.loading = true;
 
@@ -103,6 +99,7 @@ export default {
                     this.teacher = this.api.teachers[parsed.id];
                     this.currentAction = null;
                     this.item = null;
+                    this.refreshLogoutDate();
 
                     this.api.loading = false;
                     return;
@@ -131,6 +128,8 @@ export default {
                 }
 
                 if(parsed.type == "item") {
+                    this.refreshLogoutDate();
+
                     this.alreadyBorrowed = parsed.alreadyBorrowed;
                     this.item = await this.api.getItem(parsed.id);
                     
@@ -159,6 +158,11 @@ export default {
 
             this.api.loading = false;
         },
+
+        refreshLogoutDate() {
+            var minutesToAdd = 2;
+            this.logoutDate = new Date(new Date().getTime() + minutesToAdd * 60000);
+        }
     },
 
     mounted() {
@@ -179,11 +183,41 @@ export default {
         await this.api.fetchTeachers();
 
         this.api.loading = false;
+
+        setInterval(() => {
+            if(!this.teacher || !this.logoutDate)
+                return;
+
+            var timespan = new Date(this.logoutDate.getTime() - new Date().getTime());
+
+            if(this.logoutDate.getTime() < new Date().getTime()) {
+                this.teacher = null;
+                return;
+            }
+
+            var hours = timespan.getMinutes();
+            var minutes = timespan.getSeconds();
+
+            if (hours < 10)
+                hours = "0" + hours;
+            if (minutes < 10)
+                minutes = "0" + minutes;
+
+            this.displayTime = "" + hours + ":" + minutes;
+        }, 1000);
     },
 };
 </script>
 
 <style>
+    .logout-text {
+        display: block;
+        margin-top: 1em;
+        margin-bottom: -2em;
+        text-align: center;
+        color: rgb(179, 179, 179);
+    }
+
     .scan-teacher-code-text {
         text-align: center;
     }

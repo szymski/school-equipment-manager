@@ -57,6 +57,8 @@ export default {
         },
 
         async submit() {
+            this.api.clearError();
+
             try {
                 await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template, number: this.number });
                 router.push("/items");

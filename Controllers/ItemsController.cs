@@ -91,7 +91,7 @@ namespace SchoolEquipmentManager.Controllers
         [HttpGet("[action]")]
         public IActionResult Get(int id)
         {
-            var item = _context.Items.Include(i => i.Location).FirstOrDefault(i => i.Id == id);
+            var item = _context.Items.Include(i => i.Location).Include(i => i.Template).FirstOrDefault(i => i.Id == id);
 
             if (item == null)
                 return BadRequest("Nie ma takiego przedmiotu.");
@@ -239,19 +239,23 @@ namespace SchoolEquipmentManager.Controllers
             if (model.Number > 100)
                 return BadRequest("Nie można dodać więcej niż 100 przedmiotów naraz.");
 
+            List<Item> addedItems = new List<Item>();
+
             for (int i = 0; i < model.Number; i++)
             {
-                _context.Items.Add(new Item()
+                var item = new Item()
                 {
                     ShortId = null,
                     Notes = model.Notes,
                     Location = location,
                     Template = template,
-                });
+                };
+                addedItems.Add(item);
+                _context.Items.Add(item);
             }
             _context.SaveChanges();
 
-            return Ok();
+            return Json(addedItems.Select(i => i.Id));
         }
     }
 }

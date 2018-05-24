@@ -49,6 +49,8 @@ export default {
             $(event.srcElement).removeClass("loading");
         },
         async addLocation() {
+            this.api.clearError();
+
             try {
                 await this.$http.post("/api/Locations/Add", { name: this.newLocationName });
                 this.locations = await this.api.getLocations();

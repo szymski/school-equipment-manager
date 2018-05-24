@@ -33,6 +33,8 @@ export default {
 
     methods: {
         async submit() {
+            this.api.clearError();
+
             try {
                 await this.$http.post("/api/ItemTemplates/Add", { name: this.name, description: this.description});
                 router.push("/item-templates");

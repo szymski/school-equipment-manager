@@ -46,6 +46,8 @@ export default {
 
     methods: {
         async submit() {
+            this.api.clearError();
+
             try {
                 var response = await this.api.addTeacher(this.name, this.surname, this.barcode);
                 router.push("/teachers");

@@ -93,7 +93,7 @@
     <!-- Identifier modal -->
     <div class="ui modal" id="enterIdModal">
         <div class="header">
-            Wprowadź identyfikator dla <i>{{ modalItem.name }}</i> (<i>{{ modalItem.location }}</i>)
+            Wprowadź identyfikator dla <i>{{ modalItem.name }}</i> <template v-if="modalItem.location && modalItem.location != ''">(<i>{{ modalItem.location }}</i>)</template>
         </div>
         <div class="content">
             <div class="description">
@@ -120,7 +120,7 @@
     <!-- Notes modal -->
     <div class="ui modal" id="notesModal">
         <div class="header">
-            Uwagi dla <i>{{ modalItem.name }}</i> (<i>{{ modalItem.location }}</i>)
+            Uwagi dla <i>{{ modalItem.name }}</i> <template v-if="modalItem.location && modalItem.location != ''">(<i>{{ modalItem.location }}</i>)</template>
         </div>
         <div class="content">
             <div class="description">
