@@ -26,12 +26,28 @@ export const api = {
         await axios.post("/api/Items/UpdateTemplate", { id: itemId, template: templateId });
     },
 
+    async updateItemLocation(itemId, locationId) {
+        await axios.post("/api/Items/UpdateLocation", { id: itemId, location: locationId });
+    },
+
     async getItem(itemId) {
         return (await axios.get("/api/Items/Get?id=" + itemId)).data;
     },
 
     async getLocations() {
         return (await axios.get("/api/Locations")).data;
+    },
+
+    async getLocationsAsTable() {
+        var temp = (await axios.get("/api/Locations")).data;
+
+        var locations = { };
+
+        temp.forEach(l => {
+            locations[l.id] = l;
+        });
+
+        return locations;
     },
 
     async fetchTeachers() {

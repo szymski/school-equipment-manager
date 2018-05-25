@@ -49,6 +49,12 @@ namespace SchoolEquipmentManager.Controllers
             public int Template { get; set; }
         }
 
+        public class UpdateLocationViewModel
+        {
+            public int Id { get; set; }
+            public int Location { get; set; }
+        }
+
         public class AddEventViewModel
         {
             [Required(ErrorMessage = "Id przedmiotu jest wymagane.")]
@@ -81,7 +87,8 @@ namespace SchoolEquipmentManager.Controllers
                     template = i.Template?.Id ?? 0,
                     notes = i.Notes,
                     description = i.Template != null ? i.Template.Description : "",
-                    location = i.Location != null ? i.Location.Name : "",
+                    location = i.Location?.Id ?? 0,
+                    locationName = i.Location?.Name ?? "",
                     returned = _itemManager.HasBeenReturned(i),
                 });
 
@@ -104,7 +111,8 @@ namespace SchoolEquipmentManager.Controllers
                 template = item.Template?.Id ?? 0,
                 notes = item.Notes,
                 description = item.Template != null ? item.Template.Description : "",
-                location = item.Location != null ? item.Location.Name : "",
+                location = item.Location?.Id ?? 0,
+                locationName = item.Location?.Name ?? "",
             });
         }
 
@@ -207,6 +215,29 @@ namespace SchoolEquipmentManager.Controllers
                     return BadRequest("Nie ma takiego typu przedmiotu.");
 
                 item.Template = template;
+            }
+
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult UpdateLocation([FromBody] UpdateLocationViewModel model)
+        {
+            var item = _context.Items.Include(i => i.Location).FirstOrDefault(i => i.Id == model.Id);
+            if (item == null)
+                return BadRequest("Nie ma przedmiotu o takim id.");
+
+            if (model.Location == 0)
+                item.Location = null;
+            else
+            {
+                var location = _context.Locations.FirstOrDefault(t => t.Id == model.Location);
+                if (location == null)
+                    return BadRequest("Nie ma takiego położenia.");
+
+                item.Location = location;
             }
 
             _context.SaveChanges();

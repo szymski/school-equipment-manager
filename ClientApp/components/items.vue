@@ -32,7 +32,7 @@
             <tr v-for="(item, index) in filterItems(items)" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
                 <td style="text-align:center;">
-                    <div v-if="item.shortId" class="item-short-id">
+                    <div v-if="item.shortId" class="item-short-id single line">
                         {{ item.shortId }}
                         <button class="ui mini basic icon circular button edit-id-btn" @click="showEnterIdDialog(item)">
                             <i class="pencil icon"></i>
@@ -42,7 +42,7 @@
                 </td>
                 <td>
                     <div :data-tooltip="item.returned ? null : 'Ten przedmiot nie został jeszcze zwrócony.'">
-                        <div class="editable-property" v-if="item.name && item.name != ''">
+                        <div class="editable-property single line" v-if="item.name && item.name != ''">
                             <i v-if="!item.returned" class="exclamation circle icon not-returned-icon"/>
                             <a @click="goToEventList(item.id)">
                                 {{ item.name }}
@@ -63,7 +63,7 @@
                 </td>
                 <td>{{ item.description }}</td>
                 <td>
-                    <div class="editable-property">
+                    <div class="editable-property single line">
                         <div v-if="!areNotesTooBigToDisplay(item.notes)">
                             {{ item.notes }}
                             <button class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
@@ -76,9 +76,9 @@
                     </div>
                 </td>
                 <td>
-                    <div class="editable-property">
-                        {{ item.location || "Brak" }}
-                        <button class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
+                    <div class="editable-property single line">
+                        {{ item.location == 0 ? "Brak" : item.locationName }}
+                        <button class="ui mini basic icon circular button edit-id-btn" @click="showLocationModal(item)">
                             <i class="pencil icon"></i>
                         </button>
                     </div>
@@ -169,6 +169,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Location modal -->
+    <div class="ui modal" id="locationModal">
+        <div class="header">
+            Zmień położenie przedmiotu
+        </div>
+        <div class="content">
+            <div class="description">
+                <div class="ui form">
+                    <div class="field">
+                        <select v-model="modalLocation" class="ui dropdown">
+                            <option value="0">Brak</option>
+                            <option v-for="item in locations" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui deny button">
+                Anuluj
+            </div>
+            <div class="ui positive right labeled icon button" @click="setItemLocation(modalItem, modalLocation)" id="locationModalButton">
+                Aktualizuj
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -180,6 +208,7 @@ export default {
         return {
             items: [ ],
             templates: [ ],
+            locations: { },
             searchText: "",
 
             modalItem: { },
@@ -189,6 +218,8 @@ export default {
             modalNotes: "",
 
             modalTemplate: 0,
+
+            modalLocation: 0,
         };
     },
 
@@ -234,6 +265,12 @@ export default {
             $("#templateModal").modal("show");
         },
 
+        showLocationModal(item) {
+            this.modalItem = item;
+            this.modalLocation = item.location; 
+            $("#locationModal").modal("show");
+        },
+
         async setIdentifier(item, identifier) {
             try {
                 await this.api.updateItemIdentifier(item.id, identifier);
@@ -275,6 +312,20 @@ export default {
             }
         },
 
+        async setItemLocation(item, locationId) {
+            try {
+                await this.api.updateItemLocation(item.id, locationId);
+
+                item.location = locationId;
+
+                if(locationId != 0)
+                    item.locationName = this.locations[locationId].name;
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
+        },
+
         areNotesTooBigToDisplay(notes) {
             return notes.length > 50;
         }
@@ -299,6 +350,8 @@ export default {
         this.items = response.data;
 
         this.templates = (await this.$http.get("/api/ItemTemplates")).data;
+
+        this.locations = await this.api.getLocationsAsTable();
 
         this.api.loading = false;
     }

@@ -78,7 +78,7 @@ namespace SchoolEquipmentManager
             #endregion
 
             var rnd = new Random();
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var events = new List<BorrowEvent>();
 

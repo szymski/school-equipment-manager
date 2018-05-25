@@ -195,15 +195,15 @@ export default {
                 return;
             }
 
-            var hours = timespan.getMinutes();
-            var minutes = timespan.getSeconds();
+            var minutes = timespan.getMinutes();
+            var seconds = timespan.getSeconds();
 
-            if (hours < 10)
-                hours = "0" + hours;
             if (minutes < 10)
                 minutes = "0" + minutes;
+            if (seconds < 10)
+                seconds = "0" + seconds;
 
-            this.displayTime = "" + hours + ":" + minutes;
+            this.displayTime = "" + minutes + ":" + seconds;
         }, 1000);
     },
 };

@@ -5,7 +5,13 @@
         </div>
 
         <a class="item" v-if="item.display" v-for="(item, index) in routes" :key="index" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
-            <span><i v-if="item.icon" :class="{'icon': true, [item.icon]: true}"/>{{ item.display }}</span>
+            <div>
+                <i v-if="item.icon" :class="{'icon': true, [item.icon]: true}"/>
+                <span>{{ item.display }}</span>
+                <template v-if="item.path == '/messages'">
+                    <div class="ui circular red label message-count">2</div>
+                </template>
+            </div>
         </a>
 
         <div v-if="api.useDevVersion" class="item">
@@ -113,5 +119,19 @@ export default {
 
 .user-header {
     text-align: center;
+}
+
+.message-count {
+    /* display: absolute !important; */
+    position: absolute !important;
+    top: 50%;
+    bottom: 50%;
+    margin: auto !important;
+    /* position: absolute;
+    margin-left: auto !important;
+    right: 1em;
+    margin: 0 !important; */
+
+    right: 1em !important;
 }
 </style>

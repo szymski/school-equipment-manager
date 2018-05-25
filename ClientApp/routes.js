@@ -16,6 +16,7 @@ import ScanPage from 'components/scan-page'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna', icon: "home" },
+    { path: '/messages', component: ScanPage, display: "Wiadomości", icon: "envelope" },
     { path: '/items', component: Items, display: 'Wyposażenie', icon: "clipboard list" },
     { path: '/add-item', component: AddItem },
     { path: '/locations', component: Locations, display: 'Położenia', icon: "map marker alternate" },
