@@ -4,11 +4,41 @@ import { isString } from 'util';
 export const api = {
     useDevVersion: true,
     loggedIn: false,
+    authToken: null,
     loading: false,
     username: "SuperUser",
     teachers: null,
     
     currentError: null,
+
+    async updateUserInfo() {
+        var data = (await axios.get("/api/General/GetUserInfo")).data;
+        this.loggedIn = data.loggedIn;
+        this.username = data.username;
+
+        console.log("User data: ", data);
+    },
+  
+    async login(username, password) {
+        var data = (await axios.post("/api/General/Login", {
+            username: username,
+            password: password,
+        })).data;
+
+        this.authToken = data.auth_token;
+        this.loggedIn = true;
+
+        console.log("Auth token: ", this.authToken);
+        localStorage.authToken = this.authToken;
+
+        return data;
+    },
+
+    async logout() {
+        localStorage.removeItem("authToken");
+        this.loggedIn = false;
+        this.authToken = null;
+    },
 
     async getDashboardInfo() {
         return (await axios.get("/api/General/GeneralInfo")).data;

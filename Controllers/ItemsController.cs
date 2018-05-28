@@ -34,6 +34,7 @@ namespace SchoolEquipmentManager.Controllers
         public class UpdateShortIdViewModel
         {
             public int Id { get; set; }
+            [Required]
             public string Identifier { get; set; }
         }
 
@@ -173,12 +174,17 @@ namespace SchoolEquipmentManager.Controllers
         [HttpPost("[action]")]
         public IActionResult UpdateShortId([FromBody] UpdateShortIdViewModel model)
         {
+            model.Identifier = model.Identifier.ToUpper();
+
             var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
             if (item == null)
                 return BadRequest("Nie ma przedmiotu o takim id.");
 
             if (_context.Items.Any(i => i.Id != item.Id && i.ShortId == model.Identifier))
                 return BadRequest("Istnieje już przedmiot z takim identyfikatorem.");
+
+            if (_context.Teachers.Any(t => t.BarCode == model.Identifier))
+                return BadRequest("Istnieje już nauczyciel z takim identyfikatorem.");
 
             item.ShortId = model.Identifier;
             _context.SaveChanges();

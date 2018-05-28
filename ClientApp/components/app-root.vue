@@ -1,6 +1,6 @@
 <template>
     <div id="app" class="pushable">
-        <div v-if="loggedIn">
+        <div v-if="api.loggedIn">
             <side-bar/>
             <div class="pusher">
                 <div class="ui basic segment">
@@ -17,15 +17,16 @@
             <div class="ui one column stackable center aligned page grid">
                 <div class="ui eight wide column">
                     <div class="ui raised segment login-box">
+                        <error-display/>
                         <h3>Wymagane zalogowanie</h3>
                         <div class="ui form">
                             <div class="ui field">
-                                <input type="text" placeholder="Login">
+                                <input type="text" placeholder="Login" v-model="username">
                             </div>
                             <div class="ui field">
-                                <input type="password" placeholder="Hasło">
+                                <input type="password" placeholder="Hasło" v-model="password">
                             </div>
-                            <button class="ui fluid primary button">Zaloguj</button>
+                            <button id="loginButton" class="ui fluid primary button" @click="login">Zaloguj</button>
                         </div>
                     </div>
                 </div>
@@ -43,11 +44,38 @@ Vue.component("home-page", HomePage);
 Vue.component("side-bar", SideBar);
 
 export default {
-  data() {
-    return {
-        loggedIn: true,
-    };
-  }
+    data() {
+        return {
+            username: "",
+            password: "",
+        };
+    },
+
+    async created() {
+        this.api.loading = true;
+
+        await this.api.updateUserInfo();
+
+        this.api.loading = false;
+    },
+
+    methods: {
+        async login() {
+            this.api.clearError();
+
+            $("#loginButton").addClass("loading");
+
+            try {
+                await this.api.login(this.username, this.password);
+                await this.api.updateUserInfo();
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
+            
+            $("#loginButton").removeClass("loading");
+        }
+    }
 };
 </script>
 

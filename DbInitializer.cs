@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
 using SchoolEquipmentManager.Models;
 
@@ -10,10 +11,12 @@ namespace SchoolEquipmentManager
     public class DbInitializer
     {
         private AppContext _dbContext;
+        private UserManager<ApplicationUser> _userManager;
 
-        public DbInitializer(AppContext dbContext)
+        public DbInitializer(AppContext dbContext, UserManager<ApplicationUser> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public void Initialize()
@@ -74,6 +77,32 @@ namespace SchoolEquipmentManager
                 BarCode = "JAR-POL-582307",
             };
             _dbContext.Teachers.Add(teacher2);
+
+            var teacher3 = new Teacher()
+            {
+                Name = "Szymon",
+                Surname = "Jankowski",
+                BarCode = "SZY-JAN-021370",
+            };
+            _dbContext.Teachers.Add(teacher3);
+
+            var task = _userManager.CreateAsync(new ApplicationUser()
+            {
+                UserName = "admin",
+                Teacher = teacher3,
+            }, "123456");
+            task.Wait();
+
+            var result = task.Result;
+            if(!result.Succeeded)
+                throw new Exception("User creation failed.");
+
+            var task2 = _userManager.CreateAsync(new ApplicationUser()
+            {
+                UserName = "karol",
+                Teacher = teacher1,
+            }, "12345678");
+            task2.Wait();
 
             #endregion
 

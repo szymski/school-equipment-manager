@@ -24,6 +24,18 @@ Vue.mixin({
     }
 })
 
+api.authToken = localStorage.authToken;
+
+axios.interceptors.request.use((config) => {
+    var authToken = api.authToken;
+    if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
+    }
+    return config;
+}, (err) => {
+    return Promise.reject(err);
+});
+
 const app = new Vue({
     store,
     router,

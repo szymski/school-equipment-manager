@@ -2,6 +2,9 @@
     <div class="ui visible sidebar inverted vertical menu left">
         <div class="item user-header">
             Witaj, {{ api.username }}!
+            <a class="logout-button" @click="logout">
+                <i class="sign out icon" title="Wyloguj"/>
+            </a>
         </div>
 
         <a class="item" v-if="item.display" v-for="(item, index) in routes" :key="index" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
@@ -65,6 +68,10 @@ export default {
         navigate(route) {
             router.push(route);
         },
+
+        async logout() {
+            await this.api.logout();
+        }
     }
 };
 </script>
@@ -133,5 +140,13 @@ export default {
     margin: 0 !important; */
 
     right: 1em !important;
+}
+
+.logout-button {
+    position: absolute !important;
+    margin: auto !important;
+
+    right: 0.8em !important;
+    margin-top: -2px !important;
 }
 </style>

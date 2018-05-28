@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager
 {
-    public class AppContext : DbContext
+    public class AppContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public DbSet<Item> Items { get; set; }
         public DbSet<Location> Locations { get; set; }

@@ -111,9 +111,12 @@ namespace SchoolEquipmentManager.Controllers
             if (_context.Teachers.Any(t => t.Id != teacher.Id && t.BarCode.ToLower() == model.BarCode.ToLower()))
                 return BadRequest("Istnieje już nauczyciel z takim kodem kreskowym.");
 
+            if (_context.Items.Any(i => i.ShortId.ToUpper() == model.BarCode.ToUpper()))
+                return BadRequest("Istnieje już przedmiot z takim kodem kreskowym.");
+
             teacher.Name = model.Name;
             teacher.Surname = model.Surname;
-            teacher.BarCode = model.BarCode;
+            teacher.BarCode = model.BarCode?.ToUpper() ?? "";
 
             _context.SaveChanges();
 
