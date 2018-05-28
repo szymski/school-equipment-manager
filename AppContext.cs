@@ -15,6 +15,7 @@ namespace SchoolEquipmentManager
         public DbSet<Location> Locations { get; set; }
         public DbSet<ItemTemplate> ItemTemplates { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public AppContext(DbContextOptions<AppContext> options) : base(options)
         {
@@ -29,6 +30,9 @@ namespace SchoolEquipmentManager
             modelBuilder.Entity<Item>().HasOne(i => i.Template);
             modelBuilder.Entity<BorrowEvent>().HasOne(e => e.Teacher);
             modelBuilder.Entity<Item>().HasMany(i => i.Events).WithOne(e => e.Item).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Teacher>().HasMany(t => t.Messages).WithOne(m => m.Recipent)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

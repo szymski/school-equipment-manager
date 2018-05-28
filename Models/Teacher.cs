@@ -11,5 +11,6 @@ namespace SchoolEquipmentManager.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string BarCode { get; set; }
+        public List<Message> Messages { get; set; }
     }
 }

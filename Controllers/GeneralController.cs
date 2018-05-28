@@ -47,7 +47,7 @@ namespace SchoolEquipmentManager.Controllers
         [AllowAnonymous]
         public IActionResult GetUserInfo()
         {
-            var user = _userGetter.GetCurrentUser(u => u.Include(u2 => u2.Teacher));
+            var user = _userGetter.GetCurrentUser(u => u.Include(u2 => u2.Teacher).ThenInclude(t => t.Messages));
 
             if (user == null)
                 return Json(new
@@ -59,6 +59,7 @@ namespace SchoolEquipmentManager.Controllers
             {
                 loggedIn = true,
                 username = $"{user.Teacher.Name} {user.Teacher.Surname}",
+                messageCount = user.Teacher.Messages.Count(m => !m.Read),
             });
         }
 

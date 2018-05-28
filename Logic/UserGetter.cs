@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Logic
@@ -30,7 +31,7 @@ namespace SchoolEquipmentManager.Logic
             if (idClaim == null)
                 return null;
 
-            var users = _userManager.Users.ToList();
+            var users = _userManager.Users.Include(u => u.Teacher).ToList();
 
             return users.FirstOrDefault(u => u.Id == idClaim.Value);
 
@@ -45,7 +46,7 @@ namespace SchoolEquipmentManager.Logic
             if (idClaim == null)
                 return null;
 
-            var users = includeFunc(_userManager.Users).ToList();
+            var users = includeFunc(_userManager.Users.Include(u => u.Teacher)).ToList();
 
             return users.FirstOrDefault(u => u.Id == idClaim.Value);
         }

@@ -12,7 +12,9 @@
                 <i v-if="item.icon" :class="{'icon': true, [item.icon]: true}"/>
                 <span>{{ item.display }}</span>
                 <template v-if="item.path == '/messages'">
-                    <div class="ui circular red label message-count">2</div>
+                    <div v-if="api.messageCount && api.messageCount" class="ui circular red label message-count">
+                        {{ api.messageCount }}
+                    </div>
                 </template>
             </div>
         </a>

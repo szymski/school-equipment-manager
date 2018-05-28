@@ -7,6 +7,7 @@ export const api = {
     authToken: null,
     loading: false,
     username: "SuperUser",
+    messageCount: 2,
     teachers: null,
     
     currentError: null,
@@ -15,8 +16,7 @@ export const api = {
         var data = (await axios.get("/api/General/GetUserInfo")).data;
         this.loggedIn = data.loggedIn;
         this.username = data.username;
-
-        console.log("User data: ", data);
+        this.messageCount = data.messageCount;
     },
   
     async login(username, password) {
@@ -28,7 +28,6 @@ export const api = {
         this.authToken = data.auth_token;
         this.loggedIn = true;
 
-        console.log("Auth token: ", this.authToken);
         localStorage.authToken = this.authToken;
 
         return data;
@@ -176,5 +175,13 @@ export const api = {
 
     async parseCode(code) {
         return (await axios.get("/api/BarCode/ParseCode?code=" + code)).data;
-    }
+    },
+
+    async getMessages() {
+        return (await axios.get("/api/Messages")).data;
+    },
+
+    async getMessage(messageId) {
+        return (await axios.get("/api/Messages/Get/" + messageId)).data;
+    },
 };

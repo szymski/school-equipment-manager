@@ -83,6 +83,23 @@ namespace SchoolEquipmentManager
                 Name = "Szymon",
                 Surname = "Jankowski",
                 BarCode = "SZY-JAN-021370",
+                Messages = new List<Message>()
+                {
+                    new Message()
+                    {
+                        Date = DateTime.Now,
+                        Title = "Witaj w systemie!",
+                        Body = "To jest testowa wiadomość.",
+                        Read = false,
+                    },
+                    new Message()
+                    {
+                        Date = DateTime.Now,
+                        Title = "Druga wiadomość",
+                        Body = "To jest już druga testowa wiadomość.",
+                        Read = false,
+                    }
+                }
             };
             _dbContext.Teachers.Add(teacher3);
 

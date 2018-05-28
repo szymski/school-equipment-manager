@@ -13,10 +13,13 @@ import AddTeacher from 'components/add-teacher'
 import TeacherBarcodes from 'components/teacher-barcodes-page'
 import EditTeacher from 'components/edit-teacher-page'
 import ScanPage from 'components/scan-page'
+import MessagesPage from 'components/messages-page'
+import ViewMessagePage from 'components/view-message-page'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna', icon: "home" },
-    { path: '/messages', component: ScanPage, display: "Wiadomości", icon: "envelope" },
+    { path: '/messages', component: MessagesPage, display: "Wiadomości", icon: "envelope" },
+    { path: '/view-message/:id', component: ViewMessagePage },
     { path: '/items', component: Items, display: 'Wyposażenie', icon: "clipboard list" },
     { path: '/add-item', component: AddItem },
     { path: '/locations', component: Locations, display: 'Położenia', icon: "map marker alternate" },
