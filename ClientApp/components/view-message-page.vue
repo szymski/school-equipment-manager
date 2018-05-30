@@ -8,9 +8,7 @@
             <h5 class="ui top attached header">
                 {{ date }}
             </h5>
-            <div class="ui attached segment">
-                {{ body }}
-            </div>
+            <div class="ui attached segment" v-html="body"></div>
         </template>
     </div>
 </template>
@@ -49,6 +47,8 @@ export default {
         }
 
         this.api.loading = false;
+
+        this.api.updateUserInfo();
     }
 }
 </script>

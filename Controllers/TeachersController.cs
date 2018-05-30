@@ -14,18 +14,16 @@ namespace SchoolEquipmentManager.Controllers
     [Route("api/[controller]")]
     public class TeachersController : Controller
     {
-        private AppContext _context;
-        private ItemManager _itemManager;
-        private UserManager<ApplicationUser> _userManager;
-
         public class NewTeacherModel
         {
             [Required(ErrorMessage = "Pole Imię jest wymagane.")]
             [MinLength(2, ErrorMessage = "Imię musi mieć przynajmniej 2 znaki.")]
             public string Name { get; set; }
+
             [Required(ErrorMessage = "Pole Nazwisko jest wymagane.")]
             [MinLength(2, ErrorMessage = "Nazwisko musi mieć przynajmniej 2 znaki.")]
             public string Surname { get; set; }
+
             public string BarCode { get; set; }
 
             public bool EnableAccount { get; set; }
@@ -33,11 +31,20 @@ namespace SchoolEquipmentManager.Controllers
             public string Email { get; set; }
         }
 
-        public TeachersController(AppContext dbContext, ItemManager itemManager, UserManager<ApplicationUser> userManager)
+        private AppContext _context;
+        private ItemManager _itemManager;
+        private UserManager<ApplicationUser> _userManager;
+        private UserGetter _userGetter;
+        private IMessageService _messageService;
+
+        public TeachersController(AppContext dbContext, ItemManager itemManager,
+            UserManager<ApplicationUser> userManager, IMessageService messageService, UserGetter userGetter)
         {
             _context = dbContext;
             _itemManager = itemManager;
             _userManager = userManager;
+            _messageService = messageService;
+            _userGetter = userGetter;
         }
 
         public IEnumerable<dynamic> Index()
@@ -52,7 +59,8 @@ namespace SchoolEquipmentManager.Controllers
                     name = t.Name,
                     surname = t.Surname,
                     barcode = t.BarCode,
-                    borrowedItems = _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).ToList().Count(i => _itemManager.GetWhoBorrowed(i)?.Id == t.Id),
+                    borrowedItems = _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).ToList()
+                        .Count(i => _itemManager.GetWhoBorrowed(i)?.Id == t.Id),
                 });
             }
 
@@ -97,7 +105,8 @@ namespace SchoolEquipmentManager.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (_context.Teachers.Any(t => t.Name.ToLower() == model.Name.ToLower() && t.Surname.ToLower() == model.Surname.ToLower()))
+            if (_context.Teachers.Any(t =>
+                t.Name.ToLower() == model.Name.ToLower() && t.Surname.ToLower() == model.Surname.ToLower()))
                 return BadRequest("Istnieje już nauczyciel z takim imieniem i nazwiskiem.");
 
             if (_context.Teachers.Any(t => t.BarCode.ToLower() == model.BarCode.ToLower()))
@@ -113,7 +122,14 @@ namespace SchoolEquipmentManager.Controllers
             _context.Teachers.Add(teacher);
             _context.SaveChanges();
 
-            return Json(teacher);
+            _messageService.SendMessage(teacher,
+                "Witaj w systemie ewidencji inwentarzu!",
+                "Wejdź do zakładki pomoc by dowiedzieć się jak skorzystać z systemu.");
+
+            return Json(new
+            {
+                teacherId = teacher.Id,
+            });
         }
 
         [HttpPost("[action]/{id}")]
@@ -127,7 +143,9 @@ namespace SchoolEquipmentManager.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (_context.Teachers.Any(t => t.Id != teacher.Id && t.Name.ToLower() == model.Name.ToLower() && t.Surname.ToLower() == model.Surname.ToLower()))
+            if (_context.Teachers.Any(t =>
+                t.Id != teacher.Id && t.Name.ToLower() == model.Name.ToLower() &&
+                t.Surname.ToLower() == model.Surname.ToLower()))
                 return BadRequest("Istnieje już nauczyciel z takim imieniem i nazwiskiem.");
 
             if (_context.Teachers.Any(t => t.Id != teacher.Id && t.BarCode.ToLower() == model.BarCode.ToLower()))
@@ -157,8 +175,8 @@ namespace SchoolEquipmentManager.Controllers
                     user = new ApplicationUser()
                     {
                         Teacher = teacher,
-                        UserName = model.Username,
-                        Email = model.Email,
+                        UserName = model.Username.Trim(),
+                        Email = model.Email.Trim(),
                     };
 
                     // TODO: Better password generator.
@@ -166,13 +184,17 @@ namespace SchoolEquipmentManager.Controllers
 
                     await _userManager.CreateAsync(user, generatedPassword);
 
+                    _messageService.SendMessage(teacher,
+                        "Nowe hasło",
+                        $"Dla twojego konta zostało wygenerowane nowe hasło: <b>{generatedPassword}</b><br>Powinieneś je zmienić w zakładce moje konto.");
+
                     accountCreated = true;
                 }
                 // Update user account
                 else
                 {
-                    user.UserName = model.Username;
-                    user.Email = model.Email;
+                    user.UserName = model.Username.Trim();
+                    user.Email = model.Email.Trim();
                 }
             }
             else
@@ -184,9 +206,20 @@ namespace SchoolEquipmentManager.Controllers
                     await _userManager.DeleteAsync(user);
             }
 
+            var oldBarcode = teacher.BarCode;
+
             teacher.Name = model.Name;
             teacher.Surname = model.Surname;
-            teacher.BarCode = model.BarCode?.ToUpper() ?? "";
+            teacher.BarCode = model.BarCode?.Trim().ToUpper() ?? "";
+
+            // Send a message that the barcode has been changed
+            if (!string.IsNullOrEmpty(teacher.BarCode) && oldBarcode.ToUpper().Trim() != teacher.BarCode)
+            {
+                _messageService.SendMessage(teacher,
+                    "Ustawiono nowy identyfikator dla konta",
+                    $"Dla twojego konta został ustawiony nowy identyfikator: {model.BarCode?.Trim().ToUpper()}<br><br>" +
+                    $"<img src='/api/BarCode/Generate?text={model.BarCode.Trim().ToUpper()}'/>");
+            }
 
             _context.SaveChanges();
 
@@ -200,21 +233,59 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpPost("[action]/{id}")]
-        public IActionResult Remove(int id)
+        public async Task<IActionResult> Remove(int id)
         {
             var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
 
             if (teacher == null)
                 return BadRequest("Taki nauczyciel nie istnieje.");
 
-            foreach (var ev in _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).SelectMany(i => i.Events))
+            var loggedUser = _userGetter.GetCurrentUser();
+            if (loggedUser.Teacher.Id == teacher.Id)
+                return BadRequest("Nie możesz usunąć własnego profilu.");
+
+            foreach (var ev in _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher)
+                .SelectMany(i => i.Events))
                 if (ev.Teacher?.Id == teacher.Id)
                     ev.Teacher = null;
+
+            var user = _context.Users.Include(u => u.Teacher).FirstOrDefault(u => u.Teacher.Id == teacher.Id);
+            if (user != null)
+                await _userManager.DeleteAsync(user);
 
             _context.Remove(teacher);
             _context.SaveChanges();
 
             return Ok();
+        }
+
+        [HttpPost("[action]/{id}")]
+        public async Task<IActionResult> ResetPassword(int id)
+        {
+            var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
+
+            if (teacher == null)
+                return BadRequest("Taki nauczyciel nie istnieje.");
+
+            // TODO: Check if the user has rights to do this.
+
+            var user = _context.Users.Include(u => u.Teacher).FirstOrDefault(u => u.Teacher.Id == teacher.Id);
+            if (user == null)
+                return BadRequest("Ten nauczyciel nie ma aktywowanego konta.");
+
+            var generatedPassword = new Random().Next(10000000, 99999999).ToString();
+
+            await _userManager.RemovePasswordAsync(user);
+            await _userManager.AddPasswordAsync(user, generatedPassword);
+
+            _messageService.SendMessage(teacher,
+                "Nowe hasło",
+                $"Dla twojego konta zostało wygenerowane nowe hasło: <b>{generatedPassword}</b><br>Powinieneś je zmienić w zakładce moje konto.");
+
+            return Json(new
+            {
+                generatedPassword = generatedPassword,
+            });
         }
     }
 }

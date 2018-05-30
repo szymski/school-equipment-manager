@@ -41,14 +41,15 @@
                     <input type="text" v-model="email">
                 </div>
 
-                <button class="ui button" @click="save">Zresetuj hasło</button>
+                <button class="ui button" @click="resetPassword">Zresetuj hasło</button>
             </div>
         </div>
 
         <button class="ui primary button" @click="save">Zapisz</button>
-        <button class="ui right floated red button" @click="showRemoveDialog">Usuń nauczyciela</button>
+        <button class="ui right floated red button" @click="showRemoveDialog" :disabled="api.teacherId == teacher.id">Usuń nauczyciela</button>
     </div>
 
+    <!-- Removal confirmation dialog -->
     <div class="ui modal" id="removeModal">
         <div class="header">
             Czy na pewno chcesz usunąć nauczyciela <i>{{ teacher.name }} {{ teacher.surname }}</i>?
@@ -64,6 +65,24 @@
             </div>
             <div class="ui deny red right button" @click="remove">
                 Usuń
+            </div>
+        </div>
+    </div>
+
+    <!-- Generated password dialog -->
+    <div class="ui modal" id="generatedPasswordModal">
+        <div class="header">
+            Wygenerowano hasło dla  nauczyciela <i>{{ teacher.name }} {{ teacher.surname }}</i>
+        </div>
+        <div class="content">
+            <div class="description">
+                <p>Zostało wygenerowane nowe hasło. Przekaż je nauczycielowi:</p>
+                <h2 class="generated-password-text">{{ modalPassword }}</h2>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui green deny right button" @click="closeGeneratedPasswordModal">
+                Gotowe
             </div>
         </div>
     </div>
@@ -85,15 +104,38 @@ export default {
             enableAccount: false,
             username: "",
             email: "",
+
+            modalPassword: "",
         };
     },
 
     methods: {
         async save() {
             try {
-                await this.api.updateTeacher(this.teacher.id, this.name, this.surname, this.barcode,
+                var data = await this.api.updateTeacher(this.teacher.id, this.name, this.surname, this.barcode,
                     this.enableAccount, this.username, this.email);
-                router.push("/teachers");
+
+                if(data && data.generatedPassword) {
+                    this.modalPassword = data.generatedPassword;
+                    $("#generatedPasswordModal").modal("show");
+                }
+                else {
+                    router.push("/teachers");
+                    this.api.updateUserInfo();
+                }
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
+        },
+
+        async resetPassword() {
+            this.api.clearError();
+
+            try {
+                var data = await this.api.resetPassword(this.teacher.id);
+                this.modalPassword = data.generatedPassword;
+                $("#generatedPasswordModal").modal("show");
             }
             catch(e) {
                 this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
@@ -120,6 +162,11 @@ export default {
 
         generateBarcode() {
             this.barcode = this.api.generateBarcodeForTeacher(this.name, this.surname);
+        },
+
+        closeGeneratedPasswordModal() {
+            $("#removeModal").modal("hide");
+            router.push("/teachers");
         }
     },
 
@@ -147,5 +194,7 @@ export default {
 </script>
 
 <style>
-
+    .generated-password-text {
+        text-align: center;
+    }
 </style>

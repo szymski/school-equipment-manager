@@ -46,12 +46,14 @@ Vue.component("side-bar", SideBar);
 export default {
     data() {
         return {
+            loggingIn: false,
+
             username: "",
             password: "",
         };
     },
 
-    mounted() {
+    updated() {
         $("[id=loginField]").keyup(ev => {
             if(ev.keyCode === 13)
                 $("#loginButton").click();
@@ -68,6 +70,11 @@ export default {
 
     methods: {
         async login() {
+            if(this.loggingIn)
+                return;
+
+            this.loggingIn = true;
+
             this.api.clearError();
 
             $("#loginButton").addClass("loading");
@@ -81,6 +88,8 @@ export default {
             }
             
             $("#loginButton").removeClass("loading");
+
+            this.loggingIn = false;
         }
     }
 };

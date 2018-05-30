@@ -7,7 +7,8 @@ export const api = {
     authToken: null,
     loading: false,
     username: "SuperUser",
-    messageCount: 2,
+    teacherId: null,
+    messageCount: 0,
     teachers: null,
     
     currentError: null,
@@ -16,6 +17,7 @@ export const api = {
         var data = (await axios.get("/api/General/GetUserInfo")).data;
         this.loggedIn = data.loggedIn;
         this.username = data.username;
+        this.teacherId = data.teacherId;
         this.messageCount = data.messageCount;
     },
   
@@ -95,7 +97,7 @@ export const api = {
     },
 
     async addTeacher(name, surname, barcode) {
-        return await axios.post("/api/Teachers/Add", { name: name, surname: surname, barcode: barcode });
+        return (await axios.post("/api/Teachers/Add", { name: name, surname: surname, barcode: barcode })).data;
     },
 
     async updateTeacher(id, name, surname, barcode, enableAccount, username, email) {
@@ -112,6 +114,10 @@ export const api = {
 
     async removeTeacher(id) {
         return await axios.post("/api/Teachers/Remove/" + id);
+    },
+
+    async resetPassword(teacherId) {
+        return (await axios.post("/api/Teachers/ResetPassword/" + teacherId)).data;
     },
 
     async getEvents(itemId) {

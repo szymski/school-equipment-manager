@@ -57,6 +57,7 @@ namespace Vue2Spa
             services.AddTransient<BarCodeManager>();
             services.AddTransient<ItemManager>();
             services.AddTransient<UserGetter>();
+            services.AddScoped<IMessageService, MessageService>();
 
             #region Jwt
 

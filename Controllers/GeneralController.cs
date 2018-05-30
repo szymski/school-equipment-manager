@@ -58,6 +58,7 @@ namespace SchoolEquipmentManager.Controllers
             return Json(new
             {
                 loggedIn = true,
+                teacherId = user.Teacher.Id,
                 username = $"{user.Teacher.Name} {user.Teacher.Surname}",
                 messageCount = user.Teacher.Messages.Count(m => !m.Read),
             });

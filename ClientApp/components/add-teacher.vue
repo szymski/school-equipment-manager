@@ -35,8 +35,6 @@ export default {
             name: "",
             surname: "",
             barcode: "",
-
-            error: null,
         }
     },
 
