@@ -20,10 +20,10 @@
                         <error-display/>
                         <h3>Wymagane zalogowanie</h3>
                         <div class="ui form">
-                            <div class="ui field">
+                            <div class="ui field" id="loginField">
                                 <input type="text" placeholder="Login" v-model="username">
                             </div>
-                            <div class="ui field">
+                            <div class="ui field" id="loginField">
                                 <input type="password" placeholder="Hasło" v-model="password">
                             </div>
                             <button id="loginButton" class="ui fluid primary button" @click="login">Zaloguj</button>
@@ -49,6 +49,13 @@ export default {
             username: "",
             password: "",
         };
+    },
+
+    mounted() {
+        $("[id=loginField]").keyup(ev => {
+            if(ev.keyCode === 13)
+                $("#loginButton").click();
+        });  
     },
 
     async created() {

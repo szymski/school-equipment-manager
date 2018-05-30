@@ -23,6 +23,28 @@
                 </div>
             </div>
 
+        <div class="ui segments">
+            <h5 class="ui top attached segment">
+                <div class="ui checkbox">
+                    <input type="checkbox" v-model="enableAccount">
+                    <label>Zezwól na logowanie</label>
+                </div>
+            </h5>
+            <div v-if="enableAccount" class="ui attached segment">
+                <div class="field">
+                    <label>Nazwa użytkownika</label>
+                    <input type="text" v-model="username">
+                </div>
+
+                <div class="field">
+                    <label>Adres E-Mail</label>
+                    <input type="text" v-model="email">
+                </div>
+
+                <button class="ui button" @click="save">Zresetuj hasło</button>
+            </div>
+        </div>
+
         <button class="ui primary button" @click="save">Zapisz</button>
         <button class="ui right floated red button" @click="showRemoveDialog">Usuń nauczyciela</button>
     </div>
@@ -59,13 +81,18 @@ export default {
             name: "",
             surname: "",
             barcode: "",
+
+            enableAccount: false,
+            username: "",
+            email: "",
         };
     },
 
     methods: {
         async save() {
             try {
-                await this.api.updateTeacher(this.teacher.id, this.name, this.surname, this.barcode);
+                await this.api.updateTeacher(this.teacher.id, this.name, this.surname, this.barcode,
+                    this.enableAccount, this.username, this.email);
                 router.push("/teachers");
             }
             catch(e) {
@@ -101,9 +128,14 @@ export default {
 
         try {
             this.teacher = await this.api.getTeacher(this.$route.params.id);
+            
             this.name = this.teacher.name;
             this.surname = this.teacher.surname;
             this.barcode = this.teacher.barcode;
+
+            this.enableAccount = this.teacher.enableAccount;
+            this.username = this.teacher.username || "";
+            this.email = this.teacher.email || "";
         }
         catch(e) {
             this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));

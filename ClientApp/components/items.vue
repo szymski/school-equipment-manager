@@ -337,7 +337,6 @@ export default {
 
     mounted() {
         $("#modalIdentifierInput").keyup(ev => {
-            console.log(ev.keyCode);
             if(ev.keyCode === 13)
                 $("#modalIdentifierButton").click();
         });

@@ -98,8 +98,16 @@ export const api = {
         return await axios.post("/api/Teachers/Add", { name: name, surname: surname, barcode: barcode });
     },
 
-    async updateTeacher(id, name, surname, barcode) {
-        return await axios.post("/api/Teachers/Update/" + id, { id: id, name: name, surname: surname, barcode: barcode });
+    async updateTeacher(id, name, surname, barcode, enableAccount, username, email) {
+        return (await axios.post("/api/Teachers/Update/" + id, {
+            id: id,
+            name: name,
+            surname: surname,
+            barcode: barcode,
+            enableAccount: enableAccount,
+            username: username,
+            email: email,
+        })).data;
     },
 
     async removeTeacher(id) {
