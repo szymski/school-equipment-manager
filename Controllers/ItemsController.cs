@@ -174,7 +174,7 @@ namespace SchoolEquipmentManager.Controllers
         [HttpPost("[action]")]
         public IActionResult UpdateShortId([FromBody] UpdateShortIdViewModel model)
         {
-            model.Identifier = model.Identifier.ToUpper();
+            model.Identifier = model.Identifier.Trim().ToUpper();
 
             var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
             if (item == null)

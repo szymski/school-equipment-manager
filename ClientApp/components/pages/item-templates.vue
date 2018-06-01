@@ -31,11 +31,34 @@
                 <td>{{ itemTemplate.description }}</td>
                 <td style="text-align:center;">{{ itemTemplate.useCount }}</td>
                 <td>
-                    <button class="ui fluid small red button" @click="removeItem(itemTemplate.id, $event)">Usuń</button>
+                    <button class="ui fluid small red button" @click="tryRemoveItem(itemTemplate, $event)">Usuń</button>
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <!-- Removal confirmation dialog -->
+    <div class="ui modal" id="removeModal">
+        <div class="header">
+            Czy na pewno chcesz usunąć typ <i>{{ modalTemplate.name }}</i>?
+        </div>
+        <div class="content">
+            <div class="description">
+                <p>
+                    Ten typ przedmiotu został użyty {{ modalTemplate.useCount }} {{ modalTemplate.useCount == 1 ? "raz" : "razy" }}.
+                    Po usunięciu przedmioty używające tego typu nie będą miały żadnego typu.
+                </p>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui deny button">
+                Anuluj
+            </div>
+            <div class="ui deny red right button" @click="removeItem(modalTemplate)">
+                Usuń
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -47,6 +70,12 @@ export default {
         return {
             items: [ ],
             searchText: "",
+
+            modalTemplate: {
+                id: 0,
+                name: "",
+                useCount: 0,
+            }
         };
     },
 
@@ -59,12 +88,25 @@ export default {
             router.push("/add-template");
         },
 
-        async removeItem(id, event) {
-            $(event.srcElement).addClass("loading");
-            await this.$http.post('/api/ItemTemplates/Remove/' + id);
+        async tryRemoveItem(item, event) {
+            if(item.useCount == 0)
+                await this.removeItem(item, event);
+            else {
+                this.modalTemplate = item;
+                $("#removeModal").modal("show");
+            }
+        },
+
+        async removeItem(item, event) {
+            if(event)
+                $(event.srcElement).addClass("loading");
+
+            await this.$http.post('/api/ItemTemplates/Remove/' + item.id);
             let response = await this.$http.get('/api/ItemTemplates')
             this.items = response.data;
-            $(event.srcElement).removeClass("loading");
+
+            if(event)
+                $(event.srcElement).removeClass("loading");
         }
     },
 

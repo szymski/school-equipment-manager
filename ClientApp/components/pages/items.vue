@@ -25,7 +25,7 @@
                 <th>Opis</th>
                 <th>Uwagi</th>
                 <th class="collapsing">Położenie</th>
-                <th></th>
+                <th class="collapsing"></th>
             </tr>
         </thead>
         <tbody>

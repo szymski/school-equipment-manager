@@ -119,6 +119,9 @@ namespace SchoolEquipmentManager.Controllers
             if (_context.Teachers.Any(t => t.BarCode.ToLower() == model.BarCode.ToLower()))
                 return BadRequest("Istnieje już nauczyciel z takim kodem kreskowym.");
 
+            if (_context.Items.Any(i => i.ShortId.ToLower() == model.BarCode.ToLower()))
+                return BadRequest("Istnieje już przedmiot z takim kodem kreskowym.");
+
             var teacher = new Teacher()
             {
                 Name = model.Name,
@@ -131,7 +134,7 @@ namespace SchoolEquipmentManager.Controllers
 
             _messageService.SendMessage(teacher,
                 "Witaj w systemie ewidencji inwentarzu!",
-                "Wejdź do zakładki pomoc by dowiedzieć się jak skorzystać z systemu.");
+                "Wejdź do zakładki pomoc by dowiedzieć się jak skorzystać z systemu.<br>Nie zapomnij też zmienić hasła w zakładce <i>Moje konto</i>.");
 
             return Json(new
             {
@@ -158,7 +161,7 @@ namespace SchoolEquipmentManager.Controllers
             if (_context.Teachers.Any(t => t.Id != teacher.Id && t.BarCode.ToLower() == model.BarCode.ToLower()))
                 return BadRequest("Istnieje już nauczyciel z takim kodem kreskowym.");
 
-            if (_context.Items.Any(i => i.ShortId.ToUpper() == model.BarCode.ToUpper()))
+            if (_context.Items.Any(i => i.ShortId.ToLower() == model.BarCode.ToLower()))
                 return BadRequest("Istnieje już przedmiot z takim kodem kreskowym.");
 
             bool accountCreated = false;

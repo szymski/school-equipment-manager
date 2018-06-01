@@ -94,22 +94,6 @@ namespace SchoolEquipmentManager.Controllers
             {
                 SymmetricSecurityKey signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthHelper.Secret));
 
-                //var token = new JwtSecurityToken(AuthHelper.Issuer, AuthHelper.Audience,
-                //    claims: _jwtFactory.GenerateClaimsIdentity(user.UserName, user.Id),
-                //    expires: DateTime.UtcNow.AddDays(1),
-                //    signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256));
-
-                //return Json(new
-                //{
-                //    token = token.EncodedHeader,
-                //});
-
-                //var claims = _jwtFactory.GenerateClaimsIdentity(user.UserName, user.Id);
-                //var jwt = await AuthHelper.GenerateJwt(claims, _jwtFactory, user.UserName, _jwtIssuerOptions,
-                //    new JsonSerializerSettings());
-
-                //return Ok(jwt);
-
                 var claims = new[]
                 {
                     new Claim("id", user.Id),
