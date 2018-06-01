@@ -112,6 +112,13 @@ export const api = {
         })).data;
     },
 
+    async updateTeacherSelf(email, password) {
+        return (await axios.post("/api/Teachers/UpdateSelf", {
+            email: email,
+            password: password,
+        })).data;
+    },
+
     async removeTeacher(id) {
         return await axios.post("/api/Teachers/Remove/" + id);
     },

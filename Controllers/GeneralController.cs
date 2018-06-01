@@ -67,10 +67,14 @@ namespace SchoolEquipmentManager.Controllers
         [HttpGet("[action]")]
         public IActionResult GeneralInfo()
         {
+            var borrowedTodayCount = _context.Items.Include(i => i.Events)
+                .SelectMany(i => i.Events).Count(e => e.Type == "borrow" && e.Date > DateTime.Today);
+
             return Json(new
             {
                 totalItems = _context.Items.Count(),
                 borrowedItems = _context.Items.Include(i => i.Events).ToList().Count(i => !_itemManager.HasBeenReturned(i)),
+                borrowedTodayCount = borrowedTodayCount,
             });
         }
 

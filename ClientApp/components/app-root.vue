@@ -37,10 +37,8 @@
 
 <script>
 import Vue from "vue";
-import HomePage from "./home-page";
 import SideBar from "./side-bar";
 
-Vue.component("home-page", HomePage);
 Vue.component("side-bar", SideBar);
 
 export default {

@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1>Test</h1>
+    <h1>Pomoc</h1>
 
     <div class="ui styled fluid accordion">
         <div class="title">
@@ -11,6 +11,39 @@
             <p class="transition hidden">
                 Strona, na której się znajdujesz, służy do zarządzania inwentarzem.
                 TODO
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Czym są położenia przedmiotów?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                Położeniem przedmiotu jest miejsce, w którym przedmiot ma być docelowo przechowywany.
+                Przy pobraniu przedmiotu przez nauczyciela, jego położenie nie ulega zmianie.
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Czym są typy przedmiotów?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                Aby uniknąć powielania informacji przy każdym dodanym przedmiocie, dostępne są typy przedmiotów.
+                Każdy dodany przedmiot posiada swój typ, który zawiera nazwę przedmiotu oraz jego opis.
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Jak wygląda procedura pobrania i zwrotu przedmiotu?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                Nauczyciel, który zamierza pobrać dany przedmiot, najpierw skanuje skanerem swój kod kreskowy pobrania, a następnie skanuje kod przedmiotu. Zeskanowanie kodu pobrania następuje tylko raz.<br>
+                Przy zwrocie przedmiotu należy zeskanować kod zwrotu oraz kod przedmiotu.
             </p>
         </div>
 
@@ -47,17 +80,33 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Lista zmian
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                <div class="ui relaxed divided list">
                     <div class="item">
-                        <a class="ui tiny image">
-                            <img src="http://url.szymekk.me/i6cvw">
-                        </a>
-                        <div class="middle aligned content">
-                            <div class="header">
-                                Linus Torvalds
-                            </div>
-                            <div class="description">
-                                Bóg. Stworzył Gita, a bez niego dostałbym zawału.
-                            </div>
+                        <div class="content">
+                            <div class="header">23.05.2018</div>
+                            <div class="description">Dodano opcje pobierania i zwracania przedmiotów przy pomocy skanera kodów kreskowych</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">20.05.2018</div>
+                            <div class="description">Dodano tę informację</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">15.01.2018</div>
+                            <div class="description">Rozpoczęto prace nad systemem</div>
                         </div>
                     </div>
                 </div>
@@ -68,7 +117,7 @@
 </template>
 
 <script>
-import router from "../router.js";
+import router from "../../router.js";
 
 export default {
     data() {

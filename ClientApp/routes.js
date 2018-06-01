@@ -1,20 +1,21 @@
-import HomePage from 'components/home-page'
-import Items from 'components/items'
-import AddItem from 'components/add-item'
-import Locations from 'components/locations'
-import ItemTemplates from 'components/item-templates'
-import AddTemplate from 'components/add-template'
-import Test from 'components/test-page'
-import Faq from 'components/faq-page'
-import Report from 'components/report'
-import ViewEvents from 'components/view-events'
-import Teachers from 'components/teachers'
-import AddTeacher from 'components/add-teacher'
-import TeacherBarcodes from 'components/teacher-barcodes-page'
-import EditTeacher from 'components/edit-teacher-page'
-import ScanPage from 'components/scan-page'
-import MessagesPage from 'components/messages-page'
-import ViewMessagePage from 'components/view-message-page'
+import HomePage from 'components/pages/home-page'
+import Items from 'components/pages/items'
+import AddItem from 'components/pages/add-item'
+import Locations from 'components/pages/locations'
+import ItemTemplates from 'components/pages/item-templates'
+import AddTemplate from 'components/pages/add-template'
+import Test from 'components/pages/test-page'
+import Faq from 'components/pages/faq-page'
+import Report from 'components/pages/report'
+import ViewEvents from 'components/pages/view-events'
+import Teachers from 'components/pages/teachers'
+import AddTeacher from 'components/pages/add-teacher'
+import TeacherBarcodes from 'components/pages/teacher-barcodes-page'
+import EditTeacher from 'components/pages/edit-teacher-page'
+import ScanPage from 'components/pages/scan-page'
+import MessagesPage from 'components/pages/messages-page'
+import ViewMessagePage from 'components/pages/view-message-page'
+import MyAccountPage from 'components/pages/my-account-page'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna', icon: "home" },
@@ -33,5 +34,6 @@ export const routes = [
     { path: '/teacher-barcodes/:id', component: TeacherBarcodes },
     { path: '/edit-teacher/:id', component: EditTeacher },
     { path: '/scan', component: ScanPage, display: "Skanowanie", icon: "play" },
+    { path: '/my-account', component: MyAccountPage, display: "Moje konto", icon: "address card" },
 ]
 

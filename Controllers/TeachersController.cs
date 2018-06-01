@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,12 @@ namespace SchoolEquipmentManager.Controllers
             public bool EnableAccount { get; set; }
             public string Username { get; set; }
             public string Email { get; set; }
+        }
+
+        public class UpdateSelfViewModel
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
         }
 
         private AppContext _context;
@@ -228,6 +235,48 @@ namespace SchoolEquipmentManager.Controllers
                 {
                     generatedPassword = generatedPassword,
                 });
+
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateSelf([FromBody] UpdateSelfViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(model);
+
+            var user = _userGetter.GetCurrentUser();
+            var teacher = user.Teacher;
+
+            if (model.Email != user.Email)
+            {
+                if (!string.IsNullOrEmpty(model.Email))
+                {
+                    model.Email = model.Email.Trim();
+
+                    try
+                    {
+                        var parsed = new MailAddress(model.Email);
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest("Podano nieprawidłowy adres E-Mail.");
+                    }
+                }
+
+                user.Email = model.Email;
+            }
+
+            if (!string.IsNullOrEmpty(model.Password))
+            {
+                if (model.Password.Length < 6)
+                    return BadRequest("Minimalna długość hasła to 6 znaków.");
+
+                await _userManager.RemovePasswordAsync(user);
+                await _userManager.AddPasswordAsync(user, model.Password);
+            }
+
+            _context.SaveChanges();
 
             return Ok();
         }

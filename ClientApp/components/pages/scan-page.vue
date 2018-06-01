@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import router from "../router.js";
+import router from "../../router.js";
 import { parse } from 'querystring';
 
 export default {

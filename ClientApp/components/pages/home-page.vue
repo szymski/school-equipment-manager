@@ -3,9 +3,9 @@
         <h1>Strona główna</h1>
         <p>Witaj na stronie systemu ewidencji inwentarzu szkolnego.</p>
 
-        <div v-if="info" class="ui stackable equal width grid">
+        <div v-if="info" class="ui stackable two column equal width grid">
             <div class="ui column">
-                <div class="ui segment">
+                <div class="ui segment dashboard-entry">
                     <div class="dashboard-entry-wrapper">
                         <p class="number">{{ info.totalItems }}</p>
                         <p class="description">Liczba przedmiotów</p>
@@ -13,10 +13,19 @@
                 </div>
             </div>
             <div class="ui column">
-                <div class="ui segment">
+                <div class="ui segment dashboard-entry">
                     <div class="dashboard-entry-wrapper">
                         <p class="number">{{ info.borrowedItems }}</p>
                         <p class="description">Niezwrócone przedmioty</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui column">
+                <div class="ui segment dashboard-entry">
+                    <div class="dashboard-entry-wrapper">
+                        <p class="number">{{ info.borrowedTodayCount }}</p>
+                        <p class="description">Liczba pobrań dzisiaj</p>
                     </div>
                 </div>
             </div>
