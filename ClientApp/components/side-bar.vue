@@ -56,7 +56,7 @@ export default {
 
     mounted() {
         $(".progress").progress({
-            percent: 70
+            percent: 80
         });
 
         $(".sidebar").sidebar();

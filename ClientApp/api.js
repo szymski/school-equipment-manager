@@ -154,6 +154,21 @@ export const api = {
         barcode += "-";
         barcode += Math.floor((Math.random() * 899999) + 100000);;
 
+        var replaceSymbols = {
+            "Ą": "A",
+            "Ć": "C",
+            "Ę": "E",
+            "Ł": "L",
+            "Ń": "N",
+            "Ó": "O",
+            "Ś": "S",
+            "Ź": "Z",
+            "Ż": "Z",
+        };
+
+        for(var key in replaceSymbols)
+            barcode = barcode.replace(new RegExp(key, "g"), replaceSymbols[key]);
+
         return barcode;
     },
 

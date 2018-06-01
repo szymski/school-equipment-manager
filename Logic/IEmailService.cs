@@ -6,9 +6,9 @@ using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager.Logic
 {
-    public interface IMessageService
+    public interface IEmailService
     {
-        Task SendMessage(Teacher recipent, string title, string body);
-        Task SendMessageToAll(string title, string body);
+        void SendEmail(ApplicationUser recipent, string title, string body);
+        void SendEmail(string address, string title, string body);
     }
 }

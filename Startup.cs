@@ -58,6 +58,7 @@ namespace Vue2Spa
             services.AddTransient<ItemManager>();
             services.AddTransient<UserGetter>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IEmailService, EmailService>().Configure<EmailServiceOptions>(Configuration.GetSection("Email"));
 
             #region Jwt
 
