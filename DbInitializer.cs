@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
+using SchoolEquipmentManager.Logic;
 using SchoolEquipmentManager.Models;
 
 namespace SchoolEquipmentManager
@@ -12,16 +13,20 @@ namespace SchoolEquipmentManager
     {
         private AppContext _dbContext;
         private UserManager<ApplicationUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
 
-        public DbInitializer(AppContext dbContext, UserManager<ApplicationUser> userManager)
+        public DbInitializer(AppContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public void Initialize()
         {
             _dbContext.Database.EnsureCreated();
+
+            CreateRoles().Wait();
 
             if (_dbContext.Items.Any())
                 return;
@@ -103,23 +108,32 @@ namespace SchoolEquipmentManager
             };
             _dbContext.Teachers.Add(teacher3);
 
-            var task = _userManager.CreateAsync(new ApplicationUser()
             {
-                UserName = "admin",
-                Teacher = teacher3,
-            }, "123456");
-            task.Wait();
+                var user = new ApplicationUser()
+                {
+                    UserName = "admin",
+                    Email = "szymskipl@gmail.com",
+                    Teacher = teacher3,
+                };
 
-            var result = task.Result;
-            if(!result.Succeeded)
-                throw new Exception("User creation failed.");
+                var task = _userManager.CreateAsync(user, "123456");
+                task.Wait();
 
-            var task2 = _userManager.CreateAsync(new ApplicationUser()
+                _userManager.AddToRoleAsync(user, Roles.Administrator).Wait();
+            }
+
             {
-                UserName = "karol",
-                Teacher = teacher1,
-            }, "12345678");
-            task2.Wait();
+                var user = new ApplicationUser()
+                {
+                    UserName = "karol",
+                    Teacher = teacher1,
+                };
+
+                var task = _userManager.CreateAsync(user, "123456");
+                task.Wait();
+
+                _userManager.AddToRoleAsync(user, Roles.Moderator).Wait();
+            }
 
             #endregion
 
@@ -150,6 +164,14 @@ namespace SchoolEquipmentManager
             }
 
             _dbContext.SaveChanges();
+        }
+
+        public async Task CreateRoles()
+        {
+            if (!await _roleManager.RoleExistsAsync(Roles.Administrator))
+                await _roleManager.CreateAsync(new IdentityRole(Roles.Administrator));
+            if (!await _roleManager.RoleExistsAsync(Roles.Moderator))
+                await _roleManager.CreateAsync(new IdentityRole(Roles.Moderator));
         }
     }
 }

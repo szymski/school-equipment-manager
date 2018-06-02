@@ -44,7 +44,7 @@ export default {
             this.barcodes = { base: this.barcodes.base };
         }
         catch(e) {
-            this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
         }
 
         this.api.loading = false;

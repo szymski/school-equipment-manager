@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using SchoolEquipmentManager.Models;
 namespace SchoolEquipmentManager.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class TeachersController : Controller
     {
         public class NewTeacherModel
@@ -30,6 +32,7 @@ namespace SchoolEquipmentManager.Controllers
             public bool EnableAccount { get; set; }
             public string Username { get; set; }
             public string Email { get; set; }
+            public string Role { get; set; }
         }
 
         public class UpdateSelfViewModel
@@ -54,28 +57,42 @@ namespace SchoolEquipmentManager.Controllers
             _userGetter = userGetter;
         }
 
-        public IEnumerable<dynamic> Index()
+        public async Task<IActionResult> Index()
         {
             var teachers = new List<dynamic>();
 
             foreach (var t in _context.Teachers.ToList())
             {
-                teachers.Add(new
-                {
-                    id = t.Id,
-                    name = t.Name,
-                    surname = t.Surname,
-                    barcode = t.BarCode,
-                    borrowedItems = _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).ToList()
-                        .Count(i => _itemManager.GetWhoBorrowed(i)?.Id == t.Id),
-                });
+                var user = _context.Users.Include(u => u.Teacher).FirstOrDefault(u => u.Teacher.Id == t.Id);
+
+                if (user == null)
+                    teachers.Add(new
+                    {
+                        id = t.Id,
+                        name = t.Name,
+                        surname = t.Surname,
+                        barcode = t.BarCode,
+                        borrowedItems = _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).ToList()
+                            .Count(i => _itemManager.GetWhoBorrowed(i)?.Id == t.Id),
+                    });
+                else
+                    teachers.Add(new
+                    {
+                        id = t.Id,
+                        name = t.Name,
+                        surname = t.Surname,
+                        barcode = t.BarCode,
+                        borrowedItems = _context.Items.Include(i => i.Events).ThenInclude(e => e.Teacher).ToList()
+                            .Count(i => _itemManager.GetWhoBorrowed(i)?.Id == t.Id),
+                        role = (await _userManager.GetRolesAsync(user)).FirstOrDefault()?.ToLower() ?? "user",
+                    });
             }
 
-            return teachers;
+            return Json(teachers);
         }
 
         [HttpGet("[action]")]
-        public dynamic Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
 
@@ -85,16 +102,16 @@ namespace SchoolEquipmentManager.Controllers
             var user = _context.Users.Include(u => u.Teacher).FirstOrDefault(u => u.Teacher.Id == teacher.Id);
 
             if (user == null)
-                return new
+                return Json(new
                 {
                     id = teacher.Id,
                     name = teacher.Name,
                     surname = teacher.Surname,
                     barcode = teacher.BarCode,
                     enableAccount = false,
-                };
+                });
 
-            return new
+            return Json(new
             {
                 id = teacher.Id,
                 name = teacher.Name,
@@ -103,10 +120,12 @@ namespace SchoolEquipmentManager.Controllers
                 enableAccount = true,
                 username = user.UserName,
                 email = user.Email,
-            };
+                role = (await _userManager.GetRolesAsync(user)).FirstOrDefault()?.ToLower() ?? "user",
+            });
         }
 
         [HttpPost("[action]")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Add([FromBody] NewTeacherModel model)
         {
             if (!ModelState.IsValid)
@@ -143,6 +162,7 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpPost("[action]/{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Update(int id, [FromBody] NewTeacherModel model)
         {
             var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
@@ -175,6 +195,9 @@ namespace SchoolEquipmentManager.Controllers
                 if (model.Username.Length < 2)
                     return BadRequest("Nazwa użytkownika musi mieć przynajmniej 2 znaki.");
 
+                if (model.Role != "administrator" && model.Role != "moderator" && model.Role != "user")
+                    return BadRequest("Rola nie jest prawidłowa.");
+
                 var user = _context.Users.Include(u => u.Teacher).FirstOrDefault(u => u.Teacher.Id == teacher.Id);
 
                 // TODO: Check if username or email already exists.
@@ -206,6 +229,24 @@ namespace SchoolEquipmentManager.Controllers
                     user.UserName = model.Username.Trim();
                     user.Email = model.Email.Trim();
                 }
+
+                var currentRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault()?.ToLower() ?? "user";
+
+                if (currentRole != model.Role)
+                {
+                    var currentUser = _userGetter.GetCurrentUser();
+
+                    if (currentUser.Id == user.Id)
+                        return BadRequest("Nie możesz zmienić swojej roli.");
+
+                    if(currentRole != "user")
+                        await _userManager.RemoveFromRoleAsync(user, currentRole);
+
+                    if (model.Role == "administrator")
+                        await _userManager.AddToRoleAsync(user, Roles.Administrator);
+                    else if (model.Role == "moderator")
+                        await _userManager.AddToRoleAsync(user, Roles.Moderator);
+                }
             }
             else
             {
@@ -228,7 +269,7 @@ namespace SchoolEquipmentManager.Controllers
                 _messageService.SendMessage(teacher,
                     "Ustawiono nowy identyfikator dla konta",
                     $"Dla twojego konta został ustawiony nowy identyfikator: {model.BarCode?.Trim().ToUpper()}<br><br>" +
-                    $"<img src='/api/BarCode/Generate?text={model.BarCode.Trim().ToUpper()}'/>");
+                    $"<img src='{Request.Scheme}://{Request.Host}/api/BarCode/Generate?text={model.BarCode.Trim().ToUpper()}'/>");
             }
 
             _context.SaveChanges();
@@ -285,6 +326,7 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpPost("[action]/{id}")]
+        [Authorize(Roles = Roles.Administrator)]
         public async Task<IActionResult> Remove(int id)
         {
             var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
@@ -312,6 +354,7 @@ namespace SchoolEquipmentManager.Controllers
         }
 
         [HttpPost("[action]/{id}")]
+        [Authorize(Roles = Roles.Administrator)]
         public async Task<IActionResult> ResetPassword(int id)
         {
             var teacher = _context.Teachers.FirstOrDefault(t => t.Id == id);
@@ -341,3 +384,4 @@ namespace SchoolEquipmentManager.Controllers
         }
     }
 }
+

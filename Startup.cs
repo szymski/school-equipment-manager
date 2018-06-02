@@ -65,6 +65,7 @@ namespace Vue2Spa
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -74,7 +75,7 @@ namespace Vue2Spa
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = "localhost",
-                    ValidAudience ="webApi",
+                    ValidAudience = "webApi",
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthHelper.Secret)),
                 };
             });
@@ -86,7 +87,7 @@ namespace Vue2Spa
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AppContext dbContext, UserManager<ApplicationUser> userManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AppContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -104,7 +105,7 @@ namespace Vue2Spa
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            new DbInitializer(dbContext, userManager).Initialize();
+            new DbInitializer(dbContext, userManager, roleManager).Initialize();
 
             app.UseStaticFiles();
 

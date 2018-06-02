@@ -20,6 +20,10 @@
                 <input disabled type="text" v-model="username">
             </div>
             <div class="field">
+                <label>Rola</label>
+                <input disabled type="text" :value="({ 'administrator': 'Administrator', 'moderator': 'Moderator', 'user': 'Zwykły użytkownik' })[role]">
+            </div>
+            <div class="field">
                 <label>Adres E-Mail</label>
                 <input type="text" v-model="email">
             </div>
@@ -67,6 +71,7 @@ export default {
 
             name: "",
             surname: "",
+            role: "",
             email: "",
             username: "",
 
@@ -82,6 +87,7 @@ export default {
         this.name = data.name;
         this.surname = data.surname;
         this.username = data.username;
+        this.role = data.role;
         this.email = data.email;
     
         this.api.loading = false;
@@ -108,7 +114,7 @@ export default {
                 $("#doneModal").modal("show");
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
 
             this.loading = false;

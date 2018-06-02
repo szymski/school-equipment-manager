@@ -3,12 +3,17 @@ import { isString } from 'util';
 
 export const api = {
     useDevVersion: true,
+    loading: false,
+    
     loggedIn: false,
     authToken: null,
-    loading: false,
     username: "SuperUser",
+    role: "",
     teacherId: null,
     messageCount: 0,
+    isAdmin: false,
+    isMod: false,
+
     teachers: null,
     
     currentError: null,
@@ -19,6 +24,10 @@ export const api = {
         this.username = data.username;
         this.teacherId = data.teacherId;
         this.messageCount = data.messageCount;
+        this.role = data.role;
+
+        this.isAdmin = this.role == "administrator";
+        this.isMod = this.role == "administrator" || this.role == "moderator";
     },
   
     async login(username, password) {
@@ -100,7 +109,7 @@ export const api = {
         return (await axios.post("/api/Teachers/Add", { name: name, surname: surname, barcode: barcode })).data;
     },
 
-    async updateTeacher(id, name, surname, barcode, enableAccount, username, email) {
+    async updateTeacher(id, name, surname, barcode, enableAccount, username, email, role) {
         return (await axios.post("/api/Teachers/Update/" + id, {
             id: id,
             name: name,
@@ -109,6 +118,7 @@ export const api = {
             enableAccount: enableAccount,
             username: username,
             email: email,
+            role: role,
         })).data;
     },
 
@@ -174,13 +184,16 @@ export const api = {
 
     /// Returns a formatted error message from the response
     parseError(response) {
-        if(isString(response))
-            return response;
+        if(response.status == 403)
+            return "Nie masz wystarczających uprawnień.";
+
+        if(isString(response.data))
+            return response.data;
 
         var result = "";
 
-        for(var key in response) {
-            result += response[key][0] + "<br>";
+        for(var key in response.data) {
+            result += response.data[key][0] + "<br>";
         }
 
         return result;

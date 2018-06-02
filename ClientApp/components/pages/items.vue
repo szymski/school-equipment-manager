@@ -1,12 +1,12 @@
 <template>
 <div>
-    <h1 class="six wide column">Przedmioty</h1>
+    <h1 class="six wide column">Wyposażenie</h1>
 
     <error-display/>
 
     <div class="ui grid">
         <div class="four wide column">
-            <button class="ui button" @click="goToAddItem">Dodaj przedmiot</button>
+            <button v-if="api.isMod" class="ui button" @click="goToAddItem">Dodaj przedmiot</button>
         </div>
         <div class="ui right floated four wide column form">
             <div class="ui icon input" style="width:100%">
@@ -62,7 +62,7 @@
                 <th>Opis</th>
                 <th>Uwagi</th>
                 <th class="collapsing">Położenie</th>
-                <th class="collapsing"></th>
+                <th v-if="api.isMod" class="collapsing"></th>
             </tr>
         </thead>
         <tbody>
@@ -71,7 +71,7 @@
                 <td style="text-align:center;">
                     <div v-if="item.shortId" class="item-short-id single line">
                         {{ item.shortId }}
-                        <button class="ui mini basic icon circular button edit-id-btn" @click="showEnterIdDialog(item)">
+                        <button v-if="api.isMod" class="ui mini basic icon circular button edit-id-btn" @click="showEnterIdDialog(item)">
                             <i class="pencil icon"></i>
                         </button>
                     </div>
@@ -84,7 +84,7 @@
                             <a @click="goToEventList(item.id)">
                                 {{ item.name }}
                             </a>
-                            <button class="ui mini basic icon circular button edit-id-btn" @click="showTemplateModal(item)">
+                            <button v-if="api.isMod" class="ui mini basic icon circular button edit-id-btn" @click="showTemplateModal(item)">
                                 <i class="pencil icon"></i>
                             </button>
                         </div>
@@ -103,7 +103,7 @@
                     <div class="editable-property single line">
                         <div v-if="!areNotesTooBigToDisplay(item.notes)">
                             {{ item.notes }}
-                            <button class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
+                            <button v-if="api.isMod" class="ui mini basic icon circular button edit-id-btn" @click="showNotesModal(item)">
                                 <i class="pencil icon"></i>
                             </button>
                         </div>
@@ -115,12 +115,12 @@
                 <td>
                     <div class="editable-property single line">
                         {{ item.location == 0 ? "Brak" : item.locationName }}
-                        <button class="ui mini basic icon circular button edit-id-btn" @click="showLocationModal(item)">
+                        <button v-if="api.isMod" class="ui mini basic icon circular button edit-id-btn" @click="showLocationModal(item)">
                             <i class="pencil icon"></i>
                         </button>
                     </div>
                 </td>
-                <td>
+                <td v-if="api.isMod">
                     <button class="ui fluid tiny red button" @click="removeItem(item.id, $event)">Usuń</button>
                 </td>
             </tr>
@@ -361,7 +361,7 @@ export default {
                 item.shortId = identifier;
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
         },
 
@@ -371,7 +371,7 @@ export default {
                 item.notes = newNotes;
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
         },
 
@@ -392,7 +392,7 @@ export default {
                 }
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
         },
 
@@ -406,7 +406,7 @@ export default {
                     item.locationName = this.locations[locationId].name;
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
         },
 
@@ -431,8 +431,13 @@ export default {
     async created() {
         this.api.loading = true;
         
-        let response = await this.$http.get('/api/Items')
-        this.items = response.data;
+        try {
+            let response = await this.$http.get('/api/Items')
+            this.items = response.data;
+        }
+        catch(e) {
+            this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
+        }
 
         this.templates = (await this.$http.get("/api/ItemTemplates")).data;
 

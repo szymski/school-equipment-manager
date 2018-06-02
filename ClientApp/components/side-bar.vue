@@ -7,7 +7,7 @@
             </a>
         </div>
 
-        <a class="item" v-if="item.display" v-for="(item, index) in routes" :key="index" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
+        <a class="item" v-if="item.display && canDisplay(item)" v-for="(item, index) in routes" :key="index" :class="{'active':router.currentRoute.path==item.path}" @click="navigate(item.path)">
             <div>
                 <i v-if="item.icon" :class="{'icon': true, [item.icon]: true}"/>
                 <span>{{ item.display }}</span>
@@ -73,6 +73,16 @@ export default {
 
         async logout() {
             await this.api.logout();
+        },
+
+        canDisplay(route) {
+            if(route.adminOnly)
+                return this.api.isAdmin;
+
+            if(route.modOnly)
+                return this.api.isMod;
+
+            return true;
         }
     }
 };

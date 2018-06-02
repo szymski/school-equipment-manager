@@ -4,88 +4,99 @@
 
     <error-display/>
 
-    <div class="ui form">
-        <div class="field">
-            <label>Imię</label>
-            <input type="text" v-model="name">
-        </div>
+    <template v-if="teacher">
+        <div class="ui form">
+            <div class="field">
+                <label>Imię</label>
+                <input type="text" v-model="name">
+            </div>
 
-        <div class="field">
-            <label>Nazwisko</label>
-            <input type="text" v-model="surname">
-        </div>
+            <div class="field">
+                <label>Nazwisko</label>
+                <input type="text" v-model="surname">
+            </div>
 
-        <div class="field">
-                <label>Kod kreskowy</label>
-                <div class="ui action input">
-                    <input type="text" v-model="barcode">
-                    <button class="ui blue button" :disabled="!canGenerateBarcode(name, surname)" @click="generateBarcode">Wygeneruj</button>
+            <div class="field">
+                    <label>Kod kreskowy</label>
+                    <div class="ui action input">
+                        <input type="text" v-model="barcode">
+                        <button class="ui blue button" :disabled="!canGenerateBarcode(name, surname)" @click="generateBarcode">Wygeneruj</button>
+                    </div>
+                </div>
+
+            <div class="ui segments">
+                <h5 class="ui top attached segment">
+                    <div class="ui checkbox">
+                        <input type="checkbox" v-model="enableAccount">
+                        <label>Zezwól na logowanie</label>
+                    </div>
+                </h5>
+                <div v-if="enableAccount" class="ui attached segment">
+                    <div class="field">
+                        <label>Nazwa użytkownika</label>
+                        <input type="text" v-model="username">
+                    </div>
+
+                    <div class="field">
+                        <label>Adres E-Mail</label>
+                        <input type="text" v-model="email">
+                    </div>
+
+                    <div class="field">
+                        <label>Rola</label>
+                        <select class="ui dropdown" v-model="role">
+                            <option value="administrator">Administrator</option>
+                            <option value="moderator">Moderator</option>
+                            <option value="user" selected>Zwykły użytkownik</option>
+                        </select>
+                    </div>
+
+                    <button class="ui button" @click="resetPassword">Zresetuj hasło</button>
                 </div>
             </div>
 
-        <div class="ui segments">
-            <h5 class="ui top attached segment">
-                <div class="ui checkbox">
-                    <input type="checkbox" v-model="enableAccount">
-                    <label>Zezwól na logowanie</label>
+            <button class="ui primary button" @click="save">Zapisz</button>
+            <button class="ui right floated red button" @click="showRemoveDialog" :disabled="api.teacherId == teacher.id">Usuń nauczyciela</button>
+        </div>
+
+        <!-- Removal confirmation dialog -->
+        <div class="ui modal" id="removeModal">
+            <div class="header">
+                Czy na pewno chcesz usunąć nauczyciela <i>{{ teacher.name }} {{ teacher.surname }}</i>?
+            </div>
+            <div class="content">
+                <div class="description">
+                    <p>Tej zmiany nie będzie dało się cofnąć!</p>
                 </div>
-            </h5>
-            <div v-if="enableAccount" class="ui attached segment">
-                <div class="field">
-                    <label>Nazwa użytkownika</label>
-                    <input type="text" v-model="username">
+            </div>
+            <div class="actions">
+                <div class="ui deny button">
+                    Anuluj
                 </div>
-
-                <div class="field">
-                    <label>Adres E-Mail</label>
-                    <input type="text" v-model="email">
+                <div class="ui deny red right button" @click="remove">
+                    Usuń
                 </div>
-
-                <button class="ui button" @click="resetPassword">Zresetuj hasło</button>
             </div>
         </div>
 
-        <button class="ui primary button" @click="save">Zapisz</button>
-        <button class="ui right floated red button" @click="showRemoveDialog" :disabled="api.teacherId == teacher.id">Usuń nauczyciela</button>
-    </div>
-
-    <!-- Removal confirmation dialog -->
-    <div class="ui modal" id="removeModal">
-        <div class="header">
-            Czy na pewno chcesz usunąć nauczyciela <i>{{ teacher.name }} {{ teacher.surname }}</i>?
-        </div>
-        <div class="content">
-            <div class="description">
-                <p>Tej zmiany nie będzie dało się cofnąć!</p>
+        <!-- Generated password dialog -->
+        <div class="ui modal" id="generatedPasswordModal">
+            <div class="header">
+                Wygenerowano hasło dla  nauczyciela <i>{{ teacher.name }} {{ teacher.surname }}</i>
+            </div>
+            <div class="content">
+                <div class="description">
+                    <p>Zostało wygenerowane nowe hasło. Przekaż je nauczycielowi:</p>
+                    <h2 class="generated-password-text">{{ modalPassword }}</h2>
+                </div>
+            </div>
+            <div class="actions">
+                <div class="ui green deny right button" @click="closeGeneratedPasswordModal">
+                    Gotowe
+                </div>
             </div>
         </div>
-        <div class="actions">
-            <div class="ui deny button">
-                Anuluj
-            </div>
-            <div class="ui deny red right button" @click="remove">
-                Usuń
-            </div>
-        </div>
-    </div>
-
-    <!-- Generated password dialog -->
-    <div class="ui modal" id="generatedPasswordModal">
-        <div class="header">
-            Wygenerowano hasło dla  nauczyciela <i>{{ teacher.name }} {{ teacher.surname }}</i>
-        </div>
-        <div class="content">
-            <div class="description">
-                <p>Zostało wygenerowane nowe hasło. Przekaż je nauczycielowi:</p>
-                <h2 class="generated-password-text">{{ modalPassword }}</h2>
-            </div>
-        </div>
-        <div class="actions">
-            <div class="ui green deny right button" @click="closeGeneratedPasswordModal">
-                Gotowe
-            </div>
-        </div>
-    </div>
+    </template>
 </div>
 </template>
 
@@ -104,16 +115,21 @@ export default {
             enableAccount: false,
             username: "",
             email: "",
+            role: "user",
 
             modalPassword: "",
         };
+    },
+
+    updated() {
+        $(".ui.dropdown").dropdown();
     },
 
     methods: {
         async save() {
             try {
                 var data = await this.api.updateTeacher(this.teacher.id, this.name, this.surname, this.barcode,
-                    this.enableAccount, this.username, this.email);
+                    this.enableAccount, this.username, this.email, this.role);
 
                 if(data && data.generatedPassword) {
                     this.modalPassword = data.generatedPassword;
@@ -125,7 +141,7 @@ export default {
                 }
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
         },
 
@@ -138,7 +154,7 @@ export default {
                 $("#generatedPasswordModal").modal("show");
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
         },
 
@@ -152,7 +168,7 @@ export default {
                 router.push("/teachers");
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
         },
 
@@ -183,9 +199,10 @@ export default {
             this.enableAccount = this.teacher.enableAccount;
             this.username = this.teacher.username || "";
             this.email = this.teacher.email || "";
+            this.role = this.teacher.role || "user";
         }
         catch(e) {
-            this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
         }
 
         this.api.loading = false;

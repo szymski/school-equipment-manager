@@ -110,7 +110,7 @@ export default {
                 await this.api.addItemEvent(this.itemId, this.teacherId, this.type);
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
 
             await this.reload();

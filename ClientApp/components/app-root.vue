@@ -59,6 +59,23 @@
                     </div>
                 </div>
             </template>
+
+            <!-- Done modal -->
+            <div class="ui modal" id="doneModal">
+                <div class="header">
+                    Sprawdź swoją skrzynkę pocztową
+                </div>
+                <div class="content">
+                    <div class="description">
+                        <p>Otrzymasz link, który pozwoli na zresetowanie hasła.</p>
+                    </div>
+                </div>
+                <div class="actions">
+                    <div class="ui green deny right button">
+                        Zamknij
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -113,7 +130,7 @@ export default {
                 await this.api.updateUserInfo();
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
             
             $("#loginButton").removeClass("loading");
@@ -134,10 +151,10 @@ export default {
             try {
                 await this.api.requestPasswordReset(this.email);
                 this.resettingPassword = false;
-                // TODO: Display a confirmation modal.
+                $("#doneModal").modal("show");
             }
             catch(e) {
-                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
 
             $("#resetButton").removeClass("loading");

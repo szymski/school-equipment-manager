@@ -57,7 +57,7 @@ namespace SchoolEquipmentManager.Controllers
 
         [HttpGet("[action]")]
         [AllowAnonymous]
-        public IActionResult GetUserInfo()
+        public async Task<IActionResult> GetUserInfo()
         {
             var user = _userGetter.GetCurrentUser(u => u.Include(u2 => u2.Teacher).ThenInclude(t => t.Messages));
 
@@ -73,6 +73,7 @@ namespace SchoolEquipmentManager.Controllers
                 teacherId = user.Teacher.Id,
                 username = $"{user.Teacher.Name} {user.Teacher.Surname}",
                 messageCount = user.Teacher.Messages.Count(m => !m.Read),
+                role = (await _userManager.GetRolesAsync(user)).FirstOrDefault()?.ToLower() ?? "user",
             });
         }
 
@@ -106,10 +107,14 @@ namespace SchoolEquipmentManager.Controllers
             {
                 SymmetricSecurityKey signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthHelper.Secret));
 
-                var claims = new[]
+                var claims = new List<Claim>
                 {
                     new Claim("id", user.Id),
                 };
+
+                var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+                if(role != null)
+                    claims.Add(new Claim(ClaimTypes.Role, role));
 
                 var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
@@ -190,7 +195,7 @@ namespace SchoolEquipmentManager.Controllers
             if (!result.Succeeded)
                 return BadRequest("Nie udało się zresetować hasła.");
 
-            _emailService.SendEmail(user, "Nowe hasło", $"Nowe hasło: <b>{generatedPassword}</b><br>Tutaj możesz się zalogować: {Request.Scheme}://{Request.Host}");
+            _emailService.SendEmail(user, "Nowe hasło", $"Nowe hasło: <b>{generatedPassword}</b><br>Twój login: {user.UserName}<br>Tutaj możesz się zalogować: {Request.Scheme}://{Request.Host}");
 
             return Ok("Udało się zresetować hasło! Na twój adres E-Mail przyjdzie wiadomość z nowym hasłem.");
         }
