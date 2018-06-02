@@ -14,23 +14,51 @@
             </div>
         </div>
         <div v-else>
-            <div class="ui one column stackable center aligned page grid">
-                <div class="ui eight wide column">
-                    <div class="ui raised segment login-box">
-                        <error-display/>
-                        <h3>Wymagane zalogowanie</h3>
-                        <div class="ui form">
-                            <div class="ui field" id="loginField">
-                                <input type="text" placeholder="Login" v-model="username">
+            <template v-if="!resettingPassword">
+                <div class="ui one column stackable center aligned page grid">
+                    <div class="ui eight wide column">
+                        <div class="ui raised segment login-box">
+                            <error-display/>
+                            <h3>Wymagane zalogowanie</h3>
+                            <div class="ui form">
+                                <div class="ui field" id="loginField">
+                                    <input type="text" placeholder="Nazwa użytkownika" v-model="username">
+                                </div>
+                                <div class="ui field" id="loginField">
+                                    <input type="password" placeholder="Hasło" v-model="password">
+                                </div>
+
+                                <button id="loginButton" class="ui fluid primary button" @click="login">Zaloguj</button>
+
+                                <a class="reset-link" @click="resettingPassword = true">Resetuj hasło</a>
                             </div>
-                            <div class="ui field" id="loginField">
-                                <input type="password" placeholder="Hasło" v-model="password">
-                            </div>
-                            <button id="loginButton" class="ui fluid primary button" @click="login">Zaloguj</button>
                         </div>
                     </div>
                 </div>
-            </div>
+            </template>
+            <template v-else>
+                <div class="ui one column stackable center aligned page grid">
+                    <div class="ui eight wide column">
+                        <div class="ui raised segment login-box">
+                            <error-display/>
+                            <h3>Resetowanie hasła</h3>
+                            <p>
+                                Aby zresetować hasło, podaj poniżej swój adres E-Mail.<br>
+                                Jeśli istnieje konto z takim adresem, otrzymasz wiadomość, która pozwoli ustawić nowe hasło.
+                            </p>
+                            <div class="ui form">
+                                <div class="ui field" id="loginField">
+                                    <input type="text" placeholder="Adres E-Mail" v-model="email">
+                                </div>
+                                
+                                <button id="resetButton" class="ui fluid primary button" @click="requestPasswordReset" :disabled="email == ''">Resetuj hasło</button>
+
+                                <a class="reset-link" @click="resettingPassword = false">Wróć do logowania</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </div>
     </div>
 </template>
@@ -45,9 +73,12 @@ export default {
     data() {
         return {
             loggingIn: false,
+            resettingPassword: false,
 
             username: "",
             password: "",
+
+            email: "",
         };
     },
 
@@ -88,6 +119,30 @@ export default {
             $("#loginButton").removeClass("loading");
 
             this.loggingIn = false;
+        },
+
+        async requestPasswordReset() {
+            if(this.loggingIn)
+                return;
+
+            this.loggingIn = true;
+
+            this.api.clearError();
+
+            $("#resetButton").addClass("loading");
+
+            try {
+                await this.api.requestPasswordReset(this.email);
+                this.resettingPassword = false;
+                // TODO: Display a confirmation modal.
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response.data));
+            }
+
+            $("#resetButton").removeClass("loading");
+
+            this.loggingIn = false;
         }
     }
 };
@@ -112,5 +167,10 @@ body, h1, h2, h3, h4, h5, .ui.button, .ui.menu, .header {
 
 .my-loader {
     margin-top: 2em !important;
+}
+
+.reset-link {
+    display: block;
+    margin-top: 1em !important;
 }
 </style>

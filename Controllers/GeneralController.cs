@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Internal.System.Text.Encodings.Web.Utf8;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -29,18 +33,26 @@ namespace SchoolEquipmentManager.Controllers
             public string Password { get; set; }
         }
 
+        public class RequestPasswordResetViewModel
+        {
+            [Required(ErrorMessage = "Nie podano adresu E-Mail.")]
+            public string Email { get; set; }
+        }
+
         private AppContext _context;
         private ItemManager _itemManager;
         private UserGetter _userGetter;
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
+        private IEmailService _emailService;
 
-        public GeneralController(AppContext dbContext, ItemManager itemManager, UserGetter userGetter, UserManager<ApplicationUser> userManager)
+        public GeneralController(AppContext dbContext, ItemManager itemManager, UserGetter userGetter, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _context = dbContext;
             _itemManager = itemManager;
             _userGetter = userGetter;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         [HttpGet("[action]")]
@@ -117,6 +129,70 @@ namespace SchoolEquipmentManager.Controllers
             }
 
             return BadRequest("Login lub hasło nieprawidłowe.");
+        }
+
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            model.Email = model.Email.Trim();
+
+            try
+            {
+                var address = new MailAddress(model.Email);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Podany adres E-Mail jest nieprawidłowy.");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Email.ToLower() == model.Email.ToLower());
+            if (user == null)
+                return Ok();
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var resetLink = $"{Request.Scheme}://{Request.Host}/api/General/ResetPassword?email={WebUtility.UrlEncode(user.Email)}&token={WebUtility.UrlEncode(resetToken)}";
+
+            try
+            {
+                _emailService.SendEmail(user, "Resetowanie hasła", $"Odwiedź następujący link by zresetować hasło: {resetLink}");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Spróbuj ponownie za chwilę lub skontaktuj się z administratorem.");
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string email, string token)
+        {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest("Nie podano adresu e-mail.");
+
+            if (string.IsNullOrEmpty(token))
+                return BadRequest("Nie podano tokenu.");
+
+            var user = _context.Users.FirstOrDefault(u => u.Email.Trim().ToLower() == email.Trim().ToLower());
+            if (user == null)
+                return BadRequest("Nie udało się zresetować hasła.");
+
+            var generatedPassword = new Random().Next(10000000, 99999999).ToString();
+
+            var result = await _userManager.ResetPasswordAsync(user, token, generatedPassword);
+
+            if (!result.Succeeded)
+                return BadRequest("Nie udało się zresetować hasła.");
+
+            _emailService.SendEmail(user, "Nowe hasło", $"Nowe hasło: <b>{generatedPassword}</b><br>Tutaj możesz się zalogować: {Request.Scheme}://{Request.Host}");
+
+            return Ok("Udało się zresetować hasło! Na twój adres E-Mail przyjdzie wiadomość z nowym hasłem.");
         }
     }
 }

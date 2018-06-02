@@ -55,6 +55,7 @@ namespace SchoolEquipmentManager.Logic
             message.To.Add(address);
             message.Subject = title;
             message.Body = body;
+            message.IsBodyHtml = true;
 
             client.Send(message);
         }

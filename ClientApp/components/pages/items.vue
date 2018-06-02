@@ -10,8 +10,45 @@
         </div>
         <div class="ui right floated four wide column form">
             <div class="ui icon input" style="width:100%">
-                <input type="text" class="" v-model="searchText">
+                <input type="text" placeholder="Szukaj" v-model="searchText">
                 <i class="search icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Needed: type, location, with/without barcode, returned/unreturned -->
+
+    <div class="ui divider"></div>
+
+    <div class="ui form">
+        <div class="four fields">
+            <div class="field">
+                <select class="ui dropdown" v-model="filterIdentifier">
+                    <option value="all" selected>Z identyfikatorem lub bez</option>
+                    <option value="with">Z identyfikatorem</option>
+                    <option value="without">Bez identyfikatora</option>
+                </select>
+            </div>
+            <div class="field">
+                <select class="ui dropdown" v-model="filterTemplate">
+                    <option value="all" selected>Dowolny typ</option>
+                    <option value="none">Brak typu</option>
+                    <option v-for="(item, index) in templates" :key="index" :value="item.id">{{ item.name }}</option>
+                </select>
+            </div>
+            <div class="field">
+                <select class="ui dropdown" v-model="filterLocation">
+                    <option value="all" selected>Dowolne położenie</option>
+                    <option value="none">Brak położenia</option>
+                    <option v-for="(item, index) in locations" :key="index" :value="item.id">{{ item.name }}</option>
+                </select>
+            </div>
+            <div class="field">
+                <select class="ui dropdown" v-model="filterState">
+                    <option value="all" selected>Przedmioty zwrócone oraz niezwrócone</option>
+                    <option value="borrowed">Przedmioty niezwrócone</option>
+                    <option value="returned">Przedmioty zwrócone</option>
+                </select>
             </div>
         </div>
     </div>
@@ -93,7 +130,7 @@
     <!-- Identifier modal -->
     <div class="ui modal" id="enterIdModal">
         <div class="header">
-            Wprowadź identyfikator dla <i>{{ modalItem.name }}</i> <template v-if="modalItem.location && modalItem.location != ''">(<i>{{ modalItem.location }}</i>)</template>
+            Wprowadź identyfikator dla <i>{{ modalItem.name }}</i> <template v-if="modalItem.locationName && modalItem.locationName != ''">(<i>{{ modalItem.locationName }}</i>)</template>
         </div>
         <div class="content">
             <div class="description">
@@ -120,7 +157,7 @@
     <!-- Notes modal -->
     <div class="ui modal" id="notesModal">
         <div class="header">
-            Uwagi dla <i>{{ modalItem.name }}</i> <template v-if="modalItem.location && modalItem.location != ''">(<i>{{ modalItem.location }}</i>)</template>
+            Uwagi dla <i>{{ modalItem.name }}</i> <template v-if="modalItem.locationName && modalItem.locationName != ''">(<i>{{ modalItem.locationName }}</i>)</template>
         </div>
         <div class="content">
             <div class="description">
@@ -215,6 +252,11 @@ export default {
             modalIdentifier: "",
             modalFirstTime: false,
 
+            filterIdentifier: "all",
+            filterTemplate: "all",
+            filterLocation: "all",
+            filterState: "all",
+
             modalNotes: "",
 
             modalTemplate: 0,
@@ -225,7 +267,49 @@ export default {
 
     methods: {
         filterItems(items) {
-            return items.filter((i) => this.searchText.length == 0 || (i.name + i.description + i.location + i.shortId + i.notes).toLowerCase().includes(this.searchText.toLowerCase()));
+            return items.filter((i) => {
+                var show = true;
+
+                if(this.filterIdentifier == "with") {
+                    if(!i.shortId || i.shortId == "")
+                        return false;
+                }
+                else if(this.filterIdentifier == "without") {
+                    if(i.shortId && i.shortId != "")
+                        return false;
+                }
+
+                if(this.filterTemplate == "none") {
+                    if(i.template != 0)
+                        return false;
+                }
+                else if(this.filterTemplate != "all") {
+                    if(i.template != this.filterTemplate)
+                        return false;
+                }
+
+                if(this.filterLocation == "none") {
+                    if(i.template != 0)
+                        return false;
+                }
+                else if(this.filterLocation != "all") {
+                    if(i.location != this.filterLocation)
+                        return false;
+                }
+
+                if(this.filterState == "borrowed") {
+                    if(i.returned)
+                        return false;
+                }
+                else if(this.filterState == "returned") {
+                    if(!i.returned)
+                        return false;
+                }
+
+                show = this.searchText.length == 0 || (i.name + i.description + i.locationName + i.shortId + i.notes).toLowerCase().includes(this.searchText.toLowerCase());
+
+                return show;
+            });
         },
 
         goToAddItem() {
@@ -336,6 +420,8 @@ export default {
     },
 
     mounted() {
+        $(".ui.dropdown").dropdown();
+
         $("#modalIdentifierInput").keyup(ev => {
             if(ev.keyCode === 13)
                 $("#modalIdentifierButton").click();

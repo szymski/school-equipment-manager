@@ -26,7 +26,7 @@ export const routes = [
     { path: '/locations', component: Locations, display: 'Położenia', icon: "map marker alternate" },
     { path: '/item-templates', component: ItemTemplates, display: 'Typy przedmiotów', icon: "wrench" },
     { path: '/add-template', component: AddTemplate },
-    { path: '/report', component: Report, display: 'Raporty', icon: "clipboard check" },
+    // { path: '/report', component: Report, display: 'Raporty', icon: "clipboard check" },
     { path: '/view-events/:id', component: ViewEvents },
     { path: '/teachers', component: Teachers, display: 'Nauczyciele', icon: "user" },
     { path: '/add-teacher', component: AddTeacher },

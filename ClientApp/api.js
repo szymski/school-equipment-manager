@@ -220,4 +220,10 @@ export const api = {
     async getMessage(messageId) {
         return (await axios.get("/api/Messages/Get/" + messageId)).data;
     },
+
+    async requestPasswordReset(email) {
+        return (await axios.post("/api/General/RequestPasswordReset", {
+            email: email,
+        })).data;
+    },
 };
