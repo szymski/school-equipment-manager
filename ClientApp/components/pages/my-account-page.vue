@@ -24,6 +24,10 @@
                 <input disabled type="text" :value="({ 'administrator': 'Administrator', 'moderator': 'Moderator', 'user': 'Zwykły użytkownik' })[role]">
             </div>
             <div class="field">
+                <label>Kod kreskowy</label>
+                <input disabled type="text" v-model="barcode">
+            </div>
+            <div class="field">
                 <label>Adres E-Mail</label>
                 <input type="text" v-model="email">
             </div>
@@ -72,6 +76,7 @@ export default {
             name: "",
             surname: "",
             role: "",
+            barcode: "",
             email: "",
             username: "",
 
@@ -88,6 +93,7 @@ export default {
         this.surname = data.surname;
         this.username = data.username;
         this.role = data.role;
+        this.barcode = data.barcode;
         this.email = data.email;
     
         this.api.loading = false;

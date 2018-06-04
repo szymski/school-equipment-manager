@@ -271,9 +271,6 @@ namespace SchoolEquipmentManager.Controllers
             var location = _context.Locations.FirstOrDefault(l => l.Id == model.Location);
             var template = _context.ItemTemplates.FirstOrDefault(l => l.Id == model.Template);
 
-            //if (template == null)
-            //    return BadRequest("Nieprawidłowy typ przedmiotu");
-
             if (model.Number > 100)
                 return BadRequest("Nie można dodać więcej niż 100 przedmiotów naraz.");
 

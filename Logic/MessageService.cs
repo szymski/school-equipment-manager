@@ -47,6 +47,37 @@ namespace SchoolEquipmentManager.Logic
             });
         }
 
+        public Task SendMessage(IEnumerable<Teacher> recipents, string title, string body)
+        {
+            foreach (var teacher in recipents)
+            {
+                _context.Messages.Add(new Message()
+                {
+                    Recipent = teacher,
+                    Date = DateTime.Now,
+                    Title = title,
+                    Body = body,
+                    Read = false,
+                });
+            }
+
+            _context.SaveChanges();
+
+            var users = _context.Users.Include(u => u.Teacher).Where(u => recipents.Any(r => r.Id == u.Teacher.Id)).ToList();
+
+            return Task.Run(() =>
+            {
+                try
+                {
+                    _emailService.SendEmail(users, title, body);
+                }
+                catch (Exception e)
+                {
+
+                }
+            });
+        }
+
         public Task SendMessageToAll(string title, string body)
         {
             foreach (var teacher in _context.Teachers)

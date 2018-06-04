@@ -9,6 +9,7 @@ namespace SchoolEquipmentManager.Logic
     public interface IMessageService
     {
         Task SendMessage(Teacher recipent, string title, string body);
+        Task SendMessage(IEnumerable<Teacher> recipents, string title, string body);
         Task SendMessageToAll(string title, string body);
     }
 }

@@ -49,6 +49,19 @@
 
         <div class="title">
             <i class="dropdown icon"></i>
+            Czym są role?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                Role określają jakie działania użytkownik może na stronie podjąć.<br>
+                Administrator ma dostęp do wszystkich opcji.<br>
+                Moderator jest rolą pozwalającą na zarządzanie wyposażeniem, ale bez możliwości zarządzania użytkownikami.<br>
+                Zwykły użytkownik jest w stanie jedynie przejrzeć listę przedmiotów, bez możliwości jej edytowania.
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
             Kto jest twórcą strony?
         </div>
         <div class="content">
@@ -91,6 +104,18 @@
         <div class="content">
             <p class="transition hidden">
                 <div class="ui relaxed divided list">
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">02.06.2018</div>
+                            <div class="description">Dodano role oraz możliwość resetowania hasła przy pomocy wiadomości e-mail</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">01.06.2018</div>
+                            <div class="description">Dodano podstronę <i>Moje konto</i> oraz system wysyłania wiadomości e-mail</div>
+                        </div>
+                    </div>
                     <div class="item">
                         <div class="content">
                             <div class="header">23.05.2018</div>

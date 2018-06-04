@@ -37,17 +37,18 @@ export const api = {
         })).data;
 
         this.authToken = data.auth_token;
-        this.loggedIn = true;
-
         localStorage.authToken = this.authToken;
+
+        await this.updateUserInfo();
+        this.loggedIn = true;
 
         return data;
     },
 
     async logout() {
-        localStorage.removeItem("authToken");
         this.loggedIn = false;
         this.authToken = null;
+        localStorage.removeItem("authToken");
     },
 
     async getDashboardInfo() {
@@ -237,6 +238,14 @@ export const api = {
     async requestPasswordReset(email) {
         return (await axios.post("/api/General/RequestPasswordReset", {
             email: email,
+        })).data;
+    },
+
+    async sendAlreadyBorrowedMessage(teacherId, borrowedTeacherId, itemId) {
+        return (await axios.post("/api/Teachers/SendAlreadyBorrowedMessage", {
+            teacherId: teacherId,
+            borrowedTeacherId: borrowedTeacherId,
+            itemId: itemId,
         })).data;
     },
 };

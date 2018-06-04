@@ -9,6 +9,7 @@ namespace SchoolEquipmentManager.Logic
     public interface IEmailService
     {
         void SendEmail(ApplicationUser recipent, string title, string body);
+        void SendEmail(IEnumerable<ApplicationUser> recipents, string title, string body);
         void SendEmail(string address, string title, string body);
     }
 }

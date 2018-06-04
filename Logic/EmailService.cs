@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -26,6 +27,12 @@ namespace SchoolEquipmentManager.Logic
         public EmailService(IOptions<EmailServiceOptions> options)
         {
             _options = options.Value;
+        }
+
+        public void SendEmail(IEnumerable<ApplicationUser> recipents, string title, string body)
+        {
+            foreach (var recipent in recipents)
+                SendEmail(recipent, title, body);
         }
 
         public void SendEmail(ApplicationUser recipent, string title, string body)

@@ -41,6 +41,16 @@ namespace SchoolEquipmentManager.Controllers
             public string Password { get; set; }
         }
 
+        public class SendAlreadyBorrowedMessageViewModel
+        {
+            [Required]
+            public int TeacherId { get; set; }
+            [Required]
+            public int BorrowedTeacherId { get; set; }
+            [Required]
+            public int ItemId { get; set; }
+        }
+
         private AppContext _context;
         private ItemManager _itemManager;
         private UserManager<ApplicationUser> _userManager;
@@ -381,6 +391,37 @@ namespace SchoolEquipmentManager.Controllers
             {
                 generatedPassword = generatedPassword,
             });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SendAlreadyBorrowedMessage([FromBody] SendAlreadyBorrowedMessageViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(model);
+
+            var teacher = _context.Teachers.FirstOrDefault(t => t.Id == model.TeacherId);
+            if (teacher == null)
+                return BadRequest("Nie ma takiego nauczyciela.");
+
+            var borrowedTeacher = _context.Teachers.FirstOrDefault(t => t.Id == model.BorrowedTeacherId);
+            if (borrowedTeacher == null)
+                return BadRequest("Nie ma takiego nauczyciela.");
+
+            var item = _context.Items.Include(i => i.Template).Include(i => i.Location).FirstOrDefault(i => i.Id == model.ItemId);
+            if (item == null)
+                return BadRequest("Nie ma takiego przedmiotu");
+
+            var message = $"Nastąpiła próba pobrania przedmiotu, który nie został zwrócony.<br><br>Identyfikator: {item.ShortId}<br>Nazwa przedmiotu: {item.Name}<br>Położenie: {item.Location?.Name ?? "Brak"}" +
+                $"<br>Nauczyciel który nie zwrócił przedmiotu: {borrowedTeacher.Name} {borrowedTeacher.Surname}<br>Nauczyciel który próbował zwrócić przedmiot: {teacher.Name} {teacher.Surname}";
+
+            var users = (await _userManager.GetUsersInRoleAsync(Roles.Administrator)).Concat(
+                await _userManager.GetUsersInRoleAsync(Roles.Moderator)).ToList();
+
+            var teachers = _context.Users.Include(u => u.Teacher).Where(u => users.Any(u2 => u2.Id == u.Id)).Select(u => u.Teacher).ToList();
+
+            _messageService.SendMessage(teachers, "Nastąpiła próba pobrania przedmiotu, który nie został zwrócony", message);
+
+            return Ok();
         }
     }
 }

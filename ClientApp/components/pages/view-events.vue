@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1 class="six wide column">Historia przedmiotu - {{ item.name }} ({{ item.location != "" ? item.location : "Brak lokalizacji" }})</h1>
+    <h1 class="six wide column">Historia przedmiotu - {{ item.name }} ({{ item.locationName != "" ? item.locationName : "Brak lokalizacji" }})</h1>
 
     <error-display/>
 

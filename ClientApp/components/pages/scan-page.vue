@@ -39,7 +39,7 @@
                         <i class="times circle outline icon failed-icon"/>
                     </div>
                     <h1 class="scan-item-code-text">
-                        Przedmiot {{ item.name }} <span v-if="item.location && item.location != ''">({{ item.location }})</span> już został pobrany przez nauczyciela {{ borrowedTeacher.name }} {{ borrowedTeacher.surname }}
+                        Przedmiot {{ item.name }} <span v-if="item.locationName && item.locationName != ''">({{ item.locationName }})</span> już został pobrany przez nauczyciela {{ borrowedTeacher.name }} {{ borrowedTeacher.surname }}
                     </h1>
                 </div>
                 <div v-else-if="!alreadyBorrowed && currentAction == 'return'">
@@ -47,7 +47,7 @@
                         <i class="times circle outline icon failed-icon"/>
                     </div>
                     <h1 class="scan-item-code-text">
-                        Przedmiot {{ item.name }} <span v-if="item.location && item.location != ''">({{ item.location }})</span> nie został wcześniej pobrany
+                        Przedmiot {{ item.name }} <span v-if="item.locationName && item.locationName != ''">({{ item.locationName }})</span> nie został wcześniej pobrany
                     </h1>
                 </div>
                 <div v-else>
@@ -56,7 +56,7 @@
                     </div>
                     <h1 class="scan-item-code-text">
                         {{ ({ "borrow": "Pobrano", "return": "Zwrócono" })[currentAction] }}
-                        przedmiot {{ item.name }} <span v-if="item.location && item.location != ''">({{ item.location }})</span>
+                        przedmiot {{ item.name }} <span v-if="item.locationName && item.locationName != ''">({{ item.locationName }})</span>
                     </h1>
                 </div>
             </div>
@@ -136,6 +136,11 @@ export default {
                     if(this.currentAction == "borrow") {
                         if(this.alreadyBorrowed) {
                             this.borrowedTeacher = this.api.teachers[parsed.whoBorrowed];
+                            
+                            // Send a message that the item has already been borrowed by someone else
+                            if(this.borrowedTeacher.id != this.teacher.id) {
+                                this.api.sendAlreadyBorrowedMessage(this.teacher.id, this.borrowedTeacher.id, this.item.id)
+                            }
                         }
                         else {
                             await this.api.addItemEvent(this.item.id, this.teacher.id, this.currentAction);

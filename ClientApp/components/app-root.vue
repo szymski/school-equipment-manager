@@ -1,6 +1,6 @@
 <template>
     <div id="app" class="pushable">
-        <div v-if="api.loggedIn">
+        <template v-if="api.loggedIn">
             <side-bar/>
             <div class="pusher">
                 <div class="ui basic segment">
@@ -12,8 +12,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div v-else>
+        </template>
+        <template v-else>
             <template v-if="!resettingPassword">
                 <div class="ui one column stackable center aligned page grid">
                     <div class="ui eight wide column">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 
