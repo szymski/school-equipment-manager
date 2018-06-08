@@ -16,12 +16,13 @@ import ScanPage from 'components/pages/scan-page'
 import MessagesPage from 'components/pages/messages-page'
 import ViewMessagePage from 'components/pages/view-message-page'
 import MyAccountPage from 'components/pages/my-account-page'
+import IdentifierCompletionPage from 'components/pages/identifier-completion-page'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Strona główna', icon: "home" },
     { path: '/messages', component: MessagesPage, display: "Wiadomości", icon: "envelope" },
     { path: '/view-message/:id', component: ViewMessagePage },
-    { path: '/items', component: Items, display: 'Wyposażenie', icon: "clipboard list" },
+    { path: '/items', name: "items", component: Items, display: 'Wyposażenie', icon: "clipboard list" },
     { path: '/add-item', component: AddItem },
     { path: '/locations', component: Locations, display: 'Położenia', icon: "map marker alternate", modOnly: true },
     { path: '/item-templates', component: ItemTemplates, display: 'Typy przedmiotów', icon: "wrench", modOnly: true },
@@ -33,6 +34,7 @@ export const routes = [
     { path: '/faq-page', component: Faq, display: 'Pomoc', icon: "question circle" },
     { path: '/teacher-barcodes/:id', component: TeacherBarcodes },
     { path: '/edit-teacher/:id', component: EditTeacher },
+    { path: '/identifier-completion', name: "identifier-completion", component: IdentifierCompletionPage },
     { path: '/scan', component: ScanPage, display: "Skanowanie", icon: "play", modOnly: true },
     { path: '/my-account', component: MyAccountPage, display: "Moje konto", icon: "address card" },
 ]

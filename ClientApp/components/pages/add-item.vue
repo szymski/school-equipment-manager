@@ -31,6 +31,13 @@
                 <input type="number" value="1" v-model="number" min="1">
             </div>
 
+            <div class="ui field">
+                <div class="ui checkbox">
+                    <input type="checkbox" v-model="goToCompletionPage">
+                    <label>Wprowadź identyfikatory od razu</label>
+                </div>
+            </div>
+
             <button class="ui primary button" @click="submit" :class="{ 'disabled': !canSubmit() }">Dodaj</button>
         </div>
     </div>
@@ -48,6 +55,7 @@ export default {
             template: 0,
             templates: [],
             number: 1,
+            goToCompletionPage: false,
         }
     },
 
@@ -60,8 +68,17 @@ export default {
             this.api.clearError();
 
             try {
-                await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template, number: this.number });
-                router.push("/items");
+                var itemIds = (await this.$http.post("/api/Items/Add", { notes: this.description, location: this.location, template: this.template, number: this.number })).data;
+                console.log("Added item ids: ", itemIds);
+                if(this.goToCompletionPage)
+                    router.push({
+                        name: "identifier-completion",
+                        params: {
+                            itemIds: itemIds,
+                        }
+                    });
+                else
+                    router.push("/items");
             }
             catch(e) {
                 this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));

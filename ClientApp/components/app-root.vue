@@ -1,8 +1,16 @@
 <template>
     <div id="app" class="pushable">
-        <template v-if="api.loggedIn">
-            <side-bar/>
+        <!-- Cookies nag -->
+        <div class="ui inline cookie nag">
+            <span class="title">
+                Używamy ciasteczek, aby zapewnić prawidłowe funkcjonowanie aplikacji.
+            </span>
+            <i class="close icon"></i>
+        </div>
+
+        <div v-if="api.loggedIn">
             <div class="pusher">
+                <side-bar/>
                 <div class="ui basic segment">
                     <router-view></router-view>
                     <div class="ui inverted top aligned dimmer" :class="{ 'active': api.loading }">
@@ -12,8 +20,8 @@
                     </div>
                 </div>
             </div>
-        </template>
-        <template v-else>
+        </div>
+        <div v-else>
             <template v-if="!resettingPassword">
                 <div class="ui one column stackable center aligned page grid">
                     <div class="ui eight wide column">
@@ -76,7 +84,7 @@
                     </div>
                 </div>
             </div>
-        </template>
+        </div>
     </div>
 </template>
 
@@ -97,6 +105,13 @@ export default {
 
             email: "",
         };
+    },
+
+    mounted() {
+        if(!localStorage.acceptCookies) {
+            $(".cookie.nag").nag("show");
+            localStorage.acceptCookies = true;
+        }
     },
 
     updated() {

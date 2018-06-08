@@ -9,9 +9,15 @@
 
     <error-display/>
 
-    <div class="ui form">
-        <input type="text" id="codeInput" v-model="codeInput">
+    <div class="ui three column centered grid">
+        <div class="column">
+            <div class="ui form">
+                <input class="barcode-input" type="text" id="codeInput" v-model="codeInput" placeholder="Wprowadź kod kreskowy przy pomocy skanera">
+            </div>
+        </div>
     </div>
+
+    <br/>
 
     <div v-if="!teacher">
         <h2 class="scan-teacher-code-text">Zeskanuj kod nauczyciela</h2>
@@ -215,6 +221,10 @@ export default {
 </script>
 
 <style>
+    .barcode-input {
+        text-align: center;
+    }
+
     .logout-text {
         display: block;
         margin-top: 1em;

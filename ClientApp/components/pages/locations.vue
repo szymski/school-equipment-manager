@@ -16,7 +16,14 @@
             <tbody>
                 <tr v-for="(item, index) in locations" v-bind:key="index">
                     <td>{{ index + 1 }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>
+                        <div class="editable-property single line">
+                            {{ item.name }}
+                            <button v-if="api.isMod" class="ui mini basic icon circular button edit-id-btn" @click="showUpdateNameModal(item)">
+                                <i class="pencil icon"></i>
+                            </button>
+                        </div>
+                    </td>
                     <td style="text-align:center;">{{ item.useCount }}</td>
                     <td>
                         <button class="ui fluid small red button" @click="tryRemoveLocation(item, $event)">Usuń</button>
@@ -52,6 +59,31 @@
                 </div>
             </div>
         </div>
+
+        <!-- Identifier modal -->
+        <div class="ui modal" id="updateNameModal">
+            <div class="header">
+                Zmień nazwę położenia
+            </div>
+            <div class="content">
+                <div class="description">
+                    <div class="ui form">
+                        <div class="field">
+                            <input type="text" v-model="modalName" id="modalNameInput">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <div class="ui deny button">
+                    Anuluj
+                </div>
+                <div class="ui positive right labeled icon button" @click="updateName(modalLocation, modalName)" id="modalIdentifierButton">
+                    Gotowe
+                    <i class="checkmark icon"></i>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -67,6 +99,7 @@ export default {
                 useCount: 0,
                 name: "",
             },
+            modalName: "",
         }
     },
 
@@ -101,6 +134,27 @@ export default {
             catch(e) {
                 this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
+        },
+
+        showUpdateNameModal(item) {
+            this.modalLocation = item;
+            this.modalName = item.name || "";
+
+            $("#updateNameModal").modal("show");
+        },
+
+        async updateName(item, newName) {
+            this.api.loading = true;
+
+            try {
+                await this.api.updateLocationName(item.id, newName);
+                item.name = newName;
+            }
+            catch(e) {
+                this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
+            }
+
+            this.api.loading = false;
         }
     },
 
@@ -113,4 +167,26 @@ export default {
 </script>
 
 <style>
+    .item-short-id {
+        margin-left: 32px;
+    }
+
+    .item-short-id .edit-id-btn {
+        opacity: 0;
+    }
+
+    .item-short-id:hover .edit-id-btn {
+        opacity: 1;
+    }
+
+    .editable-property {
+    }
+
+    .editable-property .edit-id-btn {
+        opacity: 0;
+    }
+
+    .editable-property:hover .edit-id-btn {
+        opacity: 1;
+    }
 </style>

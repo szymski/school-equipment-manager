@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,14 @@ namespace SchoolEquipmentManager.Controllers
         public class RemoveLocationViewModel
         {
             public int Id { get; set; }
+        }
+
+        public class UpdateNameViewModel
+        {
+            public int Id { get; set; }
+            [Required(ErrorMessage = "Nazwa położenia jest wymagana.")]
+            [MinLength(2, ErrorMessage = "Nazwa położenia musi mieć przynajmniej 2 znaki.")]
+            public string Name { get; set; }
         }
 
         private AppContext _context;
@@ -67,6 +76,22 @@ namespace SchoolEquipmentManager.Controllers
             }
 
             return Content("ok");
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult UpdateName([FromBody] UpdateNameViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var location = _context.Locations.FirstOrDefault(l => l.Id == model.Id);
+            if (location == null)
+                return BadRequest("Nie ma takiego położenia.");
+
+            location.Name = model.Name;
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }

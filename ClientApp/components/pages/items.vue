@@ -5,8 +5,16 @@
     <error-display/>
 
     <div class="ui grid">
-        <div class="four wide column">
+        <div class="ten wide column">
             <button v-if="api.isMod" class="ui button" @click="goToAddItem">Dodaj przedmiot</button>
+
+            <template v-if="!selecting">
+                <button v-if="api.isMod" class="ui button" @click="startSelecting" data-tooltip="Pozwala szybko uzupełnić identyfikatory wielu przedmiotów na raz.">Uzupełnij identyfikatory</button>
+            </template>
+            <template v-else>
+                <button v-if="api.isMod" class="ui primary button" @click="goToCompletionPage">Uzupełnij identyfikatory</button>
+                <button v-if="api.isMod" class="ui button" @click="stopSelecting">Anuluj</button>
+            </template>
         </div>
         <div class="ui right floated four wide column form">
             <div class="ui icon input" style="width:100%">
@@ -56,6 +64,7 @@
     <table class="ui celled table">
         <thead>
             <tr>
+                <th class="collapsing" v-if="selecting"></th>
                 <th class="collapsing">lp.</th>
                 <th>Identyfikator</th>
                 <th>Typ</th>
@@ -67,7 +76,15 @@
         </thead>
         <tbody>
             <tr v-for="(item, index) in filterItems(items)" v-bind:key="index">
-                <td>{{ index + 1 }}</td>
+                <td v-if="selecting">
+                    <div class="ui fitted checkbox">
+                        <input type="checkbox" v-model="item.selected">
+                        <label></label>
+                    </div>
+                </td>
+                <td>
+                    {{ index + 1 }}
+                </td>
                 <td style="text-align:center;">
                     <div v-if="item.shortId" class="item-short-id single line">
                         {{ item.shortId }}
@@ -255,13 +272,15 @@ export default {
             filterIdentifier: "all",
             filterTemplate: "all",
             filterLocation: "all",
-            filterState: "all",
+            filterState: this.$route.params.filterState || "all",
 
             modalNotes: "",
 
             modalTemplate: 0,
 
             modalLocation: 0,
+
+            selecting: false,
         };
     },
 
@@ -412,6 +431,39 @@ export default {
 
         areNotesTooBigToDisplay(notes) {
             return notes.length > 50;
+        },
+
+        startSelecting() {
+            for(var key in this.items)
+                this.items[key].selected = false;
+
+            this.selecting = true;
+        },
+
+        stopSelecting() {
+            this.selecting = false;
+        },
+
+        goToCompletionPage() {
+            this.api.clearError();
+
+            var selectedItems = [];
+
+            for(var key in this.items)
+                if(this.items[key].selected)
+                    selectedItems.push(this.items[key].id);
+
+            if(selectedItems.length == 0) {
+                this.api.displayError("Wystąpił błąd", "Musisz zaznaczyć przynajmniej jeden przedmiot.");
+                return;
+            }
+
+            router.push({
+                name: "identifier-completion",
+                params: {
+                    itemIds: selectedItems,
+                }
+            });
         }
     },
 

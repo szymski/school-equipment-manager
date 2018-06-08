@@ -8,7 +8,9 @@
                 <div class="ui segment dashboard-entry">
                     <div class="dashboard-entry-wrapper">
                         <p class="number">{{ info.totalItems }}</p>
-                        <p class="description">Liczba przedmiotów</p>
+                        <p class="description">
+                            <a @click="goToItems">Liczba przedmiotów</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -16,7 +18,9 @@
                 <div class="ui segment dashboard-entry">
                     <div class="dashboard-entry-wrapper">
                         <p class="number">{{ info.borrowedItems }}</p>
-                        <p class="description">Niezwrócone przedmioty</p>
+                        <p class="description">
+                            <a @click="goToUnreturnedItems">Niezwrócone przedmioty</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -34,10 +38,27 @@
 </template>
 
 <script>
+import router from "../../router.js";
+
 export default {
     data() {
         return {
             info: null,
+        }
+    },
+
+    methods: {
+        goToItems() {
+            router.push("/items");
+        },
+
+        goToUnreturnedItems() {
+            router.push({
+                name: "items",
+                params: {
+                    filterState: "borrowed"
+                }
+            });
         }
     },
 
@@ -64,5 +85,14 @@ export default {
     .dashboard-entry-wrapper .description {
         font-size: 24px;
         margin-bottom: 0.5em;
+        color: #222222;
+    }
+
+    .dashboard-entry-wrapper .description a {
+        color: #222222;
+    }
+
+    .dashboard-entry-wrapper .description a:hover {
+        color: #666666;
     }
 </style>
