@@ -83,11 +83,35 @@ namespace SchoolEquipmentManager.Controllers
             var borrowedTodayCount = _context.Items.Include(i => i.Events)
                 .SelectMany(i => i.Events).Count(e => e.Type == "borrow" && e.Date > DateTime.Today);
 
+            var lastEventsDay = DateTime.Today - TimeSpan.FromDays(7);
+            var borrowsData = _context.Items.Include(i => i.Events).SelectMany(i => i.Events).OrderBy(e => e.Date).Where(e => e.Type == "borrow" && e.Date >= lastEventsDay).GroupBy(e => e.Date.Date).Select(g => new
+            {
+                Date = g.Key,
+                BorrowCount = g.Count(),
+            }).ToList();
+            for(DateTime date = DateTime.Today; date >= lastEventsDay; date -= TimeSpan.FromDays(1))
+                if(borrowsData.All(b => b.Date != date))
+                    borrowsData.Add(new
+                    {
+                        Date = date,
+                        BorrowCount = 0,
+                    });
+
             return Json(new
             {
                 totalItems = _context.Items.Count(),
                 borrowedItems = _context.Items.Include(i => i.Events).ToList().Count(i => !_itemManager.HasBeenReturned(i)),
-                borrowedTodayCount = borrowedTodayCount,
+                typesData = _context.Items.Include(i => i.Template).GroupBy(i => i.Template).Select(g => new
+                {
+                    template = g.Key != null ? g.Key.Id : 0,
+                    templateName = g.Key != null ? g.Key.Name : "Brak typu",
+                    itemCount = g.Count(),
+                }),
+                borrowsData = borrowsData.OrderBy(d => d.Date).Select(d => new
+                {
+                    date = d.Date.ToString("d"),
+                    borrowCount = d.BorrowCount,
+                }),
             });
         }
 
@@ -113,7 +137,7 @@ namespace SchoolEquipmentManager.Controllers
                 };
 
                 var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-                if(role != null)
+                if (role != null)
                     claims.Add(new Claim(ClaimTypes.Role, role));
 
                 var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);

@@ -38,6 +38,20 @@
 
         <div class="title">
             <i class="dropdown icon"></i>
+            Jak wygląda procedura rejestracji przedmiotów?
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                Aby zarejestrować przedmioty, należy udać się do zakładki <i>Wyposażenie</i>, a następnie kliknąć w przycisk <i>Dodaj przedmiot</i>.
+                Teraz trzeba wybrać położenie oraz typ przedmiotu. Możliwe jest dodanie więcej niż jednego przedmiotu naraz.
+                Istnieje również możliwość szybkiego wprowadznia identyfikatorów dla nowych przedmiotów, wówczas należy zaznaczyć opcję <i>Wprowadź identyfikatory od razu</i>.<br>
+                W ten sam sposób można wprowadzić identyfikatory do wcześniej dodanych przedmiotów. By to zrobić, należy użyć przycisku <i>Uzupełnij identyfikatory</i> w zakładce <i>Wyposażenie</i>,
+                zaznaczyć przedmioty, których identyfikatory chcemy uzupełnić, a następnie klikając w przycisk <i>Uzupełnij identyfikatory</i> jeszcze raz.
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
             Jak wygląda procedura pobrania i zwrotu przedmiotu?
         </div>
         <div class="content">
@@ -104,6 +118,18 @@
         <div class="content">
             <p class="transition hidden">
                 <div class="ui relaxed divided list">
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">08.06.2018</div>
+                            <div class="description">Dodano statystyki na stronie głównej</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">07.06.2018</div>
+                            <div class="description">Dodano stronę szybkiego uzupełniania identyfikatorów</div>
+                        </div>
+                    </div>
                     <div class="item">
                         <div class="content">
                             <div class="header">02.06.2018</div>

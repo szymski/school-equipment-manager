@@ -18,6 +18,7 @@
                     <td>{{ index + 1 }}</td>
                     <td>
                         <div class="editable-property single line">
+                            <i class="ui empty circular label color-id" :style="{ 'background': api.generateColor('location' + item.id) }"></i>
                             {{ item.name }}
                             <button v-if="api.isMod" class="ui mini basic icon circular button edit-id-btn" @click="showUpdateNameModal(item)">
                                 <i class="pencil icon"></i>

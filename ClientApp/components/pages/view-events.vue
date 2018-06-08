@@ -28,7 +28,10 @@
         <tbody>
             <tr v-for="(item, index) in [].concat(events).reverse()" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
-                <td>{{ item.teacherName }}</td>
+                <td>
+                    <i class="ui empty circular label color-id" :style="{ 'background': api.generateColor('teacher' + item.teacher) }"></i>
+                    {{ item.teacherName }}
+                </td>
                 <td>{{ item.date }}</td>
                 <td>{{ ({ borrow: "Pobrano", return: "Zwrócono" })[item.type] }}</td>
             </tr>

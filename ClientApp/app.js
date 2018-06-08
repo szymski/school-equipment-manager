@@ -9,6 +9,7 @@ import ErrorDisplay from 'components/error-display'
 
 require('semantic-ui-css/semantic.css')
 require('../node_modules/semantic-ui-css/semantic.js')
+require('../node_modules/chart.js/dist/Chart.min.js')
 
 Vue.prototype.$http = axios;
 

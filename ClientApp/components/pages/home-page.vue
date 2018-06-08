@@ -28,8 +28,21 @@
             <div class="ui column">
                 <div class="ui segment dashboard-entry">
                     <div class="dashboard-entry-wrapper">
-                        <p class="number">{{ info.borrowedTodayCount }}</p>
-                        <p class="description">Liczba pobrań dzisiaj</p>
+                        <canvas id="typesChart" width="400" height="200"></canvas>
+                        <p class="description" style="margin-top:1em;">
+                            Liczba przedmiotów danego typu
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui column">
+                <div class="ui segment dashboard-entry">
+                    <div class="dashboard-entry-wrapper">
+                        <canvas id="borrowsChart" width="400" height="200"></canvas>
+                        <p class="description" style="margin-top:1em;">
+                            Liczba pobrań w danym dniu
+                        </p>
                     </div>
                 </div>
             </div>
@@ -39,6 +52,7 @@
 
 <script>
 import router from "../../router.js";
+import { setTimeout } from 'timers';
 
 export default {
     data() {
@@ -59,13 +73,80 @@ export default {
                     filterState: "borrowed"
                 }
             });
+        },
+
+        prepareTypesChart() {
+            setTimeout(() => {
+                var ctx = document.getElementById("typesChart");
+
+                var labels = [ ];
+                var data = [ ];
+                var colors = [ ];
+                this.info.typesData.forEach(el => {
+                    labels.push(el.templateName);
+                    data.push(el.itemCount);
+                    colors.push(this.api.generateColor("template" + el.template));
+                });
+
+                var chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors,
+                        }]
+                    },
+                    options: {
+                        
+                    }
+                });
+            }, 500);
+        },
+
+        prepareBorrowsChart() {
+            setTimeout(() => {
+                var ctx = document.getElementById("borrowsChart");
+
+                var labels = [ ];
+                var data = [ ];
+                var colors = [ ];
+                this.info.borrowsData.forEach(el => {
+                    labels.push(el.date);
+                    data.push(el.borrowCount);
+                });
+
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Pobrania",
+                            backgroundColor: "transparent",
+                            borderColor: "#34b2d1",
+                            data: data,
+                        }]
+                    },
+                    options: {
+                        
+                    }
+                });
+            }, 500);
         }
+    },
+
+    mounted() {
+        
     },
 
     async created() {
         this.api.loading = true;
 
         this.info = await this.api.getDashboardInfo();
+        console.log(this.info);
+
+        this.prepareTypesChart();
+        this.prepareBorrowsChart();
 
         this.api.loading = false;
     }

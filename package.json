@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
+    "chart.js": "^2.7.2",
     "core-js": "^2.5.5",
     "font-awesome": "^4.6.3",
     "popper": "^1.0.1",

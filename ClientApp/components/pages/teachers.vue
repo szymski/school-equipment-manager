@@ -20,8 +20,7 @@
         <thead>
             <tr>
                 <th class="collapsing">lp.</th>
-                <th>Imię</th>
-                <th>Nazwisko</th>
+                <th>Imię i nazwisko</th>
                 <th class="collapsing">Niezwrócone&nbsp;przedmioty</th>
                 <th>Kod kreskowy</th>
                 <th class="collapsing"></th>
@@ -30,8 +29,10 @@
         <tbody>
             <tr v-for="(teacher, index) in filterTeachers(teachers)" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
-                <td>{{ teacher.name }}</td>
-                <td>{{ teacher.surname }}</td>
+                <td>
+                    <i class="ui empty circular label color-id" :style="{ 'background': api.generateColor('teacher' + teacher.id) }"></i>
+                    {{ teacher.name }} {{ teacher.surname }}
+                </td>
                 <td style="text-align:center;">{{ teacher.borrowedItems }}</td>
                 <td>{{ teacher.barcode }}</td>
                 <td class="single line">

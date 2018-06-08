@@ -27,7 +27,10 @@
         <tbody>
             <tr v-for="(itemTemplate, index) in filterItems(items)" v-bind:key="index">
                 <td>{{ index + 1 }}</td>
-                <td>{{ itemTemplate.name }}</td>
+                <td>
+                    <i class="ui empty circular label color-id" :style="{ 'background': api.generateColor('template' + itemTemplate.id) }"></i>
+                    {{ itemTemplate.name }}
+                </td>
                 <td>{{ itemTemplate.description }}</td>
                 <td style="text-align:center;">{{ itemTemplate.useCount }}</td>
                 <td>

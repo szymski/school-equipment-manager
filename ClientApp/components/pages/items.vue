@@ -98,6 +98,7 @@
                     <div :data-tooltip="item.returned ? null : 'Ten przedmiot nie został jeszcze zwrócony.'">
                         <div class="editable-property single line" v-if="item.name && item.name != ''">
                             <i v-if="!item.returned" class="exclamation circle icon not-returned-icon"/>
+                            <i class="ui empty circular label color-id" :style="{ 'background': api.generateColor('template' + item.template) }"></i>
                             <a @click="goToEventList(item.id)">
                                 {{ item.name }}
                             </a>
@@ -131,6 +132,7 @@
                 </td>
                 <td>
                     <div class="editable-property single line">
+                        <i v-if="item.location != 0" class="ui empty circular label color-id" :style="{ 'background': api.generateColor('location' + item.location) }"></i>
                         {{ item.location == 0 ? "Brak" : item.locationName }}
                         <button v-if="api.isMod" class="ui mini basic icon circular button edit-id-btn" @click="showLocationModal(item)">
                             <i class="pencil icon"></i>
@@ -370,7 +372,7 @@ export default {
 
         showLocationModal(item) {
             this.modalItem = item;
-            this.modalLocation = item.location; 
+            this.modalLocation = item.location;
             $("#locationModal").modal("show");
         },
 

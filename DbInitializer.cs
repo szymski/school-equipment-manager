@@ -138,7 +138,7 @@ namespace SchoolEquipmentManager
             #endregion
 
             var rnd = new Random();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 var events = new List<BorrowEvent>();
 
@@ -147,7 +147,7 @@ namespace SchoolEquipmentManager
                     events.Add(new BorrowEvent()
                     {
                         Teacher = rnd.Next(0, 1) == 0 ? teacher1 : teacher2,
-                        Date = DateTime.Now - TimeSpan.FromMinutes(45),
+                        Date = DateTime.Now - TimeSpan.FromMinutes(45) - TimeSpan.FromDays(rnd.Next(0, 7)),
                         Type = "borrow",
                     });
                 }

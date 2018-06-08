@@ -6,4 +6,5 @@ This could be a good project to get into modern web development, idk.
 - ASP.NET Core 2.0
 - Vue.js
 - Semantic UI
+- Chart.js
 - [ASP.NET Core Vue Starter Kit](https://github.com/MarkPieszak/aspnetcore-Vue-starter)
