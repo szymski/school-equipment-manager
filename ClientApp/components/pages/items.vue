@@ -33,29 +33,53 @@
             <div class="field">
                 <select class="ui dropdown" v-model="filterIdentifier">
                     <option value="all" selected>Z identyfikatorem lub bez</option>
-                    <option value="with">Z identyfikatorem</option>
-                    <option value="without">Bez identyfikatora</option>
+                    <option value="with">
+                        <i class="check icon"></i>
+                        Z identyfikatorem
+                    </option>
+                    <option value="without">
+                        <i class="times icon"></i>
+                        Bez identyfikatora
+                    </option>
                 </select>
             </div>
             <div class="field">
                 <select class="ui dropdown" v-model="filterTemplate">
                     <option value="all" selected>Dowolny typ</option>
-                    <option value="none">Brak typu</option>
-                    <option v-for="(item, index) in templates" :key="index" :value="item.id">{{ item.name }}</option>
+                    <option value="none">
+                        <i class="times icon"></i>
+                        Brak typu
+                    </option>
+                    <option v-for="(item, index) in templates" :key="index" :value="item.id">
+                        <i class="ui empty circular label color-id" :style="{ 'background': api.generateColor('template' + item.id) }"></i>
+                        {{ item.name }}
+                    </option>
                 </select>
             </div>
             <div class="field">
                 <select class="ui dropdown" v-model="filterLocation">
                     <option value="all" selected>Dowolne położenie</option>
-                    <option value="none">Brak położenia</option>
-                    <option v-for="(item, index) in locations" :key="index" :value="item.id">{{ item.name }}</option>
+                    <option value="none">
+                        <i class="times icon"></i>
+                        Brak położenia
+                    </option>
+                    <option v-for="(item, index) in locations" :key="index" :value="item.id">
+                        <i class="ui empty circular label color-id" :style="{ 'background': api.generateColor('location' + item.id) }"></i>
+                        {{ item.name }}
+                    </option>
                 </select>
             </div>
             <div class="field">
                 <select class="ui dropdown" v-model="filterState">
                     <option value="all" selected>Przedmioty zwrócone oraz niezwrócone</option>
-                    <option value="borrowed">Przedmioty niezwrócone</option>
-                    <option value="returned">Przedmioty zwrócone</option>
+                    <option value="borrowed">
+                        <i class="times icon"></i>
+                        Przedmioty niezwrócone
+                    </option>
+                    <option value="returned">
+                        <i class="check icon"></i>
+                        Przedmioty zwrócone
+                    </option>
                 </select>
             </div>
         </div>
