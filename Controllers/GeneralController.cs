@@ -80,6 +80,9 @@ namespace SchoolEquipmentManager.Controllers
         [HttpGet("[action]")]
         public IActionResult GeneralInfo()
         {
+            var currentUser = _userGetter.GetCurrentUser();
+            var currentTeacher = currentUser.Teacher;
+
             var borrowedTodayCount = _context.Items.Include(i => i.Events)
                 .SelectMany(i => i.Events).Count(e => e.Type == "borrow" && e.Date > DateTime.Today);
 
@@ -89,6 +92,8 @@ namespace SchoolEquipmentManager.Controllers
                 Date = g.Key,
                 BorrowCount = g.Count(),
             }).ToList();
+
+            // Fill gaps in the dates
             for(DateTime date = DateTime.Today; date >= lastEventsDay; date -= TimeSpan.FromDays(1))
                 if(borrowsData.All(b => b.Date != date))
                     borrowsData.Add(new
@@ -101,6 +106,7 @@ namespace SchoolEquipmentManager.Controllers
             {
                 totalItems = _context.Items.Count(),
                 borrowedItems = _context.Items.Include(i => i.Events).ToList().Count(i => !_itemManager.HasBeenReturned(i)),
+                borrowedItemsSelf = _context.Items.Include(i => i.Events).ToList().Count(i => _itemManager.GetWhoBorrowed(i) == currentTeacher),
                 typesData = _context.Items.Include(i => i.Template).GroupBy(i => i.Template).Select(g => new
                 {
                     template = g.Key != null ? g.Key.Id : 0,

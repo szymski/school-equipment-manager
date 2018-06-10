@@ -1,5 +1,5 @@
 <template>
-    <div id="app" class="pushable">
+    <div id="app" class="pushable" style="min-height:100vh !important;">
         <!-- Cookies nag -->
         <div class="ui inline cookie nag">
             <span class="title">

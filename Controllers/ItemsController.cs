@@ -80,7 +80,10 @@ namespace SchoolEquipmentManager.Controllers
         {
             List<dynamic> result = new List<dynamic>();
 
-            foreach (var i in _context.Items.Include(j => j.Location).Include(j => j.Template).Include(j => j.Events))
+            foreach (var i in _context.Items.Include(j => j.Location).Include(j => j.Template).Include(j => j.Events).ThenInclude(e => e.Teacher))
+            {
+                var whoBorrowed = _itemManager.GetWhoBorrowed(i);
+
                 result.Add(new
                 {
                     id = i.Id,
@@ -91,8 +94,10 @@ namespace SchoolEquipmentManager.Controllers
                     description = i.Template != null ? i.Template.Description : "",
                     location = i.Location?.Id ?? 0,
                     locationName = i.Location?.Name ?? "",
-                    returned = _itemManager.HasBeenReturned(i),
+                    returned = whoBorrowed == null,
+                    borrowedTeacher = whoBorrowed?.Id ?? 0,
                 });
+            }
 
             return result;
         }
@@ -181,13 +186,19 @@ namespace SchoolEquipmentManager.Controllers
             if (item == null)
                 return BadRequest("Nie ma przedmiotu o takim id.");
 
-            if (_context.Items.Any(i => i.Id != item.Id && i.ShortId == model.Identifier))
-                return BadRequest("Istnieje już przedmiot z takim identyfikatorem.");
+            if (String.IsNullOrEmpty(model.Identifier))
+                item.ShortId = null;
+            else
+            {
+                if (_context.Items.Any(i => i.Id != item.Id && i.ShortId == model.Identifier))
+                    return BadRequest("Istnieje już przedmiot z takim identyfikatorem.");
 
-            if (_context.Teachers.Any(t => t.BarCode == model.Identifier))
-                return BadRequest("Istnieje już nauczyciel z takim identyfikatorem.");
+                if (_context.Teachers.Any(t => t.BarCode == model.Identifier))
+                    return BadRequest("Istnieje już nauczyciel z takim identyfikatorem.");
 
-            item.ShortId = model.Identifier;
+                item.ShortId = model.Identifier;
+            }
+
             _context.SaveChanges();
 
             return Ok();

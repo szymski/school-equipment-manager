@@ -95,6 +95,14 @@ export const api = {
         await axios.post("/api/Locations/UpdateName", { id: locationId, name: newName });
     },
 
+    async updateTemplateName(templateId, newName) {
+        await axios.post("/api/ItemTemplates/UpdateName", { id: templateId, name: newName });
+    },
+
+    async updateTemplateDescription(templateId, newDescription) {
+        await axios.post("/api/ItemTemplates/UpdateDescription", { id: templateId, description: newDescription });
+    },
+
     async fetchTeachers() {
         if(this.teachers)
             return;

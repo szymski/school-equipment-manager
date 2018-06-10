@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <!-- Identifier modal -->
+        <!-- Name modal -->
         <div class="ui modal" id="updateNameModal">
             <div class="header">
                 Zmień nazwę położenia
@@ -79,7 +79,7 @@
                 <div class="ui deny button">
                     Anuluj
                 </div>
-                <div class="ui positive right labeled icon button" @click="updateName(modalLocation, modalName)" id="modalIdentifierButton">
+                <div class="ui positive right labeled icon button" @click="updateName(modalLocation, modalName)">
                     Gotowe
                     <i class="checkmark icon"></i>
                 </div>

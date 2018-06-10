@@ -72,13 +72,17 @@
             <div class="field">
                 <select class="ui dropdown" v-model="filterState">
                     <option value="all" selected>Przedmioty zwrócone oraz niezwrócone</option>
+                    <option value="returned">
+                        <i class="check icon"></i>
+                        Przedmioty zwrócone
+                    </option>
                     <option value="borrowed">
                         <i class="times icon"></i>
                         Przedmioty niezwrócone
                     </option>
-                    <option value="returned">
-                        <i class="check icon"></i>
-                        Przedmioty zwrócone
+                    <option value="borrowed-self">
+                        <i class="times icon"></i>
+                        Przedmioty niezwrócone przez ciebie
                     </option>
                 </select>
             </div>
@@ -231,7 +235,7 @@
             <div class="description">
                 <div class="ui form">
                     <div class="field">
-                        <select v-model="modalTemplate" class="ui dropdown">
+                        <select v-model="modalTemplate" class="ui dropdown" id="templateSelect">
                             <option value="0">Brak</option>
                             <option v-for="item in templates" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
                         </select>
@@ -259,7 +263,7 @@
             <div class="description">
                 <div class="ui form">
                     <div class="field">
-                        <select v-model="modalLocation" class="ui dropdown">
+                        <select v-model="modalLocation" class="ui dropdown" id="locationSelect">
                             <option value="0">Brak</option>
                             <option v-for="item in locations" v-bind:key="item.id" v-bind:value="item.id">{{ item.name }}</option>
                         </select>
@@ -346,6 +350,10 @@ export default {
                     if(i.returned)
                         return false;
                 }
+                else if(this.filterState == "borrowed-self") {
+                    if(i.returned || i.borrowedTeacher != this.api.teacherId)
+                        return false;
+                }
                 else if(this.filterState == "returned") {
                     if(!i.returned)
                         return false;
@@ -376,7 +384,7 @@ export default {
         showEnterIdDialog(item) {
             this.modalItem = item;
             this.modalIdentifier = item.shortId || ""; // This doesn't always update the modal. wtf
-            $("modalIdentifierInput").val(this.modalIdentifier);
+            $("#modalIdentifierInput").val(this.modalIdentifier);
             this.modalFirstTime = !this.modalIdentifier || this.modalIdentifier == "";
             $("#enterIdModal").modal("show");
         },
@@ -384,19 +392,21 @@ export default {
         showNotesModal(item) {
             this.modalItem = item;
             this.modalNotes = item.notes || ""; // This doesn't always update the modal. wtf
-            $("notesModalInput").val(this.modalNotes);
+            $("#notesModalInput").val(this.modalNotes);
             $("#notesModal").modal("show");
         },
 
         showTemplateModal(item) {
             this.modalItem = item;
             this.modalTemplate = item.template; 
+            $("#templateSelect").val(item.template).change();
             $("#templateModal").modal("show");
         },
 
         showLocationModal(item) {
             this.modalItem = item;
             this.modalLocation = item.location;
+            $("#locationSelect").val(item.location).change();
             $("#locationModal").modal("show");
         },
 

@@ -15,12 +15,26 @@
                 </div>
             </div>
             <div class="ui column">
-                <div class="ui segment dashboard-entry">
-                    <div class="dashboard-entry-wrapper">
-                        <p class="number">{{ info.borrowedItems }}</p>
-                        <p class="description">
-                            <a @click="goToUnreturnedItems">Niezwrócone przedmioty</a>
-                        </p>
+                <div class="ui two column grid">
+                    <div class="ui column">
+                        <div class="ui segment dashboard-entry">
+                            <div class="dashboard-entry-wrapper">
+                                <p class="number">{{ info.borrowedItems }}</p>
+                                <p class="description">
+                                    <a @click="goToUnreturnedItems">Niezwrócone przedmioty</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui column">
+                        <div class="ui segment dashboard-entry">
+                            <div class="dashboard-entry-wrapper">
+                                <p class="number">{{ info.borrowedItemsSelf }}</p>
+                                <p class="description">
+                                    <a @click="goToUnreturnedItemsSelf">Niezwrócone przez ciebie</a>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,6 +85,15 @@ export default {
                 name: "items",
                 params: {
                     filterState: "borrowed"
+                }
+            });
+        },
+
+        goToUnreturnedItemsSelf() {
+            router.push({
+                name: "items",
+                params: {
+                    filterState: "borrowed-self"
                 }
             });
         },
