@@ -29,6 +29,10 @@ module.exports = (env) => {
                 { test: /\.js$/, include: /ClientApp/, use: 'babel-loader' },
                 { test: /\.css$/, use: isDevBuild ? ['style-loader', 'css-loader'] : ExtractTextPlugin.extract({ use: 'css-loader' }) },
                 { test: /\.(png|jpg|jpeg|gif|svg|eot|woff2|ttf|woff)$/, use: 'url-loader?limit=25000' },
+                {
+                    test: /\.ico$/,
+                    loader: 'file-loader?name=[name].[ext]'
+                }
             ]
         },
         plugins: [
@@ -41,7 +45,7 @@ module.exports = (env) => {
                 jquery: 'jquery',
                 'window.jQuery': 'jquery',
                 jQuery: 'jquery'
-            })
+            }),
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
             new webpack.SourceMapDevToolPlugin({

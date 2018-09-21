@@ -56,7 +56,7 @@
         </div>
         <div class="content">
             <p class="transition hidden">
-                Nauczyciel, który zamierza pobrać dany przedmiot, najpierw skanuje skanerem swój kod kreskowy pobrania, a następnie skanuje kod przedmiotu. Zeskanowanie kodu pobrania następuje tylko raz.<br>
+                Nauczyciel, który zamierza pobrać dany przedmiot, najpierw skanuje skanerem swój kod kreskowy, kod pobrania, a następnie skanuje kod przedmiotu. Zeskanowanie kodu pobrania następuje tylko raz.<br>
                 Przy zwrocie przedmiotu należy zeskanować kod zwrotu oraz kod przedmiotu.
             </p>
         </div>
@@ -161,6 +161,21 @@
                         </div>
                     </div>
                 </div>
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Użyte technologie i biblioteki
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                <ul>
+                    <li>ASP.NET Core 2</li>
+                    <li>Vue.js</li>
+                    <li>Semantic UI</li>
+                    <li>Pomelo.EntityFrameworkCore.MySql</li>
+                </ul>
             </p>
         </div>
     </div>

@@ -8,8 +8,8 @@ namespace SchoolEquipmentManager.Logic
 {
     public interface IMessageService
     {
-        Task SendMessage(Teacher recipent, string title, string body);
-        Task SendMessage(IEnumerable<Teacher> recipents, string title, string body);
-        Task SendMessageToAll(string title, string body);
+        Task SendMessage(Teacher recipent, string templateName, params object[] bodyFormatValues);
+        Task SendMessage(IEnumerable<Teacher> recipents, string templateName, params object[] bodyFormatValues);
+        Task SendMessageToAll(string templateName, params object[] bodyFormatValues);
     }
 }

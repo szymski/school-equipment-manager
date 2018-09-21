@@ -4,6 +4,7 @@ import { isString } from 'util';
 export const api = {
     useDevVersion: true,
     loading: false,
+    connectionLost: false,
     
     loggedIn: false,
     authToken: null,
@@ -21,10 +22,14 @@ export const api = {
     async updateUserInfo() {
         var data = (await axios.get("/api/General/GetUserInfo")).data;
         this.loggedIn = data.loggedIn;
+        this.useDevVersion = data.devVersion;
         this.username = data.username;
         this.teacherId = data.teacherId;
         this.messageCount = data.messageCount;
         this.role = data.role;
+
+        if(this.useDevVersion)
+            console.log("Using development frontend");
 
         this.isAdmin = this.role == "administrator";
         this.isMod = this.role == "administrator" || this.role == "moderator";
@@ -197,6 +202,9 @@ export const api = {
 
     /// Returns a formatted error message from the response
     parseError(response) {
+        if(!response)
+            return "Nieznany błąd";
+
         if(response.status == 403)
             return "Nie masz wystarczających uprawnień.";
 
@@ -269,6 +277,18 @@ export const api = {
         return rgbToHex(color.r, color.g, color.b);
     }
 };
+
+// Display connection lost message when neccesary
+axios.interceptors.response.use((response) => {
+    return response;
+}, (error) => {
+    if (!error.response || error.response.status === 408 || error.code === "ECONNABORTED") {
+        console.log("Connection to server lost");
+        api.connectionLost = true;
+    }
+
+    return Promise.reject(error);
+});
 
 function HSVtoRGB(h, s, v) {
     var r, g, b, i, f, p, q, t;

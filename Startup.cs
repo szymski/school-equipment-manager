@@ -41,8 +41,16 @@ namespace Vue2Spa
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            if (Configuration.GetValue<bool>("MySQL:Enabled"))
+            {
+                services.AddDbContext<AppContext>(options =>
+                    options.UseMySql($"Server={Configuration["MySQL:Host"]};Database={Configuration["MySQL:Database"]};User={Configuration["MySQL:User"]};Password={Configuration["MySQL:Password"]}"));
+            }
+            else
+            {
+                services.AddDbContext<AppContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            }
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -87,7 +95,7 @@ namespace Vue2Spa
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AppContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AppContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IMessageService messageService)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -105,7 +113,7 @@ namespace Vue2Spa
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            new DbInitializer(dbContext, userManager, roleManager).Initialize();
+            new DbInitializer(dbContext, userManager, roleManager, env, messageService).Initialize();
 
             app.UseStaticFiles();
 

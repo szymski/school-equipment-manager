@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
 using SchoolEquipmentManager.Logic;
@@ -14,12 +15,16 @@ namespace SchoolEquipmentManager
         private AppContext _dbContext;
         private UserManager<ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
+        private IHostingEnvironment _hostingEnv;
+        private IMessageService _messageService;
 
-        public DbInitializer(AppContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public DbInitializer(AppContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IHostingEnvironment env, IMessageService messageService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _hostingEnv = env;
+            _messageService = messageService;
         }
 
         public void Initialize()
@@ -28,9 +33,19 @@ namespace SchoolEquipmentManager
 
             CreateRoles().Wait();
 
-            if (_dbContext.Items.Any())
+            if (_dbContext.Teachers.Any())
                 return;
 
+            if (_hostingEnv.IsDevelopment())
+                InitDevelopmentDb();
+            else
+                InitProductionDb();
+
+            _dbContext.SaveChanges();
+        }
+
+        private void InitDevelopmentDb()
+        {
             #region Locations
 
             var location1 = new Location()
@@ -116,10 +131,12 @@ namespace SchoolEquipmentManager
                     Teacher = teacher3,
                 };
 
-                var task = _userManager.CreateAsync(user, "123456");
+                var task = _userManager.CreateAsync(user, "admin123");
                 task.Wait();
 
                 _userManager.AddToRoleAsync(user, Roles.Administrator).Wait();
+
+                _messageService.SendMessage(teacher3, "SystemInstalled");
             }
 
             {
@@ -162,8 +179,32 @@ namespace SchoolEquipmentManager
                 };
                 _dbContext.Items.Add(item);
             }
+        }
 
-            _dbContext.SaveChanges();
+        private void InitProductionDb()
+        {
+            var adminTeacher = new Teacher()
+            {
+                Name = "Główny",
+                Surname = "Administrator",
+                BarCode = "",
+                Messages = new List<Message>()
+            };
+            _dbContext.Teachers.Add(adminTeacher);
+
+            var adminUser = new ApplicationUser()
+            {
+                UserName = "admin",
+                Email = "",
+                Teacher = adminTeacher,
+            };
+
+            var task = _userManager.CreateAsync(adminUser, "admin123");
+            task.Wait();
+
+            _userManager.AddToRoleAsync(adminUser, Roles.Administrator).Wait();
+
+            _messageService.SendMessage(adminTeacher, "SystemInstalled");
         }
 
         public async Task CreateRoles()

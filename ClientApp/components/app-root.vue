@@ -8,79 +8,95 @@
             <i class="close icon"></i>
         </div>
 
-        <div v-if="api.loggedIn">
-            <div class="pusher">
-                <side-bar/>
-                <div class="ui basic segment">
-                    <router-view></router-view>
-                    <div class="ui inverted top aligned dimmer" :class="{ 'active': api.loading }">
-                        <div class="content">
-                            <div class="ui inline loader my-loader"/>
-                        </div>
+        <!-- Connection lost message -->
+        <div v-if="api.connectionLost">
+            <div class="ui one column stackable center aligned page grid">
+                <div class="ui eight wide column">
+                    <div class="ui raised red segment login-box">
+                        <h3>Utracono połączenie z serwerem</h3>
+                        <p>Prosimy o spróbowanie ponownie za chwilę lub skontaktowanie się z administratorem.</p>
+                        <button class="ui gray button" @click="refresh">Odśwież</button>
                     </div>
                 </div>
             </div>
         </div>
         <div v-else>
-            <template v-if="!resettingPassword">
-                <div class="ui one column stackable center aligned page grid">
-                    <div class="ui eight wide column">
-                        <div class="ui raised segment login-box">
-                            <error-display/>
-                            <h3>Wymagane zalogowanie</h3>
-                            <div class="ui form">
-                                <div class="ui field" id="loginField">
-                                    <input type="text" placeholder="Nazwa użytkownika" v-model="username">
-                                </div>
-                                <div class="ui field" id="loginField">
-                                    <input type="password" placeholder="Hasło" v-model="password">
-                                </div>
-
-                                <button id="loginButton" class="ui fluid primary button" @click="login">Zaloguj</button>
-
-                                <a class="reset-link" @click="resettingPassword = true">Resetuj hasło</a>
+            <div v-if="api.loggedIn">
+                <div class="pusher">
+                    <side-bar/>
+                    <div class="ui basic segment">
+                        <router-view></router-view>
+                        <div class="ui inverted top aligned dimmer" :class="{ 'active': api.loading }">
+                            <div class="content">
+                                <div class="ui inline loader my-loader"/>
                             </div>
                         </div>
                     </div>
                 </div>
-            </template>
-            <template v-else>
-                <div class="ui one column stackable center aligned page grid">
-                    <div class="ui eight wide column">
-                        <div class="ui raised segment login-box">
-                            <error-display/>
-                            <h3>Resetowanie hasła</h3>
-                            <p>
-                                Aby zresetować hasło, podaj poniżej swój adres E-Mail.<br>
-                                Jeśli istnieje konto z takim adresem, otrzymasz wiadomość, która pozwoli ustawić nowe hasło.
-                            </p>
-                            <div class="ui form">
-                                <div class="ui field" id="loginField">
-                                    <input type="text" placeholder="Adres E-Mail" v-model="email">
-                                </div>
-                                
-                                <button id="resetButton" class="ui fluid primary button" @click="requestPasswordReset" :disabled="email == ''">Resetuj hasło</button>
+            </div>
+            <div v-else>
+                <template v-if="!resettingPassword">
+                    <div class="ui one column stackable center aligned page grid">
+                        <div class="ui eight wide column">
+                            <h1 class="app-title">System ewidencji inwentarzu</h1>
+                            <div class="ui raised segment login-box">
+                                <error-display/>
+                                <h3>Wymagane zalogowanie</h3>
+                                <div class="ui form">
+                                    <div class="ui field" id="loginField">
+                                        <input type="text" placeholder="Nazwa użytkownika" v-model="username">
+                                    </div>
+                                    <div class="ui field" id="loginField">
+                                        <input type="password" placeholder="Hasło" v-model="password">
+                                    </div>
 
-                                <a class="reset-link" @click="resettingPassword = false">Wróć do logowania</a>
+                                    <button id="loginButton" class="ui fluid primary button" @click="login">Zaloguj</button>
+
+                                    <a class="reset-link" @click="resettingPassword = true">Resetuj hasło</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </template>
+                </template>
+                <template v-else>
+                    <div class="ui one column stackable center aligned page grid">
+                        <div class="ui eight wide column">
+                            <h1 class="app-title">System ewidencji inwentarzu</h1>
+                            <div class="ui raised segment login-box">
+                                <error-display/>
+                                <h3>Resetowanie hasła</h3>
+                                <p>
+                                    Aby zresetować hasło, podaj poniżej swój adres E-Mail.<br>
+                                    Jeśli istnieje konto z takim adresem, otrzymasz wiadomość, która pozwoli ustawić nowe hasło.
+                                </p>
+                                <div class="ui form">
+                                    <div class="ui field" id="loginField">
+                                        <input type="text" placeholder="Adres E-Mail" v-model="email">
+                                    </div>
+                                    
+                                    <button id="resetButton" class="ui fluid primary button" @click="requestPasswordReset" :disabled="email == ''">Resetuj hasło</button>
 
-            <!-- Done modal -->
-            <div class="ui modal" id="doneModal">
-                <div class="header">
-                    Sprawdź swoją skrzynkę pocztową
-                </div>
-                <div class="content">
-                    <div class="description">
-                        <p>Otrzymasz link, który pozwoli na zresetowanie hasła.</p>
+                                    <a class="reset-link" @click="resettingPassword = false">Wróć do logowania</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="actions">
-                    <div class="ui green deny right button">
-                        Zamknij
+                </template>
+
+                <!-- Done modal -->
+                <div class="ui modal" id="doneModal">
+                    <div class="header">
+                        Sprawdź swoją skrzynkę pocztową
+                    </div>
+                    <div class="content">
+                        <div class="description">
+                            <p>Otrzymasz link, który pozwoli na zresetowanie hasła.</p>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <div class="ui green deny right button">
+                            Zamknij
+                        </div>
                     </div>
                 </div>
             </div>
@@ -175,6 +191,10 @@ export default {
             $("#resetButton").removeClass("loading");
 
             this.loggingIn = false;
+        },
+
+        refresh() {
+            location.reload();
         }
     }
 };
@@ -194,7 +214,7 @@ body, h1, h2, h3, h4, h5, .ui.button, .ui.menu, .header {
 }
 
 .login-box {
-    margin-top: 4em !important;
+    margin-top: 1em !important;
 }
 
 .my-loader {
@@ -204,5 +224,9 @@ body, h1, h2, h3, h4, h5, .ui.button, .ui.menu, .header {
 .reset-link {
     display: block;
     margin-top: 1em !important;
+}
+
+.app-title {
+    padding-top: 2em;
 }
 </style>

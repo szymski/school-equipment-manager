@@ -161,9 +161,9 @@ namespace SchoolEquipmentManager.Controllers
             _context.Teachers.Add(teacher);
             _context.SaveChanges();
 
-            _messageService.SendMessage(teacher,
-                "Witaj w systemie ewidencji inwentarzu!",
-                "Wejdź do zakładki pomoc by dowiedzieć się jak skorzystać z systemu.<br>Nie zapomnij też zmienić hasła w zakładce <i>Moje konto</i>.");
+            //_messageService.SendMessage(teacher,
+            //    "Witaj w systemie ewidencji inwentarzu!",
+            //    "Wejdź do zakładki pomoc by dowiedzieć się jak skorzystać z systemu.<br>Nie zapomnij też zmienić hasła w zakładce <i>Moje konto</i>.");
 
             return Json(new
             {
@@ -227,9 +227,7 @@ namespace SchoolEquipmentManager.Controllers
 
                     await _userManager.CreateAsync(user, generatedPassword);
 
-                    _messageService.SendMessage(teacher,
-                        "Nowe hasło",
-                        $"Dla twojego konta zostało wygenerowane nowe hasło: <b>{generatedPassword}</b><br>Powinieneś je zmienić w zakładce moje konto.");
+                    _messageService.SendMessage(teacher, "AccountEnabled", user.UserName, generatedPassword, $"{Request.Scheme}://{Request.Host}/");
 
                     accountCreated = true;
                 }
@@ -276,10 +274,7 @@ namespace SchoolEquipmentManager.Controllers
             // Send a message that the barcode has been changed
             if (!string.IsNullOrEmpty(teacher.BarCode) && oldBarcode.ToUpper().Trim() != teacher.BarCode)
             {
-                _messageService.SendMessage(teacher,
-                    "Ustawiono nowy identyfikator dla konta",
-                    $"Dla twojego konta został ustawiony nowy identyfikator: {model.BarCode?.Trim().ToUpper()}<br><br>" +
-                    $"<img src='{Request.Scheme}://{Request.Host}/api/BarCode/Generate?text={model.BarCode.Trim().ToUpper()}'/>");
+                _messageService.SendMessage(teacher, "NewBarcode", model.BarCode?.Trim().ToUpper(), $"{Request.Scheme}://{Request.Host}/api/BarCode/Generate?text={model.BarCode.Trim().ToUpper()}");
             }
 
             _context.SaveChanges();
@@ -383,9 +378,7 @@ namespace SchoolEquipmentManager.Controllers
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, generatedPassword);
 
-            _messageService.SendMessage(teacher,
-                "Nowe hasło",
-                $"Dla twojego konta zostało wygenerowane nowe hasło: <b>{generatedPassword}</b><br>Powinieneś je zmienić w zakładce moje konto.");
+            _messageService.SendMessage(teacher, "PasswordReset", generatedPassword);
 
             return Json(new
             {
@@ -411,15 +404,19 @@ namespace SchoolEquipmentManager.Controllers
             if (item == null)
                 return BadRequest("Nie ma takiego przedmiotu");
 
-            var message = $"Nastąpiła próba pobrania przedmiotu, który nie został zwrócony.<br><br>Identyfikator: {item.ShortId}<br>Nazwa przedmiotu: {item.Name}<br>Położenie: {item.Location?.Name ?? "Brak"}" +
-                $"<br>Nauczyciel który nie zwrócił przedmiotu: {borrowedTeacher.Name} {borrowedTeacher.Surname}<br>Nauczyciel który próbował zwrócić przedmiot: {teacher.Name} {teacher.Surname}";
+            //var message = $"Nastąpiła próba pobrania przedmiotu, który nie został zwrócony.<br><br>Identyfikator: {item.ShortId}<br>Nazwa przedmiotu: {item.Name}<br>Położenie: {item.Location?.Name ?? "Brak"}" +
+            //    $"<br>Nauczyciel który nie zwrócił przedmiotu: {borrowedTeacher.Name} {borrowedTeacher.Surname}<br>Nauczyciel który próbował zwrócić przedmiot: {teacher.Name} {teacher.Surname}";
 
             var users = (await _userManager.GetUsersInRoleAsync(Roles.Administrator)).Concat(
                 await _userManager.GetUsersInRoleAsync(Roles.Moderator)).ToList();
 
             var teachers = _context.Users.Include(u => u.Teacher).Where(u => users.Any(u2 => u2.Id == u.Id)).Select(u => u.Teacher).ToList();
 
-            _messageService.SendMessage(teachers, "Nastąpiła próba pobrania przedmiotu, który nie został zwrócony", message);
+            //_messageService.SendMessage(teachers, "Nastąpiła próba pobrania przedmiotu, który nie został zwrócony", message);
+
+            _messageService.SendMessage(teachers, "UnreturnedBorrow", item.ShortId, item.Name,
+                item.Location?.Name ?? "Brak", $"{borrowedTeacher.Name} {borrowedTeacher.Surname}",
+                $"{teacher.Name} {teacher.Surname}");
 
             return Ok();
         }

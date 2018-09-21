@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -45,14 +46,16 @@ namespace SchoolEquipmentManager.Controllers
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
         private IEmailService _emailService;
+        private IHostingEnvironment _hostingEnv;
 
-        public GeneralController(AppContext dbContext, ItemManager itemManager, UserGetter userGetter, UserManager<ApplicationUser> userManager, IEmailService emailService)
+        public GeneralController(AppContext dbContext, ItemManager itemManager, UserGetter userGetter, UserManager<ApplicationUser> userManager, IEmailService emailService, IHostingEnvironment env)
         {
             _context = dbContext;
             _itemManager = itemManager;
             _userGetter = userGetter;
             _userManager = userManager;
             _emailService = emailService;
+            _hostingEnv = env;
         }
 
         [HttpGet("[action]")]
@@ -61,15 +64,23 @@ namespace SchoolEquipmentManager.Controllers
         {
             var user = _userGetter.GetCurrentUser(u => u.Include(u2 => u2.Teacher).ThenInclude(t => t.Messages));
 
+#if DEBUG
+            var devVersion = _hostingEnv.IsDevelopment();
+#else
+            var devVersion = false;
+#endif
+
             if (user == null)
                 return Json(new
                 {
                     loggedIn = false,
+                    devVersion = devVersion,
                 });
 
             return Json(new
             {
                 loggedIn = true,
+                devVersion = devVersion,
                 teacherId = user.Teacher.Id,
                 username = $"{user.Teacher.Name} {user.Teacher.Surname}",
                 messageCount = user.Teacher.Messages.Count(m => !m.Read),

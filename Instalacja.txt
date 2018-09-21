@@ -1,0 +1,19 @@
+W przypadku systemu Linux oraz serwera Apache 2.
+
+<VirtualHost *:81>
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:5000/
+    ProxyPassReverse / http://localhost:5000/
+    ErrorLog ${APACHE_LOG_DIR}hellomvc-error.log
+    CustomLog ${APACHE_LOG_DIR}hellomvc-access.log common
+</VirtualHost>
+
+sudo a2enmod proxy
+sudo a2enmod proxy_balancer
+sudo a2enmod proxy_http
+
+Listen odpowiedniego portu w ports.conf
+
+W bazie MySQL, wymagane użycie kodowania utf8_general_ci dla polskich znaków.
+
+./SchoolEquipmentManager --server.urls=http://localhost:5000/

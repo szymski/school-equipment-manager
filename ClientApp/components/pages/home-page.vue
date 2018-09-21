@@ -166,7 +166,6 @@ export default {
         this.api.loading = true;
 
         this.info = await this.api.getDashboardInfo();
-        console.log(this.info);
 
         this.prepareTypesChart();
         this.prepareBorrowsChart();
