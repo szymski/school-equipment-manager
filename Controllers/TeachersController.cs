@@ -260,6 +260,11 @@ namespace SchoolEquipmentManager.Controllers
             {
                 var user = _context.Users.Include(u => u.Teacher).FirstOrDefault(u => u.Teacher.Id == teacher.Id);
 
+                var currentUser = _userGetter.GetCurrentUser();
+
+                if (currentUser.Id == user?.Id)
+                    return BadRequest("Nie możesz zablokować logowania na własnym koncie.");
+
                 // Remove user account if exists
                 if (user != null)
                     await _userManager.DeleteAsync(user);

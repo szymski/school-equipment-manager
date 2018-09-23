@@ -19,15 +19,6 @@
             </div>
         </a>
 
-        <div v-if="api.useDevVersion" class="item">
-            <div class="ui inverted green progress">
-                <div class="bar">
-                    <div class="progress"></div>
-                </div>
-                <div class="label"><p>😁 Gotowość projektu 😁</p></div>
-            </div>
-        </div>
-
         <div class="item">
             <div class="ui checkbox">
                 <input type="checkbox" v-model="api.useDevVersion">

@@ -76,6 +76,21 @@
 
         <div class="title">
             <i class="dropdown icon"></i>
+            Kody kreskowe
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                Kody kreskowe nauczycieli są dostępne w zakładce <i>Nauczyciele</i>, natomiast kody pobrania i zwrotu są następujące:<br>
+                <br>
+                <img src="/api/BarCode/Generate?text=POBR" alt="">
+                <br>
+                <br>
+                <img src="/api/BarCode/Generate?text=ZWROT" alt="">
+            </p>
+        </div>
+
+        <div class="title">
+            <i class="dropdown icon"></i>
             Kto jest twórcą strony?
         </div>
         <div class="content">
@@ -172,9 +187,12 @@
             <p class="transition hidden">
                 <ul>
                     <li>ASP.NET Core 2</li>
+                    <li>jQuery</li>
                     <li>Vue.js</li>
                     <li>Semantic UI</li>
+                    <li>Chart.js</li>
                     <li>Pomelo.EntityFrameworkCore.MySql</li>
+                    <li><a href="https://github.com/MarkPieszak/aspnetcore-Vue-starter">ASP.NET Core Vue Starter Kit</a></li>
                 </ul>
             </p>
         </div>

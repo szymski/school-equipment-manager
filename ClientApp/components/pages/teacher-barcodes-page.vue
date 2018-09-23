@@ -41,7 +41,11 @@ export default {
         try {
             this.teacher = await this.api.getTeacher(this.$route.params.id);
             this.barcodes = await this.api.getBarcodesForTeacher(this.teacher.id);
-            this.barcodes = { base: this.barcodes.base };
+            this.barcodes = {
+                base: this.barcodes.base,
+                borrow: "POBR",
+                return: "ZWROT",
+            };
         }
         catch(e) {
             this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));

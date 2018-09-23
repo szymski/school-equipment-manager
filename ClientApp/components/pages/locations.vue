@@ -35,7 +35,7 @@
 
         <div class="ui action fluid input">
             <input style="" type="text" v-model="newLocationName"/>
-            <button class="ui button" style="display:inline;" @click="addLocation">Dodaj</button>
+            <button class="ui button" style="display:inline;" :class="{ 'loading': adding }" @click="addLocation">Dodaj</button>
         </div>
 
         <!-- Removal confirmation dialog -->
@@ -94,6 +94,7 @@ export default {
         return {
             locations: [ ],
             newLocationName: "Nowa lokalizacja",
+            adding: false,
 
             modalLocation: {
                 id: 0,
@@ -127,6 +128,7 @@ export default {
 
         async addLocation() {
             this.api.clearError();
+            this.adding = true;
 
             try {
                 await this.$http.post("/api/Locations/Add", { name: this.newLocationName });
@@ -135,6 +137,8 @@ export default {
             catch(e) {
                 this.api.displayError("Wystąpił błąd", this.api.parseError(e.response));
             }
+            
+            this.adding = false;
         },
 
         showUpdateNameModal(item) {

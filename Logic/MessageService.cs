@@ -36,7 +36,7 @@ namespace SchoolEquipmentManager.Logic
             {
                 Recipent = recipent,
                 Date = DateTime.Now,
-                Title = finalTitle,
+                Title = innerTitle,
                 Body = finalBody,
                 Read = false,
             });
