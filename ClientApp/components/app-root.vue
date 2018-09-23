@@ -20,6 +20,12 @@
                 </div>
             </div>
         </div>
+        <div v-else-if="api.isScanner">
+            <a href="#" @click="api.logout()">Wyloguj</a>
+            <div class="scanner-wrapper">
+                <scan-page/>
+            </div>
+        </div>
         <div v-else>
             <div v-if="api.loggedIn">
                 <div class="pusher">
@@ -228,5 +234,9 @@ body, h1, h2, h3, h4, h5, .ui.button, .ui.menu, .header {
 
 .app-title {
     padding-top: 2em;
+}
+
+.scanner-wrapper {
+    margin: 2em;
 }
 </style>

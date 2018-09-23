@@ -14,6 +14,7 @@ export const api = {
     messageCount: 0,
     isAdmin: false,
     isMod: false,
+    isScanner: false,
 
     teachers: null,
     
@@ -21,18 +22,21 @@ export const api = {
 
     async updateUserInfo() {
         var data = (await axios.get("/api/General/GetUserInfo")).data;
-        this.loggedIn = data.loggedIn;
         this.useDevVersion = data.devVersion;
         this.username = data.username;
         this.teacherId = data.teacherId;
         this.messageCount = data.messageCount;
         this.role = data.role;
-
+        
         if(this.useDevVersion)
-            console.log("Using development frontend");
-
+        console.log("Using development frontend");
+        
         this.isAdmin = this.role == "administrator";
         this.isMod = this.role == "administrator" || this.role == "moderator";
+        this.isScanner = this.role == "scanner";
+
+        if(!this.isScanner)
+            this.loggedIn = data.loggedIn;
     },
   
     async login(username, password) {
@@ -45,6 +49,12 @@ export const api = {
         localStorage.authToken = this.authToken;
 
         await this.updateUserInfo();
+        if(this.role == "scanner") {
+            console.log("Logged in to scanner account");
+
+            return;
+        }
+
         this.loggedIn = true;
 
         return data;
@@ -53,6 +63,7 @@ export const api = {
     async logout() {
         this.loggedIn = false;
         this.authToken = null;
+        this.isScanner = false;
         localStorage.removeItem("authToken");
     },
 

@@ -213,6 +213,8 @@ namespace SchoolEquipmentManager
                 await _roleManager.CreateAsync(new IdentityRole(Roles.Administrator));
             if (!await _roleManager.RoleExistsAsync(Roles.Moderator))
                 await _roleManager.CreateAsync(new IdentityRole(Roles.Moderator));
+            if (!await _roleManager.RoleExistsAsync(Roles.Scanner))
+                await _roleManager.CreateAsync(new IdentityRole(Roles.Scanner));
         }
     }
 }

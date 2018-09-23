@@ -6,6 +6,7 @@ import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
 import { api } from './api'
 import ErrorDisplay from 'components/error-display'
+import ScanPage from 'components/pages/scan-page'
 
 require('semantic-ui-css/semantic.css')
 require('../node_modules/semantic-ui-css/semantic.js')
@@ -45,6 +46,7 @@ const app = new Vue({
 })
 
 Vue.component("error-display", ErrorDisplay);
+Vue.component("scan-page", ScanPage);
 
 export {
     app,

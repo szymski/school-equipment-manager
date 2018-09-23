@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Internal.System.Text.Encodings.Web.Utf8;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using SchoolEquipmentManager.Logic;
@@ -47,8 +48,9 @@ namespace SchoolEquipmentManager.Controllers
         private SignInManager<ApplicationUser> _signInManager;
         private IEmailService _emailService;
         private IHostingEnvironment _hostingEnv;
+        private IConfiguration _configuration;
 
-        public GeneralController(AppContext dbContext, ItemManager itemManager, UserGetter userGetter, UserManager<ApplicationUser> userManager, IEmailService emailService, IHostingEnvironment env)
+        public GeneralController(AppContext dbContext, ItemManager itemManager, UserGetter userGetter, UserManager<ApplicationUser> userManager, IEmailService emailService, IHostingEnvironment env, IConfiguration configuration)
         {
             _context = dbContext;
             _itemManager = itemManager;
@@ -56,12 +58,22 @@ namespace SchoolEquipmentManager.Controllers
             _userManager = userManager;
             _emailService = emailService;
             _hostingEnv = env;
+            _configuration = configuration;
         }
 
         [HttpGet("[action]")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserInfo()
         {
+            if (User.IsInRole(Roles.Scanner))
+            {
+                return Json(new 
+                {
+                    loggedIn = true,
+                    role = "scanner",
+                });
+            }
+
             var user = _userGetter.GetCurrentUser(u => u.Include(u2 => u2.Teacher).ThenInclude(t => t.Messages));
 
 #if DEBUG
@@ -138,6 +150,38 @@ namespace SchoolEquipmentManager.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            // Handle scanner station login
+            if (model.Username.Trim() == _configuration["ScannerStation:Login"])
+            {
+                if (model.Password != _configuration["ScannerStation:Password"])
+                    return BadRequest("Hasło do stanowiska skanowania nieprawidłowe.");
+
+                SymmetricSecurityKey signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthHelper.Secret));
+
+                var claims = new List<Claim>
+                {
+                    
+                };
+
+                claims.Add(new Claim(ClaimTypes.Role, Roles.Scanner));
+
+                var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                    issuer: "localhost",
+                    audience: "localhost",
+                    claims: claims,
+                    expires: DateTime.Now.AddMonths(12),
+                    signingCredentials: creds);
+
+                var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return Ok(new
+                {
+                    auth_token = tokenStr,
+                });
+            }
 
             var user = await _userManager.FindByNameAsync(model.Username);
 
